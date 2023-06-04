@@ -21,7 +21,7 @@ import com.pdl.sintax.*;
 public class Compiler {
     // Paths
     private static final String home = new File("").getAbsolutePath();
-    private static final String test = home + "/test/";
+    private static final String test = home + "/src/test/resources/";
     // Path de los archivos de output
     public final static String output = test + "outfiles/";
 
