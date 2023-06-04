@@ -1,0 +1,15 @@
+//Dividimos la gramática en 3 grandes campos:
+1. Tipado
+    1.1 Operadores int (>, %,++) 
+    1.2 Print: string, int
+    1.3 Input int guarda nums, string guarda cadenas
+    1.4.Comprobar tipo de retorno
+2. Unicidad
+    2.1 Al declarar vars globales y funciones -> TS global //OK
+    2.2 Nunca declarar globales dentro de un lower scope //OK
+3. Control de flujo
+    3.1 Do-while //Ya lo hace la gramática
+    3.2 Autoinc 
+    3.3.Return (Comprobar tipo)
+    3.4 If con semicol
+    

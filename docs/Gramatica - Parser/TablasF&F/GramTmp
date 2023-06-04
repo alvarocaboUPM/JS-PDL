@@ -1,0 +1,74 @@
+//// Gramatica
+Terminales = { eof  let  id  ;  if  (  )  {   }  while % do else
+            function return input print int boolean string and >  =
+            cad num  ++  ,  &  true false }
+
+//// lambda = cadena vacía
+
+NoTerminales = { VAR  FUN  MAIN  COMA LOOP INIT EXP EXPAUX LWAUX VALORI
+			VALORS VALORB VALOR KEY INOUT  TYPE TYPEB PARAMS LW }
+Axioma = MAIN
+
+//// Rama madre
+Producciones = {
+
+MAIN -> VAR MAIN
+MAIN -> FUN MAIN
+MAIN -> INOUT MAIN
+MAIN -> LOOP MAIN
+MAIN -> EXP ; MAIN
+MAIN -> eof
+
+FUN -> function id TYPE ( PARAMS ) { LW } //// Gestion funciones
+
+PARAMS -> TYPE id COMA PARAMS //// Bucle de parámetros con estructura (type id, )
+PARAMS -> lambda
+
+VAR -> let TYPEB id INIT ; //// Declaración de variables
+VAR -> TYPEB id INIT ;
+INIT -> = EXP
+INIT -> lambda
+
+INOUT -> print EXP ;	////EXPRESIONES DE ENTRADA - SALIDA
+INOUT -> input id ;
+
+LOOP -> do { LW } while ( EXP )
+LOOP -> if ( EXP ) KEY
+
+EXP -> id EXPAUX //// Expresiones aritmético-lógicas
+EXPAUX -> lambda
+EXPAUX -> % id EXPAUX
+EXPAUX -> > id EXPAUX
+EXPAUX -> & id EXPAUX
+EXPAUX -> ++ id EXPAUX
+
+TYPE -> int //// Control de tipos
+TYPE -> string
+
+TYPEB -> TYPE ////Si admite también boolean
+TYPEB -> boolean
+
+LW -> lambda //// Lower scope
+LW -> return VALOR ;
+LW -> LWAUX LW
+LWAUX -> VAR
+LWAUX -> INOUT
+LWAUX -> EXP
+
+COMA -> lambda //// Estados auxiliares
+COMA -> ,
+
+KEY -> return EXP ; //// Estados auxiliares
+KEY -> { LW }
+
+VALORI -> num //// Posibles valores
+VALORS -> cad
+VALORB -> true
+VALORB -> false
+
+VALOR -> VALORB //// Todos valores
+VALOR -> VALORS
+VALOR -> VALORI
+VALOR -> lambda
+
+}

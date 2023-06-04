@@ -1,0 +1,73 @@
+TYPE.type = "int"
+  | "string"
+  | "boolean"
+  | "null"
+
+CONST.value = cad.value
+  | num.value
+  | "true"
+  | "false"
+
+VAR.name = id.name
+
+INC.op = "++"
+INC.operand = VAR
+
+EXP.left = VALUE
+EXP.op = EXPX.op
+EXP.right = EXPX.right
+
+EXP.left = INC
+EXP.op = EXPX.op
+EXP.right = EXPX.right
+
+EXPX.op = ">"
+  | ">="
+  | "<"
+  | "<="
+  | "=="
+  | "!="
+  | "&&"
+  | "%"
+  | "null"
+EXPX.right = EXP
+
+VALUE.operand = VAR
+VALUE.op = XPX.op
+VALUE.args = XPX.args
+
+VALUE.operand = CONST
+VALUE.op = "null"
+VALUE.args = "null"
+
+VALUE.operand = "("
+VALUE.op = "null"
+VALUE.args = EXP
+
+XPX.op = "call"
+XPX.args = FCALL
+XPX.op = "null"
+XPX.args = "null"
+
+ASIGN.op = "="
+ASIGN.left = VAR
+ASIGN.right = EXP
+
+DECL.op = "decl"
+DECL.id = VAR
+DECL.type = TYPE
+DECL.init = DECLX.init
+
+DECLX.init = ASIGN
+DECLX.init = "null"
+
+SENA.stmt = IFX
+SENA.stmt = DECL
+SENA.stmt = "do-while"
+SENA.body = BODY
+SENA.stmt = SENB
+
+SENB.stmt = IDX
+SENB.stmt = INOUT
+SENB.stmt = "return"
+SENB.exp = RX
