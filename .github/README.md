@@ -89,11 +89,11 @@ Los elementos opcionales seleccionados por el grupo son\*:
 
 ### Gramática Regular
 
-  <p style="text-align:left;"><img src="../doc/Gramatica - Lexer/Gram.svg" width="80%" title="hover text"></p>
+  ![Gramatica Regular](Gramatica%20-%20Lexer/Gram.svg)
 
 ### AFD
 
-   <p style="text-align:left;"><img src="../doc/Gramatica - Lexer/AFD.svg" width="100%" height="450" >  </p>
+  ![Autómata Finito Determinista](Gramatica%20-%20Lexer/AFD.svg)
 
 ### Acciones semánticas
 
