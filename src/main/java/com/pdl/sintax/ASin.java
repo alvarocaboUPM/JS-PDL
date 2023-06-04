@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.List;
 
 import com.pdl.Compiler;
+import com.pdl.common.TS;
 import com.pdl.sintax.expresion.ExpNode;
 import com.pdl.sintax.expresion.ExpTree;
 import com.pdl.sintax.expresion.Expresion;

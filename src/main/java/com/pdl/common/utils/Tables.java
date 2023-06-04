@@ -1,72 +1,60 @@
-package com.pdl.common;
+package com.pdl.common.utils;
 
 import java.util.*;
 
-import com.pdl.lexer.lib.*;
+import com.pdl.lexer.lib.Token;
 
 public class Tables {
-    List<String> validTokens;
-    Map<String, Token> DirToken;
-    Map<String, Token> ResWords;
-    Map<Integer, String> ErrorHandler;
-    Map<Integer, String> Analyzers;
+    private static List<String> validTokens;
+    private static Map<String, Token> DirToken;
+    private static Map<String, Token> ResWords;
+    private static Map<Integer, String> ErrorHandler;
+    private static Map<Integer, String> Analyzers;
 
-    /**
-     * Constructor that fills the tables
-     */
-    public Tables(){
+    static {
+        fillTables();
+    }
+
+    private static void fillTables() {
         validTokens = new ArrayList<String>();
         DirToken = new HashMap<String, Token>();
         ResWords = new HashMap<String, Token>();
         ErrorHandler = new HashMap<Integer, String>();
         Analyzers = new HashMap<Integer, String>();
-        fillTables(validTokens, DirToken, ResWords, ErrorHandler, Analyzers);
-    }
 
-    private void fillTables(List<String> validTokens,
-    Map<String, Token> DirToken,
-    Map<String, Token> ResWords,
-    Map<Integer, String> ErrorHandler,
-    Map<Integer, String> Analyzer){
-        //------------VALID TOKENS TABLE ----------
+        // ------------VALID TOKENS TABLE ----------
 
-        //TOKENS INMEDIATOS Y RES
-        validTokens.add(("TypeBool"));//0
-        validTokens.add(("LoopDo")); //1
-        validTokens.add(("FunID")); //2
-        validTokens.add(("CondIf"));//3
-        validTokens.add(("ResIn"));//4
-        validTokens.add(("TypeInt"));//5
-        validTokens.add(("ResLet"));//6
-        validTokens.add(("ResPrint"));//7
-        validTokens.add(("Return"));//8
-        validTokens.add(("TypeString"));//9
-        validTokens.add(("LoopWhile"));//10
-        validTokens.add(("ResAutoSum"));//11
-        //
-        validTokens.add("CteInt");//12
-        validTokens.add("Cad");//13
-        validTokens.add("ID");//14
-        //
-        validTokens.add("AsValue");//15
-        validTokens.add("Com");//16
-        validTokens.add("SemCol");//17
-        validTokens.add("ParOpen");//18
-        validTokens.add("ParClose");//19
-        validTokens.add("KeyOpen");//20
-        validTokens.add("KeyClose");//21
-        
-        //NO TOCAR -> Ordenados en preferencia de operaciones de menor a mayor
-        validTokens.add(("MOD"));//22
-        validTokens.add(("GT"));//23
-        validTokens.add(("AND"));//24 
-   
-        //*Especial? */
-        validTokens.add(("TokT"));//25
-        validTokens.add(("TokF"));//26
-        validTokens.add(("Teof"));//27
+        // TOKENS INMEDIATOS Y RES
+        validTokens.add("TypeBool");// 0
+        validTokens.add("LoopDo"); // 1
+        validTokens.add("FunID"); // 2
+        validTokens.add("CondIf");// 3
+        validTokens.add("ResIn");// 4
+        validTokens.add("TypeInt");// 5
+        validTokens.add("ResLet");// 6
+        validTokens.add("ResPrint");// 7
+        validTokens.add("Return");// 8
+        validTokens.add("TypeString");// 9
+        validTokens.add("LoopWhile");// 10
+        validTokens.add("ResAutoSum");// 11
+        validTokens.add("CteInt");// 12
+        validTokens.add("Cad");// 13
+        validTokens.add("ID");// 14
+        validTokens.add("AsValue");// 15
+        validTokens.add("Com");// 16
+        validTokens.add("SemCol");// 17
+        validTokens.add("ParOpen");// 18
+        validTokens.add("ParClose");// 19
+        validTokens.add("KeyOpen");// 20
+        validTokens.add("KeyClose");// 21
+        validTokens.add("MOD");// 22
+        validTokens.add("GT");// 23
+        validTokens.add("AND");// 24
+        validTokens.add("TokT");// 25
+        validTokens.add("TokF");// 26
+        validTokens.add("Teof");// 27
 
-        //------------DIRECT TOKENS TABLE ----------
+        // ------------DIRECT TOKENS TABLE ----------
         DirToken.put("{", new Token(validTokens.get(20), null));
         DirToken.put("}", new Token(validTokens.get(21), null));
         DirToken.put("(", new Token(validTokens.get(18), null));
@@ -78,7 +66,7 @@ public class Tables {
         DirToken.put("%", new Token(validTokens.get(22), null));
         DirToken.put(">", new Token(validTokens.get(23), null));
 
-        //-----------RESERVED WORDS TABLE-----------
+        // -----------RESERVED WORDS TABLE-----------
         ResWords.put("do", new Token(validTokens.get(1), null));
         ResWords.put("while", new Token(validTokens.get(10), null));
         ResWords.put("boolean", new Token(validTokens.get(0), null));
@@ -90,21 +78,20 @@ public class Tables {
         ResWords.put("print", new Token(validTokens.get(7), null));
         ResWords.put("return", new Token(validTokens.get(8), null));
         ResWords.put("if", new Token(validTokens.get(3), null));
-        //-----------SPECIAL WORDS -----------
+        // -----------SPECIAL WORDS -----------
         ResWords.put("true", new Token(validTokens.get(25), null));
         ResWords.put("false", new Token(validTokens.get(26), null));
-
 
         /* *******************ERROR HANDLER*******************
          * CODE: 1-10 Main || 11-99 Lexer || 100-199 Sintax || 200 - 299 Semantic
          * Lower numbers will handle
-        */
-        ErrorHandler.putAll(new HashMap<Integer, String>(){{ 
+         */
+        ErrorHandler.putAll(new HashMap<Integer, String>() {{
             put(1, "No se encuentra el archivo: ");
             put(2, "NullPointer");
             put(3, "InOut Exception");
             put(4, "Error al volcar la tabla de símbolos");
-            //Lexer
+            // Lexer
             put(11, "SE HA SUPERADO EL MÁXIMO INT");
             put(12, "String demasiado largo");
             put(13, "INVALID TOKEN: ");
@@ -112,7 +99,7 @@ public class Tables {
             put(20, "Utilice commillas dobles para indicar string");
             put(21, "Debe cerrar el comentario");
             put(22, "Operador no disponible: ");
-            //Sintax
+            // Sintax
             put(100, "Error sintáctico genérico");
             put(101, "Se esperaba fin de fichero");
             put(102, "Se esperaba una declaración o un condicional");
@@ -131,7 +118,7 @@ public class Tables {
             put(117, "Necesaria previa declaracion de las funciones ");
             put(118, "Estructura inválida del bucle do { something } while(cond); ");
             put(120, "El parser ha recibido un token nulo");
-            //Semantics
+            // Semantics
             put(200, "Error semántico genérico");
             put(201, "Se está intentando declarar una variable global en un ámbito local");
             put(202, "Error de unicidad; se ha declarado de nuevo el identificador: ");
@@ -149,44 +136,41 @@ public class Tables {
             put(230, "Error de tipo: int % int -> int");
             put(231, "Error de tipo: int > int -> bool");
             put(232, "Error de tipo: bool && bool -> int");
-            put(233, "Error de tipo: Expresión sin tipo"); 
-         }}); 
+            put(233, "Error de tipo: Expresión sin tipo");
+        }});
 
-         Analyzer.put(0, "UserInput");
-         Analyzer.put(1, "Lexer");
-         Analyzer.put(2, "Parser");
-         Analyzer.put(3, "Semantic");
+        Analyzers.put(0, "UserInput");
+        Analyzers.put(1, "Lexer");
+        Analyzers.put(2, "Parser");
+        Analyzers.put(3, "Semantic");
 
-         /* Las hacemos inmodificables */
-         ResWords = Collections.unmodifiableMap(ResWords);
-         ErrorHandler = Collections.unmodifiableMap(ErrorHandler);
-         validTokens = Collections.unmodifiableList(validTokens);
-         DirToken = Collections.unmodifiableMap(DirToken);
-         Analyzer = Collections.unmodifiableMap(Analyzer);
-    }        
-
-    /* Getters and setters autogenerated */
-
-    public List<String> getValidTokens() {
-        return this.validTokens;
+        /* Make the tables unmodifiable */
+        ResWords = Collections.unmodifiableMap(ResWords);
+        ErrorHandler = Collections.unmodifiableMap(ErrorHandler);
+        validTokens = Collections.unmodifiableList(validTokens);
+        DirToken = Collections.unmodifiableMap(DirToken);
+        Analyzers = Collections.unmodifiableMap(Analyzers);
     }
 
-    public Map<String,Token> getDirToken() {
-        return this.DirToken;
+    /* Getters for the tables */
+
+    public static List<String> getValidTokens() {
+        return validTokens;
     }
 
-    public Map<String,Token> getResWords() {
-        return this.ResWords;
+    public static Map<String, Token> getDirToken() {
+        return DirToken;
     }
 
-    public Map<Integer,String> getErrorHandler() {
-        return this.ErrorHandler;
+    public static Map<String, Token> getResWords() {
+        return ResWords;
     }
 
-    public Map<Integer,String> getAnalyzers() {
-        return this.Analyzers;
+    public static Map<Integer, String> getErrorHandler() {
+        return ErrorHandler;
     }
 
-
-
+    public static Map<Integer, String> getAnalyzers() {
+        return Analyzers;
+    }
 }

@@ -298,7 +298,7 @@ public class Expresion extends Token {
 
     void ezError(int c) {
         Compiler.errors.add(c);
-        new ErrorAt(c, ALex.numLineas).toss(Compiler.t.getErrorHandler(),
+        new ErrorAt(c, ALex.numLineas).toss(Tables.getErrorHandler(),
                 "\n"+this.toString());
     }
 }

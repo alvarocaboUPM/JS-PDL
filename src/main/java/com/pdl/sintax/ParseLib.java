@@ -6,6 +6,7 @@ import com.pdl.lexer.ALex;
 import com.pdl.lexer.lib.*;
 import com.pdl.lexer.lib.Token.Tipado;
 import com.pdl.common.*;
+import com.pdl.common.utils.Tables;
 import com.pdl.Compiler;
 import com.pdl.sintax.expresion.ExpNode;
 import com.pdl.sintax.expresion.Expresion;
@@ -19,12 +20,12 @@ public class ParseLib {
      */
     static void ezError(int c) {
         Compiler.errors.add(c);
-        new ErrorAt(c, ALex.numLineas).toss(Compiler.t.getErrorHandler(),
+        new ErrorAt(c, ALex.numLineas).toss(Tables.getErrorHandler(),
                 new String("\n- TRAZA -> " + ASin.trace +
                         "\n- ÚLTIMO TK LEIDO -> " + ASin.tk.toString()));
     }
     public static void ezError(int c, String extraInfo) {
-        new ErrorAt(c, ALex.numLineas).toss(Compiler.t.getErrorHandler(),
+        new ErrorAt(c, ALex.numLineas).toss(Tables.getErrorHandler(),
                 extraInfo
         );
     }
@@ -65,7 +66,7 @@ public class ParseLib {
             ASin.id.setType("TypeInt");
             ASin.id.setOffset(++ASin.OffsetG);
             if (ASin.inFunc)
-                Compiler.ts.SetGlobal(ASin.id);
+                Compiler.ts.setGlobal(ASin.id);
         }
     }
 

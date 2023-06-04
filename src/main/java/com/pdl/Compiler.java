@@ -8,6 +8,8 @@ import java.util.Scanner;
 
 import com.pdl.common.*;
 import com.pdl.common.implementation.TS_imp;
+import com.pdl.common.utils.Pretty;
+import com.pdl.common.utils.Tables;
 //Project modules
 import com.pdl.lexer.*;
 import com.pdl.sintax.*;
@@ -25,10 +27,8 @@ public class Compiler {
 
     //Lista de errores para el input final
     public static List<Integer> errors;
-    // Generando tablas
-    public static Tables t;
 
-    public static TS_imp ts;
+    public static TS ts;
 
     // Byte[] que guarda el fichero fuente
     public static byte[] Source;
@@ -51,13 +51,13 @@ public class Compiler {
     static String filename, folder,df;
 
     public static void main(String args[]) {
-        AskInput();
+        askInput();
         init();
         ASin.Parser();
         finish();
     }
 
-    private static void AskInput(){
+    private static void askInput(){
         Scanner sc = new Scanner(System.in);
         System.out.println("\nSelecciona la temática de la prueba");
         System.out.println("1) Errors");
@@ -100,7 +100,6 @@ public class Compiler {
         String input = test + folder +filename;
         
         // Iniciamos tablas
-        t = new Tables();
         ts = new TS_imp();
         errors = new ArrayList<>();
 
@@ -154,10 +153,10 @@ public class Compiler {
     }
 
     private static void checkingErrors(){
-        ArrayList<String> ok = new ArrayList<>(t.getAnalyzers().values());
+        ArrayList<String> ok = new ArrayList<>(Tables.getAnalyzers().values());
         for (Integer c : errors) {
             int analyzer = ErrorAt.getAnalizer(c);
-            String a= t.getAnalyzers().get(analyzer);
+            String a= Tables.getAnalyzers().get(analyzer);
             if(ok.indexOf(a)!=-1){
                 Pretty.printRed("Hay errores en el "+ a);   
                 ok.remove(ok.indexOf(a));

@@ -8,6 +8,8 @@ import java.util.List;
 import com.pdl.lexer.lib.*;
 import com.pdl.Compiler;
 import com.pdl.common.*;
+import com.pdl.common.utils.Pretty;
+import com.pdl.common.utils.Tables;
 
 public class ALex {
 
@@ -162,13 +164,13 @@ public class ALex {
             }
             Pointer--;
             // Si no es una palabra reservada, mete el símbolo en la tabla de símbolos
-            return Compiler.t.getResWords().containsKey(Lexema) ? Compiler.t.getResWords().get(Lexema)
+            return Tables.getResWords().containsKey(Lexema) ? Tables.getResWords().get(Lexema)
                     : Compiler.ts.insertAt(Lexema);
 
         } else {
             // Checks for direct token
-            if (Compiler.t.getDirToken().containsKey(carString(car))){
-                res= Compiler.t.getDirToken().get(carString(car));
+            if (Tables.getDirToken().containsKey(carString(car))){
+                res= Tables.getDirToken().get(carString(car));
 
                 switch(res.getType()){
                     case "AsValue":
@@ -222,7 +224,7 @@ public class ALex {
         if(tk == null){
             return;
         }
-        if (!Compiler.t.getValidTokens().contains(tk.getType())) {
+        if (!Tables.getValidTokens().contains(tk.getType())) {
             ezError(13, tk.getType());
             return;
         }
@@ -315,7 +317,7 @@ public class ALex {
         // "\n>Last char read -> " + c +
         // "\n>NUM -> " + num!=null?""+num:" ";
 
-        new ErrorAt(c, numLineas).toss(Compiler.t.getErrorHandler(), 
+        new ErrorAt(c, numLineas).toss(Tables.getErrorHandler(), 
         extraInfo
         );
     }

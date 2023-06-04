@@ -114,7 +114,7 @@ public class TS_imp implements TS {
         return null;
     }
 
-    public void SetGlobal(SymbolAt tmp) {
+    public void setGlobal(SymbolAt tmp) {
 
         int id = tmp.getID();
         //tmp.setPosition(index);

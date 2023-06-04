@@ -1,6 +1,8 @@
 package com.pdl.common;
 
 import java.util.*;
+
+import com.pdl.common.utils.Pretty;
  
 /**
  * Instanciates an error with code and message

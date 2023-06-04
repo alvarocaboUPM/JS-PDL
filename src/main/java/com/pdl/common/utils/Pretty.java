@@ -1,4 +1,4 @@
-package com.pdl.common;
+package com.pdl.common.utils;
 /**
  * Clase que implementa funciones decorativas reciclables 
  * para la terminal

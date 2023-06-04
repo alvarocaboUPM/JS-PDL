@@ -1,5 +1,7 @@
 package com.pdl.lexer.lib;
 
+import com.pdl.common.TS;
+import com.pdl.common.utils.Tables;
 
 public class Token{
     protected String Type;
@@ -38,9 +40,9 @@ public class Token{
      * Checks if the token is a typing 
      * @return true | false
      */
-    public boolean isType(){
+    public boolean isType(TS ts){
         int[] tipados = {0,5,9};
-        int index = Compiler.ts.getValidTokens().indexOf(this.Type);
+        int index = Tables.getValidTokens().indexOf(this.Type);
         for (int i : tipados) {
             if(index == i) return true;
         }
@@ -81,7 +83,7 @@ public class Token{
      */
     public boolean isOperator(){
         int[] operands = {22,23,24};
-        int index = Compiler.t.getValidTokens().indexOf(this.Type);
+        int index = Tables.getValidTokens().indexOf(this.Type);
         for (int i : operands) {
             if(index == i) return true;
         }
