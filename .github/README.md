@@ -1,1 +1,1 @@
-../doc/Memoria.md
+Memoria.md
