@@ -6,6 +6,8 @@ import es.upm.aedlib.Pair;
 import com.pdl.lexer.ALex;
 import com.pdl.lexer.lib.Token;
 import com.pdl.common.ErrorAt;
+import com.pdl.common.TS;
+import com.pdl.common.utils.Tables;
 import com.pdl.Compiler;
 import com.pdl.sintax.ASin;
 
@@ -128,8 +130,8 @@ public class Expresion extends Token {
     }
 
 
-    public boolean validar() {
-        Operandos aux = checkOpTypes();
+    public boolean validar(TS t) {
+        Operandos aux = checkOpTypes(t);
         switch (this.t) {
             case INT:
                 if (!this.op.getType().equals("MOD") ||
@@ -158,8 +160,8 @@ public class Expresion extends Token {
         }
     }
 
-    private Operandos checkOpTypes() {
-        return new Operandos(left.getTipado(), right.getTipado());
+    private Operandos checkOpTypes(TS t) {
+        return new Operandos(left.getTipado(t), right.getTipado(t));
     }
 
     public boolean isExpresion() {

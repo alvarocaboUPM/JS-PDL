@@ -40,7 +40,7 @@ public class Token{
      * Checks if the token is a typing 
      * @return true | false
      */
-    public boolean isType(TS ts){
+    public boolean isType(){
         int[] tipados = {0,5,9};
         int index = Tables.getValidTokens().indexOf(this.Type);
         for (int i : tipados) {
@@ -53,7 +53,7 @@ public class Token{
      * Tries to find the typing of the token
      * @return Tipado | Default if no valid type found
      */
-    public Tipado getTipado(){
+    public Tipado getTipado(TS t){
         if(this.Type.equals("CteInt")) 
             return Tipado.INT;
         if(this.Type.equals("Cad")) 
@@ -61,7 +61,7 @@ public class Token{
         if(this.Type.equals("TokF")||this.Type.equals("TokT")) 
             return Tipado.BOOL;
         if(this.Type.equals("ID")){
-            SymbolAt aux = Compiler.ts.lookAtIndex((int)Info);
+            SymbolAt aux = t.lookAtIndex((int)Info);
             switch (aux.getType()) {
                 case "TypeInt":
                     return Tipado.INT;

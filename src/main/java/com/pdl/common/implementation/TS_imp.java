@@ -17,6 +17,8 @@ import com.pdl.sintax.ASin;
  * global y array de tablas locales
  */
 public class TS_imp implements TS {
+    HashMap<Integer, SymbolAt> globalT = new HashMap<>();
+    HashMap<String, HashMap<Integer,SymbolAt>> localT = new HashMap<>();
     HashMap<Integer, SymbolAt> curLocal;
     private boolean Global = true, FoInLoc = false;
 

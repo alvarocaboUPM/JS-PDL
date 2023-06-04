@@ -2,7 +2,6 @@ package com.pdl.common;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 
 import com.pdl.lexer.lib.*;
 import com.pdl.Compiler;
@@ -11,8 +10,7 @@ import com.pdl.Compiler;
  * Methods required by a basic lexer-orientated Symbol Table
  */
 public interface TS {
-    HashMap<Integer, SymbolAt> globalT = new HashMap<>();
-    HashMap<String, HashMap<Integer,SymbolAt>> localT = new HashMap<>();
+
     FileWriter file = Compiler.FTS;
 
     /**
@@ -47,5 +45,16 @@ public interface TS {
      * @return Symbol at index | null if not found
      */
     public SymbolAt lookAtIndex(int index);
+
+
+    public boolean getScope();
+
+    /**
+     * Changes current TS scope
+     * @param scope True -> Global | False -> Local
+     */
+    public void changeScope(boolean scope);
+
+    public void setGlobal(SymbolAt tmp);
 
 }
