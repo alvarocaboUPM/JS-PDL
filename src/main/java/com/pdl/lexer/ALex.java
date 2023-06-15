@@ -15,94 +15,76 @@ import com.pdl.common.utils.Tables;
 public class ALex {
 
     // ---------GLOBAL VARIABLES-------------
-
-
     private static int Pointer; // Reading buffer pointer
     public static int numLineas; // Number of lines in the Compiler.Source file
+    // Data Structures
+    public List<Token> tokenList; // Keeps track of the tokens generated
+    
     // Token-Generating tracking variables
     private static String Lexema;
     private static Integer num;
-    // Data Structures
-    public List<Token> TokenList = new ArrayList<Token>(); // Keeps track of the tokens generated
-    /*
-     * ______ _ _
-     * | ___| | | (_)
-     * | |_ _ _ _ __ ___ | |_ _ ___ _ __ ___
-     * | _|| | | || '_ \ / __|| __|| | / _ \ | '_ \ / __|
-     * | | | |_| || | | || (__ | |_ | || (_) || | | |\__ \
-     * \_| \__,_||_| |_| \___| \__||_| \___/ |_| |_||___/
-     * 
-     */
 
     /**
-     * Reads 1 byte and seeks the pointer 1 position
+     * Class constructor that initializes variables, orientated
+     * to generated a new Token iterator for the Parser
+     */
+    public ALex() {
+        Pointer = 0;
+        numLineas = 1;    
+        tokenList = new ArrayList<Token>();
+    }
+
+    /**
+     * Acts as a it.getNext() function in a live TokenList,
+     * mixes private funcs Gen_token and AppendToken()
      * 
-     * @return char
+     * @return validated token
      * @throws IOException
      */
-    private static char leer() {
-        byte aux = -1;
-        try {
-            aux = Pointer >= Compiler.Source.length ? -1 : Compiler.Source[Pointer];
-        } catch (NullPointerException e) {
-
-        }
-        // Reads only 1 char
-        char out = aux != -1 ? (char) aux : Constants.EOF; // Returns char or EOF
-        Pointer++;
-        return out;
-
+    public Token nxToken() throws IOException {
+        Token tk;
+        tk = Gen_Token(leer());
+        AppendToken(tk);
+        return tk;
     }
 
+    public List<Token> getTokens() {
+        return this.tokenList;
+    }
+
+    /* Métodos de libería */
+
     /**
-     * Casts a char variable to String
+     * Easy constructor for tokens
      * 
-     * @param car
-     * @return String
+     * @return new {@link Token} with lineAt <- numLineas
      */
-    private static String carString(char car) {
-        return "" + car;
+    public static Token nToken(String Type, Object Info) {
+        return new Token(Type, Info, numLineas);
     }
 
-    @SuppressWarnings("unused")
     /**
-     * Peeks next char without increasing the pointer
+     * Handles errors with Error table
      * 
-     * @return next char
+     * @param c         Error code
+     * @param extraInfo Optional information to append at the end of the mesg
      */
-    private static char peek() {
-        if (Pointer > Compiler.Source.length)
-            return 0;
-        if (Pointer == Compiler.Source.length)
-            return Constants.EOF;
-        return (char) Compiler.Source[Pointer];
+    public static void ezError(int c, String extraInfo) {
+        Compiler.errors.add(c);
+
+        new ErrorAt(c, numLineas).toss(Tables.getErrorHandler(),
+                extraInfo);
     }
 
     /**
-     * Skips cars util it finds the end of commnent or EOF
-     * 
-     * @throws IOException
-     */
-    private static void skipComment() {
-        char c;
-        while ((c = leer()) != '*' && leer() != '/') {
-            if (c == Constants.EOF) {
-                ezError(17, null);
-                return;
-            }
-        }
-
-        Pointer += 2; // Skips '*/'
-    }
-
-    /**
+     * Iterates through the source code and tokenizes it
      * @return validToken | null in case of Error
      */
     private static Token Gen_Token(char car) throws IOException {
         Lexema = null;
         Token res = null;
 
-        // Checks for EOF
+        // Checks for Constants.EOF
         if (car == Constants.EOF || Pointer > Compiler.Source.length) {
             return new Token("Teof", null);
         }
@@ -115,7 +97,7 @@ public class ALex {
                     ezError(13, "'/'" + car);
                 skipComment();
 
-                // Skippable cases
+            // Skippable cases
             case '\n':
                 numLineas++;
             case '\r':
@@ -147,7 +129,7 @@ public class ALex {
                 num = Character.getNumericValue(car);
             while (Character.isDigit(car = leer())) {
                 num = (num * 10) + Character.getNumericValue(car);
-                if (num > Constants.EOF)
+                if (num > Constants.MAX_INT)
                     ezError(11, null);
             }
             res = nToken("CteInt", num);
@@ -228,45 +210,85 @@ public class ALex {
             ezError(13, tk.getType());
             return;
         }
-        this.TokenList.add(tk);
+        this.tokenList.add(tk);
         Compiler.FTokens.write(tk.toString());
     }
 
     /* Métodos objeto */
 
+    
+
     /**
-     * Class constructor that initializes variables, orientated
-     * to generated a new Token iterator for the Parser
+     * Reads 1 byte and seeks the pointer 1 position
+     * 
+     * @return char
+     * @throws IOException
      */
-    public ALex() {
-        Pointer = 0;
-        numLineas = 1;
+    private static char leer() {
+        byte aux = -1;
+        try {
+            aux = Pointer >= Compiler.Source.length ? -1 : Compiler.Source[Pointer];
+        } catch (NullPointerException e) {
+
+        }
+        // Reads only 1 char
+        char out = aux != -1 ? (char) aux : Constants.EOF; // Returns char or Constants.EOF
+        Pointer++;
+        return out;
+
     }
 
     /**
-     * Acts as a it.getNext() function in a live TokenList,
-     * mixes private funcs Gen_token and AppendToken()
+     * Casts a char variable to String
      * 
-     * @return validated token
+     * @param car
+     * @return String
+     */
+    private static String carString(char car) {
+        return "" + car;
+    }
+
+    @SuppressWarnings("unused")
+    /**
+     * Peeks next char without increasing the pointer
+     * 
+     * @return next char
+     */
+    private static char peek() {
+        if (Pointer > Compiler.Source.length)
+            return 0;
+        if (Pointer == Compiler.Source.length)
+            return Constants.EOF;
+        return (char) Compiler.Source[Pointer];
+    }
+
+    /**
+     * Skips cars util it finds the end of commnent or Constants.EOF
+     * 
      * @throws IOException
      */
-    public Token nexToken() throws IOException {
-        Token tk;
-        tk = Gen_Token(leer());
-        AppendToken(tk);
-        return tk;
+    private static void skipComment() {
+        char c;
+        while ((c = leer()) != '*' && leer() != '/') {
+            if (c == Constants.EOF) {
+                ezError(17, null);
+                return;
+            }
+        }
+
+        Pointer += 2; // Skips '*/'
     }
 
     /**
      * Acts as a main function for the lexer
      * 
      * @IMP: No llamar porque resetea el puntero y el num lineas (variables
-     *       estáticas)
+     *       estáticas) * Utilizar solo para debug * 
      * 
      * @return TokenList List of tokens generated
      * @throws IOException
      */
-    public List<Token> Lexer() throws IOException {
+    protected List<Token> Lexer() throws IOException {
 
         // Variable initalization
         Token token = null;
@@ -279,48 +301,12 @@ public class ALex {
                 AppendToken(token);
             // No more tokens
             Pretty.printOK("Lexer analisis completado correctamente");
-            return TokenList;
+            return tokenList;
         } catch (NullPointerException e) {
             e.printStackTrace();
             return null;
         }
 
-    }
-
-    /**
-     * 
-     * @return lexer token list
-     */
-    public List<Token> getTokens() {
-        return this.TokenList;
-    }
-
-    /* Métodos de libería */
-
-    /**
-     * Easy constructor for tokens
-     * 
-     * @return new {@link Token} with lineAt <- numLineas
-     */
-    public static Token nToken(String Type, Object Info) {
-        return new Token(Type, Info, numLineas);
-    }
-
-    /**
-     * Handles errors with Error table
-     * 
-     * @param c         Error code
-     * @param extraInfo Optional information to append at the end of the mesg
-     */
-    public static void ezError(int c, String extraInfo) {
-        Compiler.errors.add(c);
-        // String info = new String()extraInfo!=null?extraInfo:""+
-        // "\n>LEXEMA -> " + Lexema!=null?Lexema:" " +
-        // "\n>Last char read -> " + c +
-        // "\n>NUM -> " + num!=null?""+num:" ";
-
-        new ErrorAt(c, numLineas).toss(Tables.getErrorHandler(),
-                extraInfo);
     }
 
 }

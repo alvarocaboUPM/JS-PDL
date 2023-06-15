@@ -1,13 +1,19 @@
 package com.pdl.parser;
 
 import com.pdl.common.interfaces.ASin;
+import com.pdl.lexer.ALex;
 
 public class Parser implements ASin {
 
     private String result;
+    private ALex lexer;
 
     public Parser() {
         result = "D\t ";
+    }
+
+    private static void getNext(){
+
     }
 
     @Override

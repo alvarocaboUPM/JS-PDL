@@ -35,7 +35,7 @@ public class ASin {
     static void getNext() {
         Token aux;
         try {
-            if ((aux = lexer.nexToken()) != null) {
+            if ((aux = lexer.nxToken()) != null) {
                 tk = aux;
             } else {
                 ParseLib.ezError(120);
