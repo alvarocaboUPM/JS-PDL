@@ -1,6 +1,7 @@
 package com.pdl.common;
 
 import java.util.*;
+import com.pdl.Compiler;
 
 import com.pdl.common.utils.Pretty;
 
@@ -14,6 +15,7 @@ public class ErrorAt {
     public ErrorAt(int c, int line) {
         code = c;
         n_line = line;
+        Compiler.errors.add(c);
     }
 
     public int getCode() {
