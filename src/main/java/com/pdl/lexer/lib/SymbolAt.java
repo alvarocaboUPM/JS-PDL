@@ -3,7 +3,6 @@ package com.pdl.lexer.lib;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class SymbolAt extends Object {
     private String Lexema;
     private int ID; // Index in the table
@@ -43,35 +42,34 @@ public class SymbolAt extends Object {
      * 
      * @return true if ok | false otherwise
      */
-   /*
-    public boolean checkType() {
-        SymbolAt aux;
-        if ((aux = Compiler.ts.lookAt(ID)) != null
-                && this.type.equals(aux.getType())) {
-                    return true;
-        }
-        return false;
-    }
-
-
-    */
+    /*
+     * public boolean checkType() {
+     * SymbolAt aux;
+     * if ((aux = Compiler.ts.lookAt(ID)) != null
+     * && this.type.equals(aux.getType())) {
+     * return true;
+     * }
+     * return false;
+     * }
+     * 
+     * 
+     */
     @Override
     public String toString() {
-        if(getType().equals("Function")) {
-            return
-                    "* Lexema:'" + getLexema() + "'\n" +
-                    "   Atributos:\n"+
-                    //"| ID='" + getID() + "'" +
+        if (getType().equals("Function")) {
+            return "* Lexema:'" + getLexema() + "'\n" +
+                    "   Atributos:\n" +
+                    // "| ID='" + getID() + "'" +
                     "   + type:'" + getType() + "'\n" +
                     "   + NumParams:" + getNumParams() + "\n" +
                     "   + TypesParams:'" + getTypesParams() + "'\n" +
                     "   + ReturnType:'" + getReturnType() + "'\n" +
                     "   + offset:" + getOffset() + "\n" +
                     "\n";
-        }else{
+        } else {
             return "* Lexema:'" + getLexema() + "'\n" +
-                    "   Atributos:\n"+
-                    //"| ID='" + getID() + "'" +
+                    "   Atributos:\n" +
+                    // "| ID='" + getID() + "'" +
                     "   + type:'" + getType() + "'\n" +
                     "   + offset:" + getOffset() + "\n" +
                     "\n";

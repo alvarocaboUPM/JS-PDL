@@ -24,11 +24,12 @@ public class ParseLib {
                 new String("\n- TRAZA -> " + ASin.trace +
                         "\n- ÚLTIMO TK LEIDO -> " + ASin.tk.toString()));
     }
+
     public static void ezError(int c, String extraInfo) {
         new ErrorAt(c, ALex.numLineas).toss(Tables.getErrorHandler(),
-                extraInfo
-        );
+                extraInfo);
     }
+
     /**
      * Sets id to the read token info field and handles
      * small sintax analisys errors
@@ -90,18 +91,18 @@ public class ParseLib {
         }
     }
 
-    static void endTree(){
+    static void endTree() {
         ASin.cursor = new ExpNode();
         ASin.expresions = ASin.expresions.destroyTree(ASin.cursor);
     }
 
     static void insertOperand() {
-        if(ASin.tk.isOperator())
+        if (ASin.tk.isOperator())
             return;
         if (ASin.e.insert(ASin.tk) == Insertion.ERROR)
             return;
         // Comprobamos que ya está formada
-        if (ASin.e.isComplete() && ASin.e.getTipado()!= Tipado.DEFAULT) {
+        if (ASin.e.isComplete() && ASin.e.getTipado() != Tipado.DEFAULT) {
             ASin.cursor.addChild(new ExpNode(new Expresion(ASin.e)));
             ASin.e.setLeft(ASin.e.clear());
         }

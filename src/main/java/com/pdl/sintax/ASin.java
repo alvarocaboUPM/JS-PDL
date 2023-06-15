@@ -219,26 +219,26 @@ public class ASin {
             if (tk.getType().equals("ParClose")) {
                 if (cursor.isRoot()) {
                     try {
-                    // Aqui has acabado toda la expresion
-                    for (List<ExpNode> nodesList : expresions.findValidPath()) {
-                        int i = 1;
-                        for (ExpNode node : nodesList) {
-                            System.out.println(i + ") " + node.getValue().toString() + "\n");
-                            i++;
+                        // Aqui has acabado toda la expresion
+                        for (List<ExpNode> nodesList : expresions.findValidPath()) {
+                            int i = 1;
+                            for (ExpNode node : nodesList) {
+                                System.out.println(i + ") " + node.getValue().toString() + "\n");
+                                i++;
+                            }
+                            i = 0;
                         }
-                        i = 0;
-                    }
-                    ParseLib.endTree();
-                        
+                        ParseLib.endTree();
+
                     } catch (NullPointerException e) {
                         System.out.println("Null Pointer en el árbol");
                     }
-                    
+
                 } else {
                     cursor = cursor.getParent();
                     getNext();
                 }
-                
+
             }
             return;
         }
@@ -341,7 +341,7 @@ public class ASin {
     static void XPX() {
         if (tk.getType() == "ParOpen") {
             // if (id.getType() != "Function")
-            //     ParseLib.ezError(117);
+            // ParseLib.ezError(117);
             // LastType = Compiler.ts.lookAtIndex(CurrID).getReturnType();
             SymbolAt tmp = id;
             trace += "18 ";
@@ -514,7 +514,7 @@ public class ASin {
             getNext();
             if (tk.getType() != "SemCol")
                 ParseLib.ezError(107);
-                
+
             if (!expresions.isEmpty())
                 ParseLib.endTree();
         }

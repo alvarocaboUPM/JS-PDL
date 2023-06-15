@@ -13,8 +13,10 @@ import com.pdl.common.utils.Tables;
 //Project modules
 import com.pdl.lexer.*;
 import com.pdl.sintax.*;
+
 /**
  * Frontend class of the JS-PDL compiler
+ * 
  * @author Álvaro Cabo / Usema El-Hatifi
  * @version 1.0
  */
@@ -25,7 +27,7 @@ public class Compiler {
     // Path de los archivos de output
     public final static String output = test + "outfiles/";
 
-    //Lista de errores para el input final
+    // Lista de errores para el input final
     public static List<Integer> errors;
 
     public static TS ts;
@@ -48,7 +50,7 @@ public class Compiler {
     // Fichero Errores
     public static PrintStream FErr;
 
-    static String filename, folder,df;
+    static String filename, folder, df;
 
     public static void main(String args[]) {
         askInput();
@@ -57,7 +59,7 @@ public class Compiler {
         finish();
     }
 
-    private static void askInput(){
+    private static void askInput() {
         Scanner sc = new Scanner(System.in);
         System.out.println("\nSelecciona la temática de la prueba");
         System.out.println("1) Errors");
@@ -67,38 +69,40 @@ public class Compiler {
         folder = sc.nextLine();
         int a;
         try {
-            a = (int)Integer.valueOf(folder);
+            a = (int) Integer.valueOf(folder);
         } catch (Exception e) {
-            a=3;
-        } 
+            a = 3;
+        }
 
         switch (a) {
             case 1:
-                folder="errors/";
-                df="e1.js";
+                folder = "errors/";
+                df = "e1.js";
                 break;
-        
+
             case 2:
-                folder="sentencias/";
-                df="s5.js";
+                folder = "sentencias/";
+                df = "s5.js";
                 break;
-        
+
             default:
-                folder="";
-                df="examen2.js";
+                folder = "";
+                df = "examen2.js";
                 break;
         }
 
-        System.out.print("Nombre del archivo a analizar [por defecto "+df+"]: ");
-        
+        System.out.print("Nombre del archivo a analizar [por defecto " + df + "]: ");
+
         filename = sc.nextLine();
-        if(filename.isBlank()) filename=df;
+        if (filename.isBlank())
+            filename = df;
         sc.close();
     }
-    private static void init(){
 
-        String input = test + folder +filename;
-        
+    private static void init() {
+
+        String input = test + folder + filename;
+
         // Iniciamos tablas
         ts = new TS_imp();
         errors = new ArrayList<>();
@@ -123,7 +127,7 @@ public class Compiler {
             FParser = new FileWriter(new File(outdir + "/Parser.txt"));
 
             FErr = new PrintStream(new File(outdir + "/Errors.txt"));
-            
+
             System.setErr(FErr);
 
         } catch (IOException e) {
@@ -134,9 +138,9 @@ public class Compiler {
         }
     }
 
-    private static void finish(){
+    private static void finish() {
         try {
-            //Dumps TS
+            // Dumps TS
             ts.OutTS();
             // Resets the standard error output
             Compiler.FSource.close();
@@ -146,25 +150,25 @@ public class Compiler {
             Compiler.FErr.close();
         } catch (IOException | NullPointerException e) {
             e.getStackTrace();
-        }finally{
+        } finally {
             System.setErr(System.err);
             checkingErrors();
         }
     }
 
-    private static void checkingErrors(){
+    private static void checkingErrors() {
         ArrayList<String> ok = new ArrayList<>(Tables.getAnalyzers().values());
         for (Integer c : errors) {
             int analyzer = ErrorAt.getAnalizer(c);
-            String a= Tables.getAnalyzers().get(analyzer);
-            if(ok.indexOf(a)!=-1){
-                Pretty.printRed("Hay errores en el "+ a);   
+            String a = Tables.getAnalyzers().get(analyzer);
+            if (ok.indexOf(a) != -1) {
+                Pretty.printRed("Hay errores en el " + a);
                 ok.remove(ok.indexOf(a));
             }
         }
         for (String good : ok) {
-            if(good!="UserInput"){
-                Pretty.printOK(good+" completado correctamente");   
+            if (good != "UserInput") {
+                Pretty.printOK(good + " completado correctamente");
             }
         }
     }

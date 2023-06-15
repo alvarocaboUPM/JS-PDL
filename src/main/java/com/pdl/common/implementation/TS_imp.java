@@ -2,7 +2,7 @@ package com.pdl.common.implementation;
 
 import java.io.IOException;
 import java.util.HashMap;
-
+import java.util.Map;
 import java.util.Map.Entry;
 
 import com.pdl.common.TS;
@@ -13,22 +13,22 @@ import com.pdl.sintax.ASin;
 
 /**
  * Instancia un Symbol Table Manager que cuenta con una estructura
- * definida por sus {@link SymbolAt}, tabla 
+ * definida por sus {@link SymbolAt}, tabla
  * global y array de tablas locales
  */
 public class TS_imp implements TS {
-    HashMap<Integer, SymbolAt> globalT = new HashMap<>();
-    HashMap<String, HashMap<Integer,SymbolAt>> localT = new HashMap<>();
-    HashMap<Integer, SymbolAt> curLocal;
+    Map<Integer, SymbolAt> globalT = new HashMap<>();
+    Map<String, Map<Integer, SymbolAt>> localT = new HashMap<>();
+    Map<Integer, SymbolAt> curLocal;
     private boolean Global = true, FoInLoc = false;
 
     static int index = 0, nLocales = 0;
 
     @Override
     public void createTS(String tableName) {
-        //index = 0;
+        // index = 0;
         nLocales++;
-        localT.put(new String(tableName),curLocal= new HashMap<Integer, SymbolAt>());
+        localT.put(new String(tableName), curLocal = new HashMap<Integer, SymbolAt>());
     }
 
     @Override
@@ -40,7 +40,7 @@ public class TS_imp implements TS {
 
         }
         int numTab = 2;
-        for (Entry<String, HashMap<Integer, SymbolAt>> tmp : localT.entrySet()) {
+        for (Entry<String, Map<Integer, SymbolAt>> tmp : localT.entrySet()) {
             file.write("--------- ----------\n");
             file.write("\nTABLA DE LA FUNCION " + tmp.getKey() + " #" + numTab++ + ":\n");
             for (SymbolAt s : tmp.getValue().values()) {
@@ -62,16 +62,17 @@ public class TS_imp implements TS {
         tmp = lookAt(ID);
 
         if (Global && tmp != null) {
-            //if ((ASin.inVarDec || ASin.inFunc)&&!ASin.inAss) ALex.ezError(202, ID);
+            // if ((ASin.inVarDec || ASin.inFunc)&&!ASin.inAss) ALex.ezError(202, ID);
             return ALex.nToken("ID", tmp.getID());
-        }
-        else if (ASin.inFunc && tmp != null && FoInLoc) {
-           // if ((ASin.inVarDec || ASin.inParms)&&!ASin.inAss) ALex.ezError(202, ID);
+        } else if (ASin.inFunc && tmp != null && FoInLoc) {
+            // if ((ASin.inVarDec || ASin.inParms)&&!ASin.inAss) ALex.ezError(202, ID);
             return ALex.nToken("ID", tmp.getID());
-        }
-        else if(ASin.inParms && ASin.TabLex.equals(ID)) ALex.ezError(202, ID);
-        else if(ASin.TabLex != null && ASin.TabLex.equals(ID)) return ALex.nToken("ID", tmp.getID());
-        else if (tmp != null && !ASin.inVarDec) return ALex.nToken("ID", tmp.getID());
+        } else if (ASin.inParms && ASin.TabLex.equals(ID))
+            ALex.ezError(202, ID);
+        else if (ASin.TabLex != null && ASin.TabLex.equals(ID))
+            return ALex.nToken("ID", tmp.getID());
+        else if (tmp != null && !ASin.inVarDec)
+            return ALex.nToken("ID", tmp.getID());
 
         // Insert in the needed scope
         if (Global)
@@ -85,7 +86,7 @@ public class TS_imp implements TS {
 
     @Override
     public SymbolAt lookAt(String ID) {
-        if(!Global) {
+        if (!Global) {
             for (SymbolAt s : curLocal.values()) {
                 if (s.getLexema().equals(ID)) {
                     FoInLoc = true;
@@ -99,17 +100,16 @@ public class TS_imp implements TS {
                 return s;
             }
         }
-         return null;
+        return null;
     }
 
     @Override
     public SymbolAt lookAtIndex(int index) {
         SymbolAt tmp;
-        if(!Global && (tmp = curLocal.get(index)) != null){
+        if (!Global && (tmp = curLocal.get(index)) != null) {
             FoInLoc = true;
             return tmp;
-        }
-        else if((tmp = globalT.get(index)) != null){
+        } else if ((tmp = globalT.get(index)) != null) {
             FoInLoc = false;
             return tmp;
         }
@@ -119,12 +119,13 @@ public class TS_imp implements TS {
     public void setGlobal(SymbolAt tmp) {
 
         int id = tmp.getID();
-        //tmp.setPosition(index);
-        globalT.put(id,tmp);
-        //index++;
+        // tmp.setPosition(index);
+        globalT.put(id, tmp);
+        // index++;
         rmID(id);
     }
-    public void rmID(int index){
+
+    public void rmID(int index) {
         if (!Global)
             curLocal.remove(index);
 

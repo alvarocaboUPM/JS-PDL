@@ -1,4 +1,4 @@
-# JS-PDL Compiler in Rust
+# JS-PDL Compiler
 
 This is a projecto for the Languages Processors subject at Universidad Politécnica de Madrid
 
@@ -7,8 +7,13 @@ This is a projecto for the Languages Processors subject at Universidad Politécn
 ## Author
 
 [@alvarocabo](https://github.com/alvarocabo)
+[@ouhat](https://github.com/ouhat)
 
 ## Program usage
+
+```
+
+```
 
 ## Documentation
 

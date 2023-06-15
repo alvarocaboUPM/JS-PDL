@@ -47,7 +47,7 @@ public class Expresion extends Token {
         super(tk.getType(), tk.getInfo(), tk.getLineAt());
         this.parOpen = false;
         this.t = Tipado.DEFAULT;
-        last=null;
+        last = null;
     }
 
     public Expresion(Token left, Token right, Token op, Tipado t) {
@@ -64,18 +64,19 @@ public class Expresion extends Token {
      */
     public Expresion() {
         super("Expresion", null);
-        
+
         this.parOpen = false;
         this.t = Tipado.DEFAULT;
     }
+
     /**
      * Duplicates expresion
      */
     public Expresion(Expresion e) {
         super(e.Type, e.Info);
-        this.left= e.left;
-        this.right= e.right;
-        this.op= e.op;
+        this.left = e.left;
+        this.right = e.right;
+        this.op = e.op;
         this.parOpen = e.parOpen;
         this.t = e.getTipado();
     }
@@ -89,32 +90,31 @@ public class Expresion extends Token {
      * @return Position that has been inserted
      */
     private Insertion insertAux(Token tk) {
-        if (tk.isOperator()){
-            if(this.op != null) 
+        if (tk.isOperator()) {
+            if (this.op != null)
                 return Insertion.ERROR;
             setOp(tk);
             return Insertion.OP;
-        } else if (op!=null && right==null) {
-            //OP y LEFT ya están llenos
+        } else if (op != null && right == null) {
+            // OP y LEFT ya están llenos
             setRight(tk);
             return Insertion.RIGHT;
-        }
-        else if (this.left == null) {
+        } else if (this.left == null) {
             setLeft(tk);
             return Insertion.LEFT;
         } else {
-            if(!ASin.inFCall)
+            if (!ASin.inFCall)
                 ezError(220);
             return Insertion.ERROR;
         }
     }
 
-    public Insertion insert(Token tk){
-        this.last=insertAux(tk);
+    public Insertion insert(Token tk) {
+        this.last = insertAux(tk);
         return last;
     }
 
-    public void setLastNull(){
+    public void setLastNull() {
         switch (last) {
             case LEFT:
                 setLeft(null);
@@ -123,12 +123,11 @@ public class Expresion extends Token {
             case RIGHT:
                 setRight(null);
                 break;
-        
+
             default:
                 break;
         }
     }
-
 
     public boolean validar(TS t) {
         Operandos aux = checkOpTypes(t);
@@ -223,8 +222,7 @@ public class Expresion extends Token {
         return null;
     }
 
-
-    public Tipado getTipado(){
+    public Tipado getTipado() {
         return this.t;
     }
 
@@ -301,6 +299,6 @@ public class Expresion extends Token {
     void ezError(int c) {
         Compiler.errors.add(c);
         new ErrorAt(c, ALex.numLineas).toss(Tables.getErrorHandler(),
-                "\n"+this.toString());
+                "\n" + this.toString());
     }
 }
