@@ -195,7 +195,7 @@ Esta sección la planteamos con una presentación distinta a la vista en clase, 
 Esta es la casuística para tokens que no solo están compuestos de un
 key sin un valor variable (Todos menos cad, ID y num)
 
-```text
+```c
     //CASE: palabra reservada
     if ( lex in ResWords[][] )
       genToken( lex , - )

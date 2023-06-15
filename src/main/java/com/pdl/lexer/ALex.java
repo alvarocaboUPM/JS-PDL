@@ -41,18 +41,18 @@ public class ALex {
      * @return char
      * @throws IOException
      */
-    private static char leer(){
-        byte aux=-1;
+    private static char leer() {
+        byte aux = -1;
         try {
-            aux = Pointer >= Compiler.Source.length ? -1 : Compiler.Source[Pointer]; 
+            aux = Pointer >= Compiler.Source.length ? -1 : Compiler.Source[Pointer];
         } catch (NullPointerException e) {
-            
+
         }
         // Reads only 1 char
         char out = aux != -1 ? (char) aux : EOF; // Returns char or EOF
         Pointer++;
         return out;
-        
+
     }
 
     /**
@@ -68,14 +68,15 @@ public class ALex {
     @SuppressWarnings("unused")
     /**
      * Peeks next char without increasing the pointer
+     * 
      * @return next char
      */
-    private static char peek(){
-        if(Pointer> Compiler.Source.length)
+    private static char peek() {
+        if (Pointer > Compiler.Source.length)
             return 0;
-        if(Pointer== Compiler.Source.length)
+        if (Pointer == Compiler.Source.length)
             return EOF;
-        return (char)Compiler.Source[Pointer];
+        return (char) Compiler.Source[Pointer];
     }
 
     /**
@@ -83,15 +84,15 @@ public class ALex {
      * 
      * @throws IOException
      */
-    private static void skipComment(){
+    private static void skipComment() {
         char c;
-        while ((c = leer()) != '*' && leer()!='/') {
+        while ((c = leer()) != '*' && leer() != '/') {
             if (c == EOF) {
                 ezError(17, null);
-                return ;
+                return;
             }
         }
-        
+
         Pointer += 2; // Skips '*/'
     }
 
@@ -107,7 +108,7 @@ public class ALex {
             return new Token("Teof", null);
         }
 
-        //Some direct cases
+        // Some direct cases
         switch (car) {
             // Coments
             case '/':
@@ -115,15 +116,15 @@ public class ALex {
                     ezError(13, "'/'" + car);
                 skipComment();
 
-            //Skippable cases
+                // Skippable cases
             case '\n':
                 numLineas++;
             case '\r':
-            case  '\t':
+            case '\t':
             case ' ':
                 return Gen_Token(leer());
-            
-            //Strings
+
+            // Strings
             case '"':
                 Lexema = carString(car);
                 while ((car = leer()) != '"') {
@@ -135,7 +136,7 @@ public class ALex {
                 }
                 res = nToken("Cad", Lexema + "\"");
                 return res;
-            
+
             default:
                 break;
         }
@@ -151,7 +152,7 @@ public class ALex {
                     ezError(11, null);
             }
             res = nToken("CteInt", num);
-            num=null;
+            num = null;
             Pointer--;
             return res;
         }
@@ -169,16 +170,16 @@ public class ALex {
 
         } else {
             // Checks for direct token
-            if (Tables.getDirToken().containsKey(carString(car))){
-                res= Tables.getDirToken().get(carString(car));
+            if (Tables.getDirToken().containsKey(carString(car))) {
+                res = Tables.getDirToken().get(carString(car));
 
-                switch(res.getType()){
+                switch (res.getType()) {
                     case "AsValue":
                 }
 
                 return res;
             }
-                
+
             // Special case -> ++ &&
             if (car == '+') {
                 if (leer() == '+')
@@ -186,13 +187,13 @@ public class ALex {
                 else
                     ezError(22, Lexema);
             }
-            if (car == '&'){
+            if (car == '&') {
                 if (leer() == '&')
                     return nToken("AND", null);
                 else
                     ezError(22, Lexema);
             }
-            
+
         }
 
         // ERROR HANDLING
@@ -210,7 +211,7 @@ public class ALex {
         return null;
     }
 
-     /**
+    /**
      * Allows to write the tokens to the file
      * and keep them in the tokens array while
      * they're being generated
@@ -221,17 +222,16 @@ public class ALex {
      */
     private void AppendToken(Token tk) throws IOException {
         // Token validation
-        if(tk == null){
+        if (tk == null) {
             return;
         }
         if (!Tables.getValidTokens().contains(tk.getType())) {
             ezError(13, tk.getType());
             return;
         }
-          this.TokenList.add(tk);
+        this.TokenList.add(tk);
         Compiler.FTokens.write(tk.toString());
     }
-
 
     /* Métodos objeto */
 
@@ -247,7 +247,8 @@ public class ALex {
     /**
      * Acts as a it.getNext() function in a live TokenList,
      * mixes private funcs Gen_token and AppendToken()
-     * @return validated token 
+     * 
+     * @return validated token
      * @throws IOException
      */
     public Token nexToken() throws IOException {
@@ -259,7 +260,9 @@ public class ALex {
 
     /**
      * Acts as a main function for the lexer
-     * @IMP: No llamar porque resetea el puntero y el num lineas (variables estáticas)
+     * 
+     * @IMP: No llamar porque resetea el puntero y el num lineas (variables
+     *       estáticas)
      * 
      * @return TokenList List of tokens generated
      * @throws IOException
@@ -289,7 +292,7 @@ public class ALex {
      * 
      * @return lexer token list
      */
-    public List<Token> getTokens(){
+    public List<Token> getTokens() {
         return this.TokenList;
     }
 
@@ -317,9 +320,8 @@ public class ALex {
         // "\n>Last char read -> " + c +
         // "\n>NUM -> " + num!=null?""+num:" ";
 
-        new ErrorAt(c, numLineas).toss(Tables.getErrorHandler(), 
-        extraInfo
-        );
+        new ErrorAt(c, numLineas).toss(Tables.getErrorHandler(),
+                extraInfo);
     }
 
 }

@@ -1,0 +1,23 @@
+S: {, }, (, ), comma, ; , = , >, %, EOF , &L, +M, /D, dN, "C, _I, lI
+
+D: *D'
+D': cD', *D''
+D'': /S
+
+L: &
+
+M: +
+
+N: dN, λ
+
+C: uC, "
+
+I: _I, lI, dI, λ
+
+-----Valid elements------
+
+u -> Every unicode char - {"}
+c -> Every unicode char - {*}
+l -> [A,Z] + [a,z]
+d -> [0,9]
+λ -> An element different from the given ones (lambda transiction)
