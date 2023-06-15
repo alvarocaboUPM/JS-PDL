@@ -1,19 +1,28 @@
 package com.pdl.parser;
 
+import java.io.IOException;
+
 import com.pdl.common.interfaces.ASin;
 import com.pdl.lexer.ALex;
+import com.pdl.lexer.lib.Token;
 
 public class Parser implements ASin {
 
     private String result;
-    private ALex lexer;
+    private static ALex lexer;
+    private static Token tk;
 
     public Parser() {
         result = "D\t ";
+        lexer = new ALex();
     }
 
     private static void getNext(){
-
+        try {
+            tk = lexer.nxToken();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
