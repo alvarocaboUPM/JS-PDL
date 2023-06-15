@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.pdl.common.ErrorAt;
 import com.pdl.common.interfaces.TS;
 import com.pdl.lexer.ALex;
 import com.pdl.lexer.lib.SymbolAt;
@@ -62,13 +63,13 @@ public class SymbolTable implements TS {
         tmp = lookAt(ID);
 
         if (Global && tmp != null) {
-            // if ((ASin.inVarDec || ASin.inFunc)&&!ASin.inAss) ALex.ezError(202, ID);
+            // if ((ASin.inVarDec || ASin.inFunc)&&!ASin.inAss) ErrorAt.ezError(202, ID);
             return ALex.nToken("ID", tmp.getID());
         } else if (ASin.inFunc && tmp != null && FoInLoc) {
-            // if ((ASin.inVarDec || ASin.inParms)&&!ASin.inAss) ALex.ezError(202, ID);
+            // if ((ASin.inVarDec || ASin.inParms)&&!ASin.inAss) ErrorAt.ezError(202, ID);
             return ALex.nToken("ID", tmp.getID());
         } else if (ASin.inParms && ASin.TabLex.equals(ID))
-            ALex.ezError(202, ID);
+            ErrorAt.ezError(202, ID);
         else if (ASin.TabLex != null && ASin.TabLex.equals(ID))
             return ALex.nToken("ID", tmp.getID());
         else if (tmp != null && !ASin.inVarDec)

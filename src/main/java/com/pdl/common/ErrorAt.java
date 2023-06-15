@@ -4,6 +4,8 @@ import java.util.*;
 import com.pdl.Compiler;
 
 import com.pdl.common.utils.Pretty;
+import com.pdl.common.utils.Tables;
+import com.pdl.lexer.ALex;
 
 /**
  * Instanciates an error with code and message
@@ -101,4 +103,14 @@ public class ErrorAt {
                 "###################\n" + out + "\n");
     }
 
+     /**
+     * Handles errors with Error table
+     * 
+     * @param c         Error code
+     * @param extraInfo Optional information to append at the end of the mesg
+     */
+    public static void ezError(int c, String extraInfo) {
+        new ErrorAt(c, ALex.numLineas).toss(Tables.getErrorHandler(),
+                extraInfo);
+    }
 }

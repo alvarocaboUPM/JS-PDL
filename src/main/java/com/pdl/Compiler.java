@@ -6,13 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import com.pdl.common.*;
+import com.pdl.common.ErrorAt;
 import com.pdl.common.interfaces.TS;
 import com.pdl.symbols.SymbolTable;
 import com.pdl.common.utils.Pretty;
 import com.pdl.common.utils.Tables;
 //Project modules
-import com.pdl.lexer.*;
 import com.pdl.old_sintax.*;
 
 /**
@@ -132,9 +131,9 @@ public class Compiler {
             System.setErr(FErr);
 
         } catch (IOException e) {
-            ALex.ezError(1, filename + "\nRuta de archivos: " + input);
+            ErrorAt.ezError(1, filename + "\nRuta de archivos: " + input);
         } catch (NullPointerException nException) {
-            ALex.ezError(2, null);
+            ErrorAt.ezError(2, null);
             nException.printStackTrace();
         }
     }

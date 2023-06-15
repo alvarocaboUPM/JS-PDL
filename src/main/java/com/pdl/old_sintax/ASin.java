@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.List;
 
 import com.pdl.Compiler;
+import com.pdl.common.ErrorAt;
 import com.pdl.lexer.ALex;
 import com.pdl.lexer.lib.*;
 import com.pdl.old_sintax.expresion.ExpNode;
@@ -42,7 +43,7 @@ public class ASin {
                 getNext();
             }
         } catch (IOException e) {
-            ALex.ezError(3, "Leyendo un nuevo token");
+            ErrorAt.ezError(3, "Leyendo un nuevo token");
             e.printStackTrace();
         }
     }
@@ -109,7 +110,7 @@ public class ASin {
         try {
             Compiler.FParser.write(trace);
         } catch (IOException e) {
-            ALex.ezError(3, " Escribiendo la traza en archivo");
+            ErrorAt.ezError(3, " Escribiendo la traza en archivo");
         }
 
         return trace;
@@ -329,7 +330,7 @@ public class ASin {
                 trace += "7 ";
                 break;
             default:
-                ALex.ezError(215, tk.getType());
+                ErrorAt.ezError(215, tk.getType());
         }
         ParseLib.insertOperand();
         getNext();
