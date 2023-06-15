@@ -12,7 +12,7 @@ import com.pdl.common.utils.Pretty;
 import com.pdl.common.utils.Tables;
 //Project modules
 import com.pdl.lexer.*;
-import com.pdl.sintax.*;
+import com.pdl.old_sintax.*;
 
 /**
  * Frontend class of the JS-PDL compiler

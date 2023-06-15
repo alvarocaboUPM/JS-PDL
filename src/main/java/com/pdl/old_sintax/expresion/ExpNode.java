@@ -1,4 +1,4 @@
-package com.pdl.sintax.expresion;
+package com.pdl.old_sintax.expresion;
 
 import java.util.ArrayList;
 import java.util.Collections;

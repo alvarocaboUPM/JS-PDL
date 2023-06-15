@@ -1,15 +1,15 @@
-package com.pdl.sintax.expresion;
+package com.pdl.old_sintax.expresion;
 
 import java.util.Objects;
 
 import es.upm.aedlib.Pair;
 import com.pdl.lexer.ALex;
 import com.pdl.lexer.lib.Token;
+import com.pdl.old_sintax.ASin;
 import com.pdl.common.ErrorAt;
 import com.pdl.common.TS;
 import com.pdl.common.utils.Tables;
 import com.pdl.Compiler;
-import com.pdl.sintax.ASin;
 
 /**
  * Instanciates a 2 operands expression for the parser

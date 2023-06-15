@@ -9,7 +9,7 @@ import com.pdl.common.TS;
 import com.pdl.lexer.ALex;
 import com.pdl.lexer.lib.SymbolAt;
 import com.pdl.lexer.lib.Token;
-import com.pdl.sintax.ASin;
+import com.pdl.old_sintax.ASin;
 
 /**
  * Instancia un Symbol Table Manager que cuenta con una estructura

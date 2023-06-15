@@ -1,16 +1,16 @@
-package com.pdl.sintax;
+package com.pdl.old_sintax;
 
 import java.util.Comparator;
 
 import com.pdl.lexer.ALex;
 import com.pdl.lexer.lib.*;
 import com.pdl.lexer.lib.Token.Tipado;
+import com.pdl.old_sintax.expresion.ExpNode;
+import com.pdl.old_sintax.expresion.Expresion;
+import com.pdl.old_sintax.expresion.Expresion.Insertion;
 import com.pdl.common.*;
 import com.pdl.common.utils.Tables;
 import com.pdl.Compiler;
-import com.pdl.sintax.expresion.ExpNode;
-import com.pdl.sintax.expresion.Expresion;
-import com.pdl.sintax.expresion.Expresion.Insertion;
 
 public class ParseLib {
     /**
