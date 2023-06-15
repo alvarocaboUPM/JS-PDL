@@ -32,64 +32,59 @@ SEN-> INC ;////16
 ASCALL -> ASIGN ////17
 ASCALL -> ( FCALL ) ////18
 ASIGN -> = EXP ////19
-FCALL -> EXP FCALLX     //// 45
-FCALL -> lambda         //// 46
-FCALLX -> , EXP FCALLX  //// 47
-FCALLX -> lambda         //// 48
+FCALL -> EXP FCALLX     //// 20
+FCALL -> lambda         //// 21
+FCALLX -> , EXP FCALLX  //// 22
+FCALLX -> lambda         //// 23
 
-IO -> print EXP      //// 21
-IO -> input id      //// 22
+IO -> print EXP      //// 24
+IO -> input id      //// 25
 
-SENCOM -> if ( EXP ) IFX     //// 31 > Condicionales
-IFX -> BODY //// 43
-IFX -> SENB    //// 44
+SENCOM -> if ( EXP ) IFX     //// 26 > Condicionales
+IFX -> BODY //// 27
+IFX -> SENB    //// 28
 
-SENB -> SEN               //// 37
-SENB -> return RX ;         //// 38
-RX -> EXP               //// 49
-RX -> lambda            //// 50
+SENB -> SEN               //// 29
+SENB -> return RX ;         //// 30
+RX -> EXP               //// 31
+RX -> lambda            //// 32
 
 SENCOM -> do { BODY } while ( EXP ) ;    //// 33 > do wile
 
-BODY -> SENB BODY           //// 40
-BODY -> DECID BODY           //// 40
-BODY -> SENCOM BODY           //// 40
-BODY -> lambda              //// 41
+BODY -> SENB BODY           //// 34
+BODY -> DECID BODY           //// 35
+BODY -> SENCOM BODY           //// 36
+BODY -> lambda              //// 37
 
 
-EXP -> VALUE EXPX ////
-EXP -> INC EXPX ////
+EXP -> VALUE EXPX ////38
+EXP -> INC EXPX ////39
 
-EXPX -> > EXP  ////11
-EXPX -> &&  EXP ////12
-EXPX -> % EXP ////13
-EXPX -> lambda ////14
+EXPX -> > EXP  ////40
+EXPX -> &&  EXP ////41
+EXPX -> % EXP ////42
+EXPX -> lambda ////43
 
-VALUE -> id XPX ////15
-VALUE -> CTE    ////16
-VALUE -> ( EXP ) ////17
+VALUE -> id XPX ////44
+VALUE -> CTE    ////45
+VALUE -> ( EXP ) ////46
 
-XPX -> ( FCALL ) ////18
-XPX -> lambda   ////19
+XPX -> ( FCALL ) ////47
+XPX -> lambda   ////48
 
-INC -> ++ id //// 8
+INC -> ++ id //// 49
 
-TX -> T   //// 27
-TX -> lambda   //// 28
+TX -> T   //// 50
+TX -> lambda   //// 51
 
-T -> int //// 24 tipos de datos
-T -> string //// 25
-T -> boolean   //// 26
-
-
-CTE -> cad ////4 
-CTE -> num ////5
-CTE -> true ////6
-CTE -> false ////7
+T -> int //// 52 tipos de datos
+T -> string //// 53
+T -> boolean   //// 54
 
 
-
-
-
+CTE -> cad ////55
+CTE -> num ////56
+CTE -> true ////57
+CTE -> false ////58
 
 }
