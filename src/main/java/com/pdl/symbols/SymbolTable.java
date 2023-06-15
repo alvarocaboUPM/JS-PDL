@@ -1,11 +1,11 @@
-package com.pdl.common.TS.implementation;
+package com.pdl.symbols;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.pdl.common.TS.TS;
+import com.pdl.common.interfaces.TS;
 import com.pdl.lexer.ALex;
 import com.pdl.lexer.lib.SymbolAt;
 import com.pdl.lexer.lib.Token;
@@ -16,7 +16,7 @@ import com.pdl.old_sintax.ASin;
  * definida por sus {@link SymbolAt}, tabla
  * global y array de tablas locales
  */
-public class TS_imp implements TS {
+public class SymbolTable implements TS {
     Map<Integer, SymbolAt> globalT = new HashMap<>();
     Map<String, Map<Integer, SymbolAt>> localT = new HashMap<>();
     Map<Integer, SymbolAt> curLocal;

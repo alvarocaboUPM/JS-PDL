@@ -7,7 +7,7 @@ import com.pdl.lexer.ALex;
 import com.pdl.lexer.lib.Token;
 import com.pdl.old_sintax.ASin;
 import com.pdl.common.ErrorAt;
-import com.pdl.common.TS.TS;
+import com.pdl.common.interfaces.TS;
 import com.pdl.common.utils.Tables;
 import com.pdl.Compiler;
 

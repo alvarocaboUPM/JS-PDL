@@ -1,12 +1,12 @@
-package com.pdl.common.TS;
+package com.pdl.symbols;
 
-import com.pdl.common.TS.implementation.TS_imp;
+import com.pdl.common.interfaces.TS;
 
 public class TSController {
     TS table;
 
     public TSController(){
-        table = new TS_imp();
+        table = new SymbolTable();
     }
 
     public TSController(TS table) {
