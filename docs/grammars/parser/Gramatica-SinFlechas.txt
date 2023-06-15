@@ -1,91 +1,79 @@
-START⟶ SENA START  
-START⟶ FUN START  
-START⟶ eof  
+START ⟶ DEC START 
+START ⟶ SEN START 
+START ⟶ SENCOM START 
+START ⟶ eof 
+
+DEC ⟶ function id TX ( PARM ) { BODY }    
+
+PARM ⟶ T id PARMX     
+PARM ⟶ lambda      
+PARMX ⟶ , T id PARMX  
+PARMX ⟶ lambda     
+
+DEC ⟶ DECID    
+DECID ⟶ let id T DECLX ; 
+
+DECLX ⟶ ASIGN 
+DECLX ⟶ lambda 
+
+SEN ⟶ id ASCALL ;  
+SEN ⟶ IO ;
+SEN ⟶ INC ;
+
+ASCALL ⟶ ASIGN 
+ASCALL ⟶ ( FCALL ) 
+ASIGN ⟶ = EXP 
+FCALL ⟶ EXP FCALLX     
+FCALL ⟶ lambda         
+FCALLX ⟶ , EXP FCALLX  
+FCALLX ⟶ lambda         
+
+IO ⟶ print EXP      
+IO ⟶ input id      
+
+SENCOM ⟶ if ( EXP ) IFX     
+IFX ⟶ BODY 
+IFX ⟶ SENB    
+
+SENB ⟶ SEN               
+SENB ⟶ return RX ;         
+RX ⟶ EXP               
+RX ⟶ lambda            
+
+SENCOM ⟶ do { BODY } while ( EXP ) ;    
+
+BODY ⟶ SENB BODY           
+BODY ⟶ DECID BODY           
+BODY ⟶ SENCOM BODY           
+BODY ⟶ lambda              
 
 
-CTE⟶ cad  
-CTE⟶ num  
-CTE⟶ true  
-CTE⟶ false  
+EXP ⟶ VALUE EXPX 
+EXP ⟶ INC EXPX 
+
+EXPX ⟶ > EXP  
+EXPX ⟶ &&  EXP 
+EXPX ⟶ % EXP 
+EXPX ⟶ lambda 
+
+VALUE ⟶ id XPX 
+VALUE ⟶ CTE    
+VALUE ⟶ ( EXP ) 
+
+XPX ⟶ ( FCALL ) 
+XPX ⟶ lambda   
+
+INC ⟶ ++ id 
+
+TX ⟶ T   
+TX ⟶ lambda   
+
+T ⟶ int 
+T ⟶ string 
+T ⟶ boolean   
 
 
-INC⟶ ++ id  
-
-EXP⟶ VALUE EXPX  
-EXP⟶ INC EXPX  
-
-EXPX⟶ > EXP   
-EXPX⟶ &&  EXP  
-EXPX⟶ % EXP  
-EXPX⟶ lambda  
-
-VALUE⟶ id XPX  
-VALUE⟶ CTE     
-VALUE⟶ ( EXP )  
-
-XPX⟶ ( FCALL )  
-XPX⟶ lambda    
-
-ASIGN⟶  = EXP ;  
-
-
-
-DECL⟶ let id TD DECLX ;  
-
-DECLX⟶ ASIGN  
-DECLX⟶ lambda  
-
-
-
-TD⟶ int  
-TD⟶ string  
-TD⟶ boolean    
-
-TDX⟶ TD    
-TDX⟶ lambda    
-
-INOUT⟶ print EXP ;      
-INOUT⟶ input id ;      
-
-SENA⟶ IFX      
-SENA⟶ DECL     
-SENA⟶ do { BODY } WILE     
-WILE⟶ while ( EXP ) ;      
-SENA⟶ SENB                 
-
-SENB⟶ id IDX               
-SENB⟶ INOUT                
-SENB⟶ return RX ;          
-SENB⟶ INC ;                
-
-
-BODY⟶ SENA BODY            
-BODY⟶ lambda               
-
-
-IFX⟶ if ( EXP ) IFAX ;     
-
-IFAX⟶ SENB     
-IFAX⟶ { SENB }  
-
-
-
-FCALL⟶ EXP FCALLX      
-FCALL⟶ lambda          
-FCALLX⟶ , EXP FCALLX   
-FCALLX⟶ lambda          
-
-RX⟶ EXP                
-RX⟶ lambda             
-
-IDX⟶ ASIGN           
-IDX⟶ ( FCALL ) ;       
-
-FUN⟶ function id TDX ( PARM ) { BODY }     
-
-
-
-PARM⟶ TD id PARMX      
-PARM⟶ lambda       
-PARMX⟶ , TD id PARMX   
-PARMX⟶ lambda      
+CTE ⟶ cad 
+CTE ⟶ num 
+CTE ⟶ true 
+CTE ⟶ false 

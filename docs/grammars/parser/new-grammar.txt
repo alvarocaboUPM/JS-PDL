@@ -1,0 +1,95 @@
+Terminales = { lambda eof  let  id  ;  if  (  )  {   }  while % do else
+            function return input print int boolean string and >  =
+            cad num  ++  , &&  true false  }
+NoTerminales = { START DEC PARM PARMX DECID DECLX SEN ASCALL ASIGN FCALL FCALLX IO SENCOM IFX SENB RX BODY EXP EXPX VALUE XPX INC T TX CTE }
+
+Axioma = START
+
+Producciones = {
+
+START -> DEC START ////1 > Declaraciones
+START -> SEN START ////2 > Sentencias Simples
+START -> SENCOM START ////3 > Sentencias Complejas
+START -> eof ////4
+
+DEC -> function id TX ( PARM ) { BODY }    //// 5
+
+PARM -> T id PARMX     //// 6
+PARM -> lambda      //// 7
+PARMX -> , T id PARMX  //// 8
+PARMX -> lambda     //// 9
+
+DEC -> DECID    //// 10
+DECID -> let id T DECLX ; //// 11
+
+DECLX -> ASIGN //// 12
+DECLX -> lambda //// 13
+
+SEN-> id ASCALL ;  ////14
+SEN-> IO ;////15
+SEN-> INC ;////16
+
+ASCALL -> ASIGN ////17
+ASCALL -> ( FCALL ) ////18
+ASIGN -> = EXP ////19
+FCALL -> EXP FCALLX     //// 45
+FCALL -> lambda         //// 46
+FCALLX -> , EXP FCALLX  //// 47
+FCALLX -> lambda         //// 48
+
+IO -> print EXP      //// 21
+IO -> input id      //// 22
+
+SENCOM -> if ( EXP ) IFX     //// 31 > Condicionales
+IFX -> BODY //// 43
+IFX -> SENB    //// 44
+
+SENB -> SEN               //// 37
+SENB -> return RX ;         //// 38
+RX -> EXP               //// 49
+RX -> lambda            //// 50
+
+SENCOM -> do { BODY } while ( EXP ) ;    //// 33 > do wile
+
+BODY -> SENB BODY           //// 40
+BODY -> DECID BODY           //// 40
+BODY -> SENCOM BODY           //// 40
+BODY -> lambda              //// 41
+
+
+EXP -> VALUE EXPX ////
+EXP -> INC EXPX ////
+
+EXPX -> > EXP  ////11
+EXPX -> &&  EXP ////12
+EXPX -> % EXP ////13
+EXPX -> lambda ////14
+
+VALUE -> id XPX ////15
+VALUE -> CTE    ////16
+VALUE -> ( EXP ) ////17
+
+XPX -> ( FCALL ) ////18
+XPX -> lambda   ////19
+
+INC -> ++ id //// 8
+
+TX -> T   //// 27
+TX -> lambda   //// 28
+
+T -> int //// 24 tipos de datos
+T -> string //// 25
+T -> boolean   //// 26
+
+
+CTE -> cad ////4 
+CTE -> num ////5
+CTE -> true ////6
+CTE -> false ////7
+
+
+
+
+
+
+}
