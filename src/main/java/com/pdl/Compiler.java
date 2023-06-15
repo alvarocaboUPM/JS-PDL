@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.pdl.common.*;
-import com.pdl.common.implementation.TS_imp;
+import com.pdl.common.TS.TS;
+import com.pdl.common.TS.implementation.TS_imp;
 import com.pdl.common.utils.Pretty;
 import com.pdl.common.utils.Tables;
 //Project modules

@@ -1,11 +1,11 @@
-package com.pdl.common.implementation;
+package com.pdl.common.TS.implementation;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.pdl.common.TS;
+import com.pdl.common.TS.TS;
 import com.pdl.lexer.ALex;
 import com.pdl.lexer.lib.SymbolAt;
 import com.pdl.lexer.lib.Token;

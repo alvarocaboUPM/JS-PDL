@@ -1,6 +1,6 @@
-package com.pdl.common;
+package com.pdl.common.TS;
 
-import com.pdl.common.implementation.TS_imp;
+import com.pdl.common.TS.implementation.TS_imp;
 
 public class TSController {
     TS table;

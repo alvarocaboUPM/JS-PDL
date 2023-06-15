@@ -1,6 +1,6 @@
 package com.pdl.lexer.lib;
 
-import com.pdl.common.TS;
+import com.pdl.common.TS.TS;
 import com.pdl.common.utils.Tables;
 
 public class Token {

@@ -8,15 +8,14 @@ import java.util.List;
 import com.pdl.lexer.lib.*;
 import com.pdl.Compiler;
 import com.pdl.common.*;
+import com.pdl.common.utils.Constants;
 import com.pdl.common.utils.Pretty;
 import com.pdl.common.utils.Tables;
 
 public class ALex {
 
     // ---------GLOBAL VARIABLES-------------
-    static final char EOF = '\u001a';
-    static final int STR_MAX_SIZE = 64;
-    static final int MAX_INT = 32767;
+
 
     private static int Pointer; // Reading buffer pointer
     public static int numLineas; // Number of lines in the Compiler.Source file
@@ -49,7 +48,7 @@ public class ALex {
 
         }
         // Reads only 1 char
-        char out = aux != -1 ? (char) aux : EOF; // Returns char or EOF
+        char out = aux != -1 ? (char) aux : Constants.EOF; // Returns char or EOF
         Pointer++;
         return out;
 
@@ -75,7 +74,7 @@ public class ALex {
         if (Pointer > Compiler.Source.length)
             return 0;
         if (Pointer == Compiler.Source.length)
-            return EOF;
+            return Constants.EOF;
         return (char) Compiler.Source[Pointer];
     }
 
@@ -87,7 +86,7 @@ public class ALex {
     private static void skipComment() {
         char c;
         while ((c = leer()) != '*' && leer() != '/') {
-            if (c == EOF) {
+            if (c == Constants.EOF) {
                 ezError(17, null);
                 return;
             }
@@ -104,7 +103,7 @@ public class ALex {
         Token res = null;
 
         // Checks for EOF
-        if (car == EOF || Pointer > Compiler.Source.length) {
+        if (car == Constants.EOF || Pointer > Compiler.Source.length) {
             return new Token("Teof", null);
         }
 
@@ -130,7 +129,7 @@ public class ALex {
                 while ((car = leer()) != '"') {
                     Lexema += carString(car);
                     // Checks for maxsize
-                    if (Lexema.length() > STR_MAX_SIZE) {
+                    if (Lexema.length() > Constants.STR_MAX_SIZE) {
                         ezError(12, null);
                     }
                 }
@@ -148,7 +147,7 @@ public class ALex {
                 num = Character.getNumericValue(car);
             while (Character.isDigit(car = leer())) {
                 num = (num * 10) + Character.getNumericValue(car);
-                if (num > MAX_INT)
+                if (num > Constants.EOF)
                     ezError(11, null);
             }
             res = nToken("CteInt", num);
