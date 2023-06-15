@@ -4,6 +4,13 @@ This is a projecto for the Languages Processors subject at Universidad Politécn
 
 ## Table of Contents
 
+- [JS-PDL Compiler](#js-pdl-compiler)
+  - [Table of Contents](#table-of-contents)
+  - [Author](#author)
+  - [Program usage](#program-usage)
+  - [Documentation](#documentation)
+    - [Useful links](#useful-links)
+
 ## Author
 
 [@alvarocabo](https://github.com/alvarocabo)
@@ -11,8 +18,8 @@ This is a projecto for the Languages Processors subject at Universidad Politécn
 
 ## Program usage
 
-```
-
+```bash
+mvn exec:java
 ```
 
 ## Documentation
