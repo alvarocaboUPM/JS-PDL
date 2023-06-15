@@ -7,12 +7,13 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.pdl.common.*;
-import com.pdl.common.implementation.TS_imp;
+import com.pdl.common.interfaces.TS;
+import com.pdl.symbols.SymbolTable;
 import com.pdl.common.utils.Pretty;
 import com.pdl.common.utils.Tables;
 //Project modules
 import com.pdl.lexer.*;
-import com.pdl.sintax.*;
+import com.pdl.old_sintax.*;
 
 /**
  * Frontend class of the JS-PDL compiler
@@ -104,7 +105,7 @@ public class Compiler {
         String input = test + folder + filename;
 
         // Iniciamos tablas
-        ts = new TS_imp();
+        ts = new SymbolTable();
         errors = new ArrayList<>();
 
         try {

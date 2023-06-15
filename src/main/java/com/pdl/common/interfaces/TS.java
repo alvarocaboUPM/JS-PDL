@@ -1,4 +1,4 @@
-package com.pdl.common;
+package com.pdl.common.interfaces;
 
 import java.io.FileWriter;
 import java.io.IOException;

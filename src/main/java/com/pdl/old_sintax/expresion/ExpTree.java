@@ -1,11 +1,11 @@
-package com.pdl.sintax.expresion;
+package com.pdl.old_sintax.expresion;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import com.pdl.lexer.lib.*;
-import com.pdl.sintax.expresion.Expresion.Insertion;
+import com.pdl.old_sintax.expresion.Expresion.Insertion;
 
 public class ExpTree {
     private ExpNode root;

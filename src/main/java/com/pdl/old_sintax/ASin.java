@@ -1,15 +1,15 @@
-package com.pdl.sintax;
+package com.pdl.old_sintax;
 
 import java.io.*;
 import java.util.List;
 
 import com.pdl.Compiler;
-import com.pdl.sintax.expresion.ExpNode;
-import com.pdl.sintax.expresion.ExpTree;
-import com.pdl.sintax.expresion.Expresion;
-import com.pdl.sintax.expresion.Expresion.Insertion;
 import com.pdl.lexer.ALex;
 import com.pdl.lexer.lib.*;
+import com.pdl.old_sintax.expresion.ExpNode;
+import com.pdl.old_sintax.expresion.ExpTree;
+import com.pdl.old_sintax.expresion.Expresion;
+import com.pdl.old_sintax.expresion.Expresion.Insertion;
 
 public class ASin {
 
