@@ -173,7 +173,7 @@ public class Parser implements ASin {
             case Constants.id:
                 result += "14 ";
                 ASCALL();
-
+                
                 return;
             case Constants.print:
             case Constants.input:
@@ -199,6 +199,7 @@ public class Parser implements ASin {
         if (checkTk(Constants.equals)) {
             result += "18 ";
             ASIGN();
+            
         }
     }
 
@@ -207,6 +208,7 @@ public class Parser implements ASin {
         // Cursor sobre el =
         result += "19 ";
         callEXP();
+        
     }
 
     @Override
@@ -300,6 +302,8 @@ public class Parser implements ASin {
         } else {
             result += "28 ";
             SENB();
+
+            
         }
     }
 
@@ -311,6 +315,7 @@ public class Parser implements ASin {
         } else {
             result += "29 ";
             SEN();
+
         }
     }
 
@@ -355,6 +360,7 @@ public class Parser implements ASin {
             result += "38 ";
             VALUE();
             EXPX();
+            //TODO: Falla si después de una expresión viene un ;
             return;
         }
         if (checkTk(Constants.increment)) {
@@ -367,14 +373,13 @@ public class Parser implements ASin {
 
     @Override
     public void EXPX() {
-        // TODO: Ojo con este tb
         if (checkTk(Constants.semicolon, Constants.parenthesesClose)) {
             return;
         }
+        
         if (!tk.isOperator()) {
             ErrorAt.ezError(116, debugString());
         }
-
         switch (tk.getType()) {
             case Constants.GT:
                 result += "40 ";
@@ -405,6 +410,7 @@ public class Parser implements ASin {
         if (checkTk(Constants.parenthesesOpen)) {
             result += "46 ";
             callEXP();
+            getNext();
         }
     }
 
@@ -426,8 +432,7 @@ public class Parser implements ASin {
         result += "49 ";
         getNext();
         ckID();
-        getNext();
-        ckSemCol();
+        
     }
 
     @Override
