@@ -13,7 +13,7 @@ import com.pdl.common.utils.Pretty;
 import com.pdl.common.utils.Tables;
 //Project modules
 import com.pdl.old_sintax.*;
-import com.pdl.symbols.model.SymbolTable;
+import com.pdl.symbols.SymbolTable;
 
 /**
  * Frontend class of the JS-PDL FilesAt

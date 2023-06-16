@@ -1,4 +1,4 @@
-package com.pdl.symbols.model;
+package com.pdl.symbols;
 
 import java.io.FileWriter;
 import java.io.IOException;
