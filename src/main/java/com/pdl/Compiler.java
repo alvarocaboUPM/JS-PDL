@@ -76,14 +76,11 @@ public class Compiler {
     }
 
     private static void init() {
-
-        
-
         // Iniciamos tablas
         ts = new SymbolTable();
         errors = new ArrayList<>();
-
-        
+        // Iniciamos los archivos
+        FilesAt.initFiles(filename, folder, df);
     }
 
     private static void finish() {
@@ -91,11 +88,7 @@ public class Compiler {
             // Dumps TS
             ts.OutTS();
             // Resets the standard error output
-            FilesAt.FSource.close();
-            FilesAt.FParser.close();
-            FilesAt.FTokens.close();
-            FilesAt.FTS.close();
-            FilesAt.FErr.close();
+            FilesAt.closeFiles();
         } catch (IOException | NullPointerException e) {
             e.getStackTrace();
         } finally {

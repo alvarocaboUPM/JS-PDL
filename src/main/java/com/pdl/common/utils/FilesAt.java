@@ -34,7 +34,7 @@ public class FilesAt {
     // Fichero Errores
     public static PrintStream FErr;
 
-    public static void initFiles(String filename, String folder, String df){
+    public static void initFiles(String filename, String folder, String df) {
         String input = test + folder + filename;
         try {
             Source = Files.readAllBytes(new File(input).toPath());
@@ -65,5 +65,13 @@ public class FilesAt {
             ALex.ezError(2, null);
             nException.printStackTrace();
         }
+    }
+
+    public static void closeFiles() throws IOException {
+        FilesAt.FSource.close();
+        FilesAt.FParser.close();
+        FilesAt.FTokens.close();
+        FilesAt.FTS.close();
+        FilesAt.FErr.close();
     }
 }
