@@ -4,7 +4,7 @@
 
 ### Panic Mode recovery
 
-Skips character until it finds a "save" one:
+Skips character until it finds a "safe" one:
 
 - ;
 - }
