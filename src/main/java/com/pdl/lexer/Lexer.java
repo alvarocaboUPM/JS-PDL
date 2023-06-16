@@ -6,34 +6,79 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.pdl.lexer.lib.*;
+import com.pdl.common.ErrorAt;
+import com.pdl.common.interfaces.ALex;
+import com.pdl.common.interfaces.TS;
 import com.pdl.common.utils.FilesAt;
-import com.pdl.common.*;
-import com.pdl.Compiler;
 import com.pdl.common.utils.Constants;
 import com.pdl.common.utils.Pretty;
 import com.pdl.common.utils.Tables;
 
-public class ALex {
+public class Lexer implements ALex {
 
-    // ---------GLOBAL VARIABLES-------------
-
-
-    private static int Pointer; // Reading buffer pointer
+    private int Pointer; // Reading buffer pointer
     public static int numLineas; // Number of lines in the FilesAt.Source file
     // Token-Generating tracking variables
-    private static String Lexema;
-    private static Integer num;
+    private String lex;
+    private Integer num;
     // Data Structures
-    public List<Token> TokenList = new ArrayList<Token>(); // Keeps track of the tokens generated
-    /*
-     * ______ _ _
-     * | ___| | | (_)
-     * | |_ _ _ _ __ ___ | |_ _ ___ _ __ ___
-     * | _|| | | || '_ \ / __|| __|| | / _ \ | '_ \ / __|
-     * | | | |_| || | | || (__ | |_ | || (_) || | | |\__ \
-     * \_| \__,_||_| |_| \___| \__||_| \___/ |_| |_||___/
+    public List<Token> tokenList; // Keeps track of the tokens generated
+    public TS tab;
+
+    public Lexer(TS t) {
+        Pointer = 0;
+        numLineas = 1;
+        tokenList = new ArrayList<Token>();
+        tab = t;
+    }
+
+    public Token nxToken() throws IOException {
+        Token tk;
+        tk = Gen_Token(leer());
+        AppendToken(tk);
+        return tk;
+    }
+
+    public List<Token> getTokens() {
+        return this.tokenList;
+    }
+
+    /**
+     * Acts as a main function for the lexer
      * 
+     * @implNote Only for debug*
+     * 
+     * @return TokenList List of tokens generated
+     * @throws IOException
      */
+    protected List<Token> lexerDebug() throws IOException {
+
+        // Variable initalization
+        Token token = null;
+        Pointer = 0;
+        numLineas = 1;
+
+        try {
+            /* Reading loop */
+            while ((token = Gen_Token(leer())) != null)
+                AppendToken(token);
+            // No more tokens
+            Pretty.printOK("Lexer analisis completado correctamente");
+            return tokenList;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Easy constructor for tokens
+     * 
+     * @return new {@link Token} with lineAt <- numLineas
+     */
+    private Token nToken(String Type, Object Info) {
+        return new Token(Type, Info, numLineas);
+    }
 
     /**
      * Reads 1 byte and seeks the pointer 1 position
@@ -41,7 +86,7 @@ public class ALex {
      * @return char
      * @throws IOException
      */
-    private static char leer() {
+    private char leer() {
         byte aux = -1;
         try {
             aux = Pointer >= FilesAt.Source.length ? -1 : FilesAt.Source[Pointer];
@@ -61,7 +106,7 @@ public class ALex {
      * @param car
      * @return String
      */
-    private static String carString(char car) {
+    private String carString(char car) {
         return "" + car;
     }
 
@@ -71,7 +116,7 @@ public class ALex {
      * 
      * @return next char
      */
-    private static char peek() {
+    private char peek() {
         if (Pointer > FilesAt.Source.length)
             return 0;
         if (Pointer == FilesAt.Source.length)
@@ -84,23 +129,22 @@ public class ALex {
      * 
      * @throws IOException
      */
-    private static void skipComment() {
+    private void skipComment() {
         char c;
         while ((c = leer()) != '*' && leer() != '/') {
             if (c == Constants.EOF) {
-                ezError(17, null);
+                ErrorAt.ezError(17, null);
                 return;
             }
         }
-
         Pointer += 2; // Skips '*/'
     }
 
     /**
      * @return validToken | null in case of Error
      */
-    private static Token Gen_Token(char car) throws IOException {
-        Lexema = null;
+    private Token Gen_Token(char car) throws IOException {
+        lex = null;
         Token res = null;
 
         // Checks for EOF
@@ -113,7 +157,7 @@ public class ALex {
             // Coments
             case '/':
                 if ((car = leer()) != '*')
-                    ezError(13, "'/'" + car);
+                    ErrorAt.ezError(13, "'/'" + car);
                 skipComment();
 
                 // Skippable cases
@@ -126,15 +170,16 @@ public class ALex {
 
             // Strings
             case '"':
-                Lexema = carString(car);
+                lex = carString(car);
                 while ((car = leer()) != '"') {
-                    Lexema += carString(car);
+                    lex += carString(car);
                     // Checks for maxsize
-                    if (Lexema.length() > Constants.STR_MAX_SIZE) {
-                        ezError(12, null);
+                    if (lex.length() > Constants.STR_MAX_SIZE) {
+                        ErrorAt.ezError(12, null);
+                        panic();
                     }
                 }
-                res = nToken("Cad", Lexema + "\"");
+                res = nToken("Cad", lex + "\"");
                 return res;
 
             default:
@@ -148,9 +193,13 @@ public class ALex {
                 num = Character.getNumericValue(car);
             while (Character.isDigit(car = leer())) {
                 num = (num * 10) + Character.getNumericValue(car);
-                if (num > Constants.EOF)
-                    ezError(11, null);
             }
+
+            if (num > Constants.MAX_INT) {
+                ErrorAt.ezError(11, null);
+                num = Constants.MAX_INT;
+            }
+            
             res = nToken("CteInt", num);
             num = null;
             Pointer--;
@@ -159,24 +208,19 @@ public class ALex {
 
         // IDs and Reserved words
         if ((Character.isAlphabetic(car) || car == '_')) {
-            Lexema = carString(car);
+            lex = carString(car);
             while (Character.isAlphabetic(car = leer()) || Character.isDigit(car) || (car == '_')) {
-                Lexema += carString(car);
+                lex += carString(car);
             }
             Pointer--;
             // Si no es una palabra reservada, mete el símbolo en la tabla de símbolos
-            return Tables.getResWords().containsKey(Lexema) ? Tables.getResWords().get(Lexema)
-                    : nToken("ID", Compiler.ts.insertAt(Lexema));
+            return Tables.getResWords().containsKey(lex) ? Tables.getResWords().get(lex)
+                    : nToken("ID", tab.insertAt(lex));
 
         } else {
             // Checks for direct token
             if (Tables.getDirToken().containsKey(carString(car))) {
                 res = Tables.getDirToken().get(carString(car));
-
-                switch (res.getType()) {
-                    case "AsValue":
-                }
-
                 return res;
             }
 
@@ -185,13 +229,13 @@ public class ALex {
                 if (leer() == '+')
                     return nToken("ResAutoSum", null);
                 else
-                    ezError(22, Lexema);
+                    ErrorAt.ezError(22, lex);
             }
             if (car == '&') {
                 if (leer() == '&')
                     return nToken("AND", null);
                 else
-                    ezError(22, Lexema);
+                    ErrorAt.ezError(22, lex);
             }
 
         }
@@ -199,12 +243,14 @@ public class ALex {
         // ERROR HANDLING
         switch (car) {
             case '\'':
-                ezError(20, null);
+                ErrorAt.ezError(20, null);
+                Gen_Token('/');
                 break;
 
             default:
                 /* No valid tokens nor error generated */
-                ezError(14, Lexema);
+                ErrorAt.ezError(14, lex);
+                panic();
                 break;
         }
 
@@ -226,102 +272,32 @@ public class ALex {
             return;
         }
         if (!Tables.getValidTokens().contains(tk.getType())) {
-            ezError(13, tk.getType());
+            ErrorAt.ezError(13, tk.getType());
             return;
         }
-        this.TokenList.add(tk);
+        this.tokenList.add(tk);
         FilesAt.FTokens.write(tk.toString());
     }
 
-    /* Métodos objeto */
-
     /**
-     * Class constructor that initializes variables, orientated
-     * to generated a new Token iterator for the Parser
+     * Skips characters until it finds a safe one
      */
-    public ALex() {
-        Pointer = 0;
-        numLineas = 1;
-    }
-
-    /**
-     * Acts as a it.getNext() function in a live TokenList,
-     * mixes private funcs Gen_token and AppendToken()
-     * 
-     * @return validated token
-     * @throws IOException
-     */
-    public Token nexToken() throws IOException {
-        Token tk;
-        tk = Gen_Token(leer());
-        AppendToken(tk);
-        return tk;
-    }
-
-    /**
-     * Acts as a main function for the lexer
-     * 
-     * @IMP: No llamar porque resetea el puntero y el num lineas (variables
-     *       estáticas)
-     * 
-     * @return TokenList List of tokens generated
-     * @throws IOException
-     */
-    public List<Token> Lexer() throws IOException {
-
-        // Variable initalization
-        Token token = null;
-        Pointer = 0;
-        numLineas = 1;
-
-        try {
-            /* Reading loop */
-            while ((token = Gen_Token(leer())) != null)
-                AppendToken(token);
-            // No more tokens
-            Pretty.printOK("Lexer analisis completado correctamente");
-            return TokenList;
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            return null;
+    private int panic() {
+        int res = 0;
+        while (!isSafe(leer())) {
+            res++;
         }
-
+        System.out.println("Skipped " + res + "chars");
+        return res;
     }
 
-    /**
-     * 
-     * @return lexer token list
-     */
-    public List<Token> getTokens() {
-        return this.TokenList;
+    private static boolean isSafe(char c) {
+        char[] safe = { ';', '"', '}' };
+        for (char safeChar : safe) {
+            if (c == safeChar) {
+                return true;
+            }
+        }
+        return false;
     }
-
-    /* Métodos de libería */
-
-    /**
-     * Easy constructor for tokens
-     * 
-     * @return new {@link Token} with lineAt <- numLineas
-     */
-    public static Token nToken(String Type, Object Info) {
-        return new Token(Type, Info, numLineas);
-    }
-
-    /**
-     * Handles errors with Error table
-     * 
-     * @param c         Error code
-     * @param extraInfo Optional information to append at the end of the mesg
-     */
-    public static void ezError(int c, String extraInfo) {
-        Compiler.errors.add(c);
-        // String info = new String()extraInfo!=null?extraInfo:""+
-        // "\n>LEXEMA -> " + Lexema!=null?Lexema:" " +
-        // "\n>Last char read -> " + c +
-        // "\n>NUM -> " + num!=null?""+num:" ";
-
-        new ErrorAt(c, numLineas).toss(Tables.getErrorHandler(),
-                extraInfo);
-    }
-
 }

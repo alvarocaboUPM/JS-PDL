@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import com.pdl.common.*;
 import com.pdl.common.interfaces.TS;
+import com.pdl.common.ErrorAt;
 import com.pdl.common.utils.FilesAt;
 import com.pdl.common.utils.Pretty;
 import com.pdl.common.utils.Tables;
@@ -31,7 +31,7 @@ public class Compiler {
     public static void main(String args[]) {
         askInput();
         init();
-        ASin.Parser();
+        ASin.Parser(ts);
         finish();
     }
 

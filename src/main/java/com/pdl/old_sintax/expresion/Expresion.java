@@ -3,7 +3,7 @@ package com.pdl.old_sintax.expresion;
 import java.util.Objects;
 
 import es.upm.aedlib.Pair;
-import com.pdl.lexer.ALex;
+import com.pdl.lexer.Lexer;
 import com.pdl.lexer.lib.Token;
 import com.pdl.old_sintax.ASin;
 import com.pdl.common.ErrorAt;
@@ -298,7 +298,7 @@ public class Expresion extends Token {
 
     void ezError(int c) {
         Compiler.errors.add(c);
-        new ErrorAt(c, ALex.numLineas).toss(Tables.getErrorHandler(),
+        new ErrorAt(c, Lexer.numLineas).toss(Tables.getErrorHandler(),
                 "\n" + this.toString());
     }
 }
