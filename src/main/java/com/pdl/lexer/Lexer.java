@@ -1,7 +1,7 @@
 package com.pdl.lexer;
 
 import java.io.File;
-import java.io.FileWriter;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -19,8 +19,7 @@ import com.pdl.common.utils.Tables;
 public class Lexer implements ALex {
     //Input and output files
     private byte[] source;
-    private FileWriter tokensFile;
-
+    private boolean onTest;
     private int Pointer; // Reading buffer pointer
     public static int numLineas; // Number of lines in the FilesAt.Source file
     // Token-Generating tracking variables
@@ -36,9 +35,9 @@ public class Lexer implements ALex {
         tokenList = new ArrayList<Token>();
         tab = t;
         source = FilesAt.Source;
-        tokensFile = FilesAt.FTokens;
+        onTest=false;
     }
-
+    
     //For testing
     public Lexer(TS t, String input) {
         Pointer = 0;
@@ -50,6 +49,7 @@ public class Lexer implements ALex {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        onTest=true;
     }
 
     public Token nxToken() throws IOException {
@@ -161,7 +161,7 @@ public class Lexer implements ALex {
         Token res = null;
 
         // Checks for EOF
-        if (car == Constants.EOF || Pointer > FilesAt.Source.length) {
+        if (car == Constants.EOF || Pointer > source.length) {
             return new Token("Teof", null);
         }
 
@@ -289,7 +289,9 @@ public class Lexer implements ALex {
             return;
         }
         this.tokenList.add(tk);
-        tokensFile.write(tk.toString());
+        if(!onTest){
+            FilesAt.FTokens.write(tk.toString());
+        }
     }
 
     /**
