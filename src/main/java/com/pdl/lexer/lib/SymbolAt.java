@@ -45,7 +45,7 @@ public class SymbolAt extends Object {
     /*
      * public boolean checkType() {
      * SymbolAt aux;
-     * if ((aux = Compiler.ts.lookAt(ID)) != null
+     * if ((aux = t.lookAt(ID)) != null
      * && this.type.equals(aux.getType())) {
      * return true;
      * }

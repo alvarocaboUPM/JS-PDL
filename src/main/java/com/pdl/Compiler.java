@@ -1,62 +1,37 @@
 package com.pdl;
 
 import java.io.*;
-import java.nio.file.Files;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import com.pdl.common.*;
-import com.pdl.common.interfaces.TS;
-import com.pdl.symbols.SymbolTable;
+import com.pdl.common.ErrorAt;
+
+import com.pdl.common.utils.FilesAt;
 import com.pdl.common.utils.Pretty;
 import com.pdl.common.utils.Tables;
 //Project modules
-import com.pdl.lexer.*;
 import com.pdl.old_sintax.*;
+import com.pdl.symbols.SymbolTable;
 
 /**
- * Frontend class of the JS-PDL compiler
+ * Frontend class of the JS-PDL FilesAt
  * 
  * @author Álvaro Cabo / Usema El-Hatifi
  * @version 1.0
  */
 public class Compiler {
-    // Paths
-    private static final String home = new File("").getAbsolutePath();
-    private static final String test = home + "/src/test/resources/";
-    // Path de los archivos de output
-    public final static String output = test + "outfiles/";
-
-    // Lista de errores para el input final
+   
     public static List<Integer> errors;
-
-    public static TS ts;
-
-    // Byte[] que guarda el fichero fuente
-    public static byte[] Source;
-
-    // Fichero código fuente
-    public static FileWriter FSource;
-
-    // Fichero tokens
-    public static FileWriter FTokens;
-
-    // Fichero Tabla de Símbolos
-    public static FileWriter FTS;
-
-    // Fichero Parser
-    public static FileWriter FParser;
-
-    // Fichero Errores
-    public static PrintStream FErr;
+    public static SymbolTable ts;
 
     static String filename, folder, df;
 
     public static void main(String args[]) {
         askInput();
         init();
-        ASin.Parser();
+        ASin.Parser(ts);
         finish();
     }
 
@@ -101,42 +76,11 @@ public class Compiler {
     }
 
     private static void init() {
-
-        String input = test + folder + filename;
-
         // Iniciamos tablas
         ts = new SymbolTable();
         errors = new ArrayList<>();
-
-        try {
-            Source = Files.readAllBytes(new File(input).toPath());
-            // Directorio outfiles
-            File outdir = new File(output + filename);
-
-            if (!outdir.exists()) {
-                outdir.mkdirs();
-            }
-
-            FSource = new FileWriter(new File(outdir + "/Source.txt"));
-
-            FSource.append(new String(Source, "US-ASCII"));
-
-            FTokens = new FileWriter(new File(outdir + "/Tokens.txt"));
-
-            FTS = new FileWriter(new File(outdir + "/TS.txt"));
-
-            FParser = new FileWriter(new File(outdir + "/Parser.txt"));
-
-            FErr = new PrintStream(new File(outdir + "/Errors.txt"));
-
-            System.setErr(FErr);
-
-        } catch (IOException e) {
-            ALex.ezError(1, filename + "\nRuta de archivos: " + input);
-        } catch (NullPointerException nException) {
-            ALex.ezError(2, null);
-            nException.printStackTrace();
-        }
+        // Iniciamos los archivos
+        FilesAt.initFiles(filename, folder, df);
     }
 
     private static void finish() {
@@ -144,11 +88,7 @@ public class Compiler {
             // Dumps TS
             ts.OutTS();
             // Resets the standard error output
-            Compiler.FSource.close();
-            Compiler.FParser.close();
-            Compiler.FTokens.close();
-            Compiler.FTS.close();
-            Compiler.FErr.close();
+            FilesAt.closeFiles();
         } catch (IOException | NullPointerException e) {
             e.getStackTrace();
         } finally {

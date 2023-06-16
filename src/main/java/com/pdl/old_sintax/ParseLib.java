@@ -2,7 +2,7 @@ package com.pdl.old_sintax;
 
 import java.util.Comparator;
 
-import com.pdl.lexer.ALex;
+import com.pdl.lexer.Lexer;
 import com.pdl.lexer.lib.*;
 import com.pdl.lexer.lib.Token.Tipado;
 import com.pdl.old_sintax.expresion.ExpNode;
@@ -20,13 +20,13 @@ public class ParseLib {
      */
     static void ezError(int c) {
         Compiler.errors.add(c);
-        new ErrorAt(c, ALex.numLineas).toss(Tables.getErrorHandler(),
+        new ErrorAt(c, Lexer.numLineas).toss(Tables.getErrorHandler(),
                 new String("\n- TRAZA -> " + ASin.trace +
                         "\n- ÚLTIMO TK LEIDO -> " + ASin.tk.toString()));
     }
 
     public static void ezError(int c, String extraInfo) {
-        new ErrorAt(c, ALex.numLineas).toss(Tables.getErrorHandler(),
+        new ErrorAt(c, Lexer.numLineas).toss(Tables.getErrorHandler(),
                 extraInfo);
     }
 
