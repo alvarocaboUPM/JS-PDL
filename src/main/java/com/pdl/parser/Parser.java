@@ -1,5 +1,6 @@
 package com.pdl.parser;
 
+import java.io.File;
 import java.io.IOException;
 
 import com.pdl.common.ErrorAt;
@@ -14,10 +15,19 @@ public class Parser implements ASin {
     private String result;
     private Lexer lexer;
     private static Token tk;
+    private TS t;
 
     public Parser(TS t) {
         result = "D\t ";
         lexer = new Lexer(t);
+        this.t = t;
+    }
+
+    protected String parserDebug(String testFile){
+        result = "D\t ";
+        lexer = new Lexer(t, testFile);
+
+        return START();
     }
 
     public String getResult() {
@@ -238,7 +248,9 @@ public class Parser implements ASin {
         if (checkTk(Constants.input)) {
             getNext();
             ckID();
-
+            getNext();
+            ckSemCol();
+            return ;
         } else {
             ErrorAt.ezError(109, debugString());
         }
@@ -269,6 +281,9 @@ public class Parser implements ASin {
             getNext();
             ckParOp();
             callEXP();
+
+            getNext();
+            ckSemCol();
 
         }
 
@@ -339,6 +354,7 @@ public class Parser implements ASin {
     public void EXP() {
         if (checkTk(Constants.id, Constants.parenthesesOpen) || tk.isCTE()) {
             result += "38 ";
+            VALUE();
             EXPX();
             return;
         }
@@ -352,10 +368,8 @@ public class Parser implements ASin {
 
     @Override
     public void EXPX() {
-        getNext();
         // TODO: Ojo con este tb
         if (checkTk(Constants.semicolon, Constants.parenthesesClose)) {
-
             return;
         }
         if (!tk.isOperator()) {
@@ -385,12 +399,13 @@ public class Parser implements ASin {
         }
         if (tk.isCTE()) {
             result += "45 ";
-            callCTE();
+            CTE();
+            getNext();
             return;
         }
         if (checkTk(Constants.parenthesesOpen)) {
-
             result += "46 ";
+            callEXP();
         }
     }
 
