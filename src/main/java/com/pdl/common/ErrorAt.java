@@ -1,8 +1,11 @@
 package com.pdl.common;
 
 import java.util.*;
+import com.pdl.Compiler;
 
 import com.pdl.common.utils.Pretty;
+import com.pdl.common.utils.Tables;
+import com.pdl.lexer.Lexer;
 
 /**
  * Instanciates an error with code and message
@@ -14,6 +17,7 @@ public class ErrorAt {
     public ErrorAt(int c, int line) {
         code = c;
         n_line = line;
+        Compiler.errors.add(c);
     }
 
     public int getCode() {
@@ -99,4 +103,14 @@ public class ErrorAt {
                 "###################\n" + out + "\n");
     }
 
+     /**
+     * Handles errors with Error table
+     * 
+     * @param c         Error code
+     * @param extraInfo Optional information to append at the end of the mesg
+     */
+    public static void ezError(int c, String extraInfo) {
+        new ErrorAt(c, Lexer.numLineas).toss(Tables.getErrorHandler(),
+                extraInfo);
+    }
 }

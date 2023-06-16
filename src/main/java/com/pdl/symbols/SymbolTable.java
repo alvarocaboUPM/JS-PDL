@@ -61,11 +61,11 @@ public class SymbolTable implements TS {
         // else if (tmp != null && !ASin.inVarDec)
         //     return tmp.getID();
 
-        // Insert in the needed scope
-        if (Global)
-            globalT.put(index, new SymbolAt(ID, index));
-        else
-            curLocal.put(index, new SymbolAt(ID, index));
+        // // Insert in the needed scope
+        // if (Global)
+        //     globalT.put(index, new SymbolAt(ID, index));
+        // else
+        //     curLocal.put(index, new SymbolAt(ID, index));
 
         // Generating token
         return index++;

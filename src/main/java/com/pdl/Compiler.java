@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import com.pdl.common.*;
-import com.pdl.common.interfaces.TS;
+import com.pdl.common.ErrorAt;
+
 import com.pdl.common.utils.FilesAt;
 import com.pdl.common.utils.Pretty;
 import com.pdl.common.utils.Tables;
@@ -24,14 +24,14 @@ import com.pdl.symbols.SymbolTable;
 public class Compiler {
    
     public static List<Integer> errors;
-    public static TS ts;
+    public static SymbolTable ts;
 
     static String filename, folder, df;
 
     public static void main(String args[]) {
         askInput();
         init();
-        ASin.Parser();
+        ASin.Parser(ts);
         finish();
     }
 

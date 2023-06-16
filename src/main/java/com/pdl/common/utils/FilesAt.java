@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 
-import com.pdl.lexer.ALex;
+import com.pdl.common.ErrorAt;
+
 
 public class FilesAt {
 
@@ -60,9 +61,9 @@ public class FilesAt {
             System.setErr(FErr);
 
         } catch (IOException e) {
-            ALex.ezError(1, filename + "\nRuta de archivos: " + input);
+            ErrorAt.ezError(1, filename + "\nRuta de archivos: " + input);
         } catch (NullPointerException nException) {
-            ALex.ezError(2, null);
+            ErrorAt.ezError(2, null);
             nException.printStackTrace();
         }
     }

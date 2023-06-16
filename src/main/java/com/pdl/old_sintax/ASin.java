@@ -4,8 +4,10 @@ import java.io.*;
 import java.util.List;
 
 import com.pdl.Compiler;
+import com.pdl.common.ErrorAt;
+import com.pdl.common.interfaces.TS;
+import com.pdl.lexer.Lexer;
 import com.pdl.common.utils.FilesAt;
-import com.pdl.lexer.ALex;
 import com.pdl.lexer.lib.*;
 import com.pdl.old_sintax.expresion.ExpNode;
 import com.pdl.old_sintax.expresion.ExpTree;
@@ -19,7 +21,7 @@ public class ASin {
     static SymbolAt id, funcID; // current symbol
     static int CurrID, nParams, nArgs, OffsetG, OffsetL;// Counters
     static String trace, LastType, ExpType;
-    static ALex lexer;
+    static Lexer lexer;
     static Expresion e;
     static ExpNode cursor;
 
@@ -36,14 +38,14 @@ public class ASin {
     static void getNext() {
         Token aux;
         try {
-            if ((aux = lexer.nexToken()) != null) {
+            if ((aux = lexer.nxToken()) != null) {
                 tk = aux;
             } else {
                 ParseLib.ezError(120);
                 getNext();
             }
         } catch (IOException e) {
-            ALex.ezError(3, "Leyendo un nuevo token");
+            ErrorAt.ezError(3, "Leyendo un nuevo token");
             e.printStackTrace();
         }
     }
@@ -53,8 +55,8 @@ public class ASin {
      * 
      * @return Full parsing trace
      */
-    public static String Parser() {
-        lexer = new ALex();
+    public static String Parser(TS t) {
+        lexer = new Lexer(t);
         cursor = new ExpNode();
         expresions = new ExpTree(cursor);
         e = new Expresion();
@@ -110,7 +112,7 @@ public class ASin {
         try {
             FilesAt.FParser.write(trace);
         } catch (IOException e) {
-            ALex.ezError(3, " Escribiendo la traza en archivo");
+            ErrorAt.ezError(3, " Escribiendo la traza en archivo");
         }
 
         return trace;
@@ -330,7 +332,7 @@ public class ASin {
                 trace += "7 ";
                 break;
             default:
-                ALex.ezError(215, tk.getType());
+                ErrorAt.ezError(215, tk.getType());
         }
         ParseLib.insertOperand();
         getNext();
