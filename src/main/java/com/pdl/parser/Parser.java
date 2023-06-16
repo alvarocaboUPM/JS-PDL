@@ -82,13 +82,11 @@ public class Parser implements ASin {
             result += "5 ";
             getNext();
             ckID();
-            TX();
+            callTX();
 
             getNext();
             ckParOp();
             PARM();
-            getNext();
-            ckParCl();
 
             getNext();
             ckKeyOp();
@@ -109,22 +107,33 @@ public class Parser implements ASin {
     @Override
     public void PARM() {
         getNext();
-        if (!tk.isType()) {
+        if (checkTk(Constants.parenthesesClose)) {
             result += "7 ";
             return;
         }
         result += "6 ";
-
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'PARM'");
+        T(); // Should already be at type token
+        getNext();
+        ckID();
+        PARMX();
     }
 
     @Override
     public void PARMX() {
-        result += "8 ";
-        result += "9 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'PARMX'");
+        getNext();
+        if (checkTk(Constants.comma)) {
+            result += "8 ";
+            callT();
+            getNext();
+            ckID();
+            PARMX();
+        }
+        if (checkTk(Constants.parenthesesClose)) {
+            result += "9 ";
+            return;
+        } else
+            ErrorAt.ezError(113, debugString());
+
     }
 
     @Override
@@ -132,74 +141,144 @@ public class Parser implements ASin {
         result += "11 ";
         getNext();
         ckID();
-        T();
+        callT();
         DECLX();
     }
 
     @Override
     public void DECLX() {
-        result += "12 ";
-        result += "13 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'DECLX'");
+        getNext();
+        if (checkTk(Constants.equals)) {
+            result += "12 ";
+            ASIGN();
+        }
+        if (checkTk(Constants.semicolon)) {
+            result += "13 ";
+        } else
+            ErrorAt.ezError(107, debugString());
     }
 
     @Override
     public void SEN() {
-        result += "14 ";
-        result += "15 ";
-        result += "16 ";
-
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'SEN'");
+        switch (tk.getType()) {
+            case Constants.id:
+                result += "14 ";
+                ASCALL();
+                break;
+            case Constants.print:
+            case Constants.input:
+                result += "15 ";
+                IO();
+                break;
+            case Constants.increment:
+                result += "16 ";
+                INC();
+                break;
+        }
+        getNext();
+        ckSemCol();
     }
 
     @Override
     public void ASCALL() {
-        result += "17 ";
-        result += "18 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'ASCALL'");
+        getNext();
+        if (checkTk(Constants.parenthesesOpen)) {
+            result += "17 ";
+            FCALL();
+            return;
+        }
+        if (checkTk(Constants.equals)) {
+            result += "18 ";
+            ASIGN();
+        }
     }
 
     @Override
     public void ASIGN() {
+        // Cursor sobre el =
         result += "19 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'ASIGN'");
+        callEXP();
     }
 
     @Override
     public void FCALL() {
+        getNext();
+        if (checkTk(Constants.parenthesesClose)) {
+            result += "21 ";
+            return;
+        }
         result += "20 ";
-        result += "21 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'FCALL'");
+        EXP(); // Ya sobre la expresion
+        FCALLX();
     }
 
     @Override
     public void FCALLX() {
-        result += "22 ";
-        result += "23 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'FCALLX'");
+        getNext();
+        if (checkTk(Constants.comma)) {
+            result += "22 ";
+            callEXP();
+            FCALLX();
+        }
+        if (checkTk(Constants.parenthesesClose)) {
+            result += "23 ";
+            return;
+        } else
+            ErrorAt.ezError(113, debugString());
     }
 
     @Override
     public void IO() {
-        result += "24 ";
-        result += "25 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'IO'");
+        if (checkTk(Constants.print)) {
+            result += "24 ";
+            callEXP();
+            return;
+        }
+        if (checkTk(Constants.input)) {
+            getNext();
+            ckID();
+
+        } else {
+            ErrorAt.ezError(109, debugString());
+        }
     }
 
     @Override
     public void SENCOM() {
-        result += "26 ";
-        result += "33 ";
+        if (checkTk(Constants.ifKw)) {
+            result += "26 ";
+            getNext();
+            ckParOp();
+            callEXP();
 
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'SENCOM'");
+            getNext();
+            ckParCl();
+
+            IFX();
+            return;
+        }
+        if (checkTk(Constants.doKw)) {
+            result += "33 ";
+            getNext();
+            ckKeyOp();
+            BODY();
+
+            getNext();
+            ckKeyCl();
+
+            getNext();
+            ckWhile();
+            getNext();
+            ckParOp();
+            callEXP();
+
+            getNext();
+            ckParCl();
+
+            getNext();
+            ckSemCol();
+        }
+
     }
 
     @Override
@@ -257,11 +336,25 @@ public class Parser implements ASin {
 
     @Override
     public void VALUE() {
-        result += "44 ";
-        result += "45 ";
-        result += "46 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'VALUE'");
+        if (checkTk(Constants.id)) {
+            result += "44 ";
+            XPX();
+            return;
+        }
+        // TODO: pasar esto a clase token
+        if (checkTk(Constants.cad)
+                || checkTk(Constants.num)
+                || checkTk(Constants.falseKw)
+                || checkTk(Constants.trueKw)){
+
+            result += "45 ";
+            callCTE();
+            return ;
+                }
+        if (checkTk(Constants.parenthesesOpen)) {
+
+            result += "46 ";
+        }
     }
 
     @Override
@@ -362,9 +455,14 @@ public class Parser implements ASin {
             ErrorAt.ezError(114, debugString());
     }
 
-    private void ckPrint() {
-        if (!checkTk(Constants.print))
-            ErrorAt.ezError(109, debugString());
+    private void ckSemCol() {
+        if (!checkTk(Constants.semicolon))
+            ErrorAt.ezError(107, debugString());
+    }
+
+    private void ckWhile() {
+        if (!checkTk(Constants.whileKw))
+            ErrorAt.ezError(118, debugString());
     }
 
     private void ckCte() {
@@ -380,6 +478,26 @@ public class Parser implements ASin {
                 && !checkTk(Constants.booleanType)
                 && !checkTk(Constants.intType))
             ErrorAt.ezError(106, debugString());
+    }
+
+    private void callTX() {
+        getNext();
+        TX();
+    }
+
+    private void callT() {
+        getNext();
+        T();
+    }
+
+    private void callEXP() {
+        getNext();
+        EXP();
+    }
+
+    private void callCTE() {
+        getNext();
+        CTE();
     }
 
 }
