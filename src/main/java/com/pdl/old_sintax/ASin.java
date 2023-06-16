@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.pdl.Compiler;
 import com.pdl.common.ErrorAt;
+import com.pdl.common.interfaces.TS;
 import com.pdl.lexer.Lexer;
 import com.pdl.common.utils.FilesAt;
 import com.pdl.lexer.lib.*;
@@ -54,8 +55,8 @@ public class ASin {
      * 
      * @return Full parsing trace
      */
-    public static String Parser() {
-        lexer = new Lexer();
+    public static String Parser(TS t) {
+        lexer = new Lexer(t);
         cursor = new ExpNode();
         expresions = new ExpTree(cursor);
         e = new Expresion();

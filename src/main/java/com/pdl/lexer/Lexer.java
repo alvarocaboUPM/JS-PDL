@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.pdl.lexer.lib.*;
-import com.pdl.Compiler;
-import com.pdl.common.*;
+import com.pdl.common.ErrorAt;
 import com.pdl.common.interfaces.ALex;
+import com.pdl.common.interfaces.TS;
 import com.pdl.common.utils.FilesAt;
 import com.pdl.common.utils.Constants;
 import com.pdl.common.utils.Pretty;
@@ -23,11 +23,13 @@ public class Lexer implements ALex {
     private static Integer num;
     // Data Structures
     public List<Token> tokenList; // Keeps track of the tokens generated
+    public TS tab;
 
-    public Lexer() {
+    public Lexer(TS t) {
         Pointer = 0;
         numLineas = 1;
         tokenList = new ArrayList<Token>();
+        tab = t;
     }
 
     public Token nxToken() throws IOException {
@@ -49,7 +51,7 @@ public class Lexer implements ALex {
      * @return TokenList List of tokens generated
      * @throws IOException
      */
-    protected List<Token> LexerDebug() throws IOException {
+    protected List<Token> lexerDebug() throws IOException {
 
         // Variable initalization
         Token token = null;
@@ -142,7 +144,7 @@ public class Lexer implements ALex {
     /**
      * @return validToken | null in case of Error
      */
-    private static Token Gen_Token(char car) throws IOException {
+    private Token Gen_Token(char car) throws IOException {
         lex = null;
         Token res = null;
 
@@ -209,7 +211,7 @@ public class Lexer implements ALex {
             Pointer-- ;
             // Si no es una palabra reservada, mete el símbolo en la tabla de símbolos
             return Tables.getResWords().containsKey(lex) ? Tables.getResWords().get(lex)
-                    : nToken("ID", Compiler.ts.insertAt(lex));
+                    : nToken("ID", tab.insertAt(lex));
 
         } else {
             // Checks for direct token
