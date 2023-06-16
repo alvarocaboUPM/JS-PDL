@@ -1,9 +1,8 @@
 package com.pdl.common.interfaces;
 
-
 import java.io.IOException;
 
-import com.pdl.lexer.lib.*;
+import com.pdl.lexer.lib.SymbolAt;
 
 
 /**
@@ -23,7 +22,7 @@ public interface TS {
      * @return Token generated
      * @throws LexicalError
      */
-    public Token insertAt(String ID);
+    public Integer insertAt(String ID);
 
     /**
      * Searchs for a symbol in any of the avalible tables

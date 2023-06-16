@@ -166,7 +166,7 @@ public class ALex {
             Pointer--;
             // Si no es una palabra reservada, mete el símbolo en la tabla de símbolos
             return Tables.getResWords().containsKey(Lexema) ? Tables.getResWords().get(Lexema)
-                    : Compiler.ts.insertAt(Lexema);
+                    : nToken("ID", Compiler.ts.insertAt(Lexema));
 
         } else {
             // Checks for direct token
