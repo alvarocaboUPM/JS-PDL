@@ -93,16 +93,14 @@ public class Parser implements ASin {
             ckID();
             callTX();
 
-            getNext();
+            
             ckParOp();
             PARM();
 
             getNext();
             ckKeyOp();
             BODY();
-            getNext();
-            ckKeyCl();
-
+            
             return;
         }
 
@@ -194,6 +192,8 @@ public class Parser implements ASin {
         if (checkTk(Constants.parenthesesOpen)) {
             result += "17 ";
             FCALL();
+            getNext();
+            ckSemCol();
             return;
         }
         if (checkTk(Constants.equals)) {
@@ -216,6 +216,7 @@ public class Parser implements ASin {
         getNext();
         if (checkTk(Constants.parenthesesClose)) {
             result += "21 ";
+            
             return;
         }
         result += "20 ";
@@ -225,11 +226,11 @@ public class Parser implements ASin {
 
     @Override
     public void FCALLX() {
-        getNext();
         if (checkTk(Constants.comma)) {
             result += "22 ";
             callEXP();
             FCALLX();
+            return ;
         }
         // TODO: OJO
         if (checkTk(Constants.parenthesesClose)) {
@@ -274,8 +275,7 @@ public class Parser implements ASin {
             ckKeyOp();
             BODY();
 
-            getNext();
-            ckKeyCl();
+            
 
             getNext();
             ckWhile();
@@ -333,7 +333,8 @@ public class Parser implements ASin {
 
     @Override
     public void BODY() {
-        if (checkTk(Constants.semicolon)) {
+        getNext();
+        if (checkTk(Constants.curlyBraceClose)) {
             result += "37 ";
             return;
         }
@@ -350,6 +351,7 @@ public class Parser implements ASin {
         } else {
             result += "36 ";
             SENB();
+            BODY();
         }
 
     }
@@ -373,7 +375,7 @@ public class Parser implements ASin {
 
     @Override
     public void EXPX() {
-        if (checkTk(Constants.semicolon, Constants.parenthesesClose)) {
+        if (checkTk(Constants.semicolon, Constants.comma, Constants.parenthesesClose)) {
             return;
         }
         
@@ -443,7 +445,7 @@ public class Parser implements ASin {
         }
 
         result += "50 ";
-        T();
+        callT();
     }
 
     @Override

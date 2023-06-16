@@ -53,4 +53,13 @@ public class ParseTest {
         assertEquals(ok, res);
     }
 
+    @Test
+    public void funcDecCallTest() {
+        testFile += "t3.js";
+        ok = "D\t 1 10 11 53 13 2 15 24 38 45 55 2 15 2 15 24 38 44 48 1 5 51 6 53 9 36 29 15 24 38 44 48 37 1 5 51 7 36 29 15 24 38 45 55 36 29 15 37 2 14 17 21 2 14 17 20 38 44 48 22 38 44 48 23 4 ";
+        String res = p.parserDebug(testFile);
+        assertTrue(Compiler.errors.isEmpty());
+        assertEquals(ok, res);
+    }
+
 }
