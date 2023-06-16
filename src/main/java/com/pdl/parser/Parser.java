@@ -164,23 +164,19 @@ public class Parser implements ASin {
             case Constants.id:
                 result += "14 ";
                 ASCALL();
-                break;
+
+                return;
             case Constants.print:
             case Constants.input:
                 result += "15 ";
                 IO();
-                break;
+                return;
             case Constants.increment:
                 result += "16 ";
                 INC();
+                
                 break;
         }
-        // if(checkTk(Constants.semicolon)){
-        //     getNext();
-        //     return ;
-        // }
-        getNext();
-        ckSemCol();
     }
 
     @Override
@@ -224,6 +220,7 @@ public class Parser implements ASin {
             callEXP();
             FCALLX();
         }
+        // TODO: OJO
         if (checkTk(Constants.parenthesesClose)) {
             result += "23 ";
             return;
@@ -255,9 +252,6 @@ public class Parser implements ASin {
             ckParOp();
             callEXP();
 
-            getNext();
-            ckParCl();
-
             IFX();
             return;
         }
@@ -276,11 +270,6 @@ public class Parser implements ASin {
             ckParOp();
             callEXP();
 
-            getNext();
-            ckParCl();
-
-            getNext();
-            ckSemCol();
         }
 
     }
@@ -321,8 +310,6 @@ public class Parser implements ASin {
         result += "31 ";
 
         EXP(); // Already in the expression
-        getNext();
-        ckSemCol();
     }
 
     @Override
@@ -366,25 +353,27 @@ public class Parser implements ASin {
     @Override
     public void EXPX() {
         getNext();
-        //TODO: Ojo con este tb
-        if(checkTk(Constants.semicolon, Constants.parenthesesClose))
+        // TODO: Ojo con este tb
+        if (checkTk(Constants.semicolon, Constants.parenthesesClose)) {
+
             return;
-        if(!tk.isOperator()){
+        }
+        if (!tk.isOperator()) {
             ErrorAt.ezError(116, debugString());
         }
-        
-        switch (tk.getType()){
+
+        switch (tk.getType()) {
             case Constants.GT:
-            result += "40 ";
-            break;
+                result += "40 ";
+                break;
             case Constants.AND:
-            result += "41 ";
-            break;
+                result += "41 ";
+                break;
             case Constants.MOD:
-            result += "42 ";
-            break;
+                result += "42 ";
+                break;
         }
-        EXP();
+        callEXP();
     }
 
     @Override
@@ -416,9 +405,6 @@ public class Parser implements ASin {
 
         result += "47 ";
         FCALL();
-
-        getNext();
-        ckParCl();
     }
 
     @Override
@@ -426,6 +412,8 @@ public class Parser implements ASin {
         result += "49 ";
         getNext();
         ckID();
+        getNext();
+        ckSemCol();
     }
 
     @Override
@@ -510,11 +498,6 @@ public class Parser implements ASin {
     private void ckKeyOp() {
         if (!checkTk(Constants.curlyBraceOpen))
             ErrorAt.ezError(104, debugString());
-    }
-
-    private void ckParCl() {
-        if (!checkTk(Constants.parenthesesClose))
-            ErrorAt.ezError(113, debugString());
     }
 
     private void ckKeyCl() {
