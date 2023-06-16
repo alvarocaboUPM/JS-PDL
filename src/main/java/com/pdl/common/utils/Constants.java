@@ -1,11 +1,20 @@
 package com.pdl.common.utils;
 
+import java.io.File;
+
 public class Constants {
     public static final char EOF = '\u001a';
     public static final int STR_MAX_SIZE = 64;
     public static final int MAX_INT = 32767;
 
-     public static final String eof = "Teof";
+     // Paths
+    public static final String HOME = new File("").getAbsolutePath();
+    public static final String TEST_FOLDER = HOME + "/src/test/resources/";
+    // Path de los archivos de output
+    public final static String OUTPUT = TEST_FOLDER + "outfiles/";
+
+
+    public static final String eof = "Teof";
     public static final String let = "ResLet";
     public static final String id = "ID";
     public static final String semicolon = "SemCol";
