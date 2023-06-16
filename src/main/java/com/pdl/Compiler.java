@@ -62,7 +62,7 @@ public class Compiler {
                 
             default:
                 folder = "";
-                df = "examen2.js";
+                df = "t1.js";
                 break;
             }
             
@@ -83,17 +83,17 @@ public class Compiler {
             FilesAt.initFiles(filename, folder, df);
         }
         
-        private static void finish() {
+        private static void finish(){
             try {
-            // Dumps TS
-            ts.OutTS();
             // Dupms Ast
-            FilesAt.FParser.append(ast);
-            // Resets the standard error output
-            FilesAt.closeFiles();
+            FilesAt.FParser.write(ast);
+            // Dumps TS
+            //ts.OutTS();
         } catch (IOException | NullPointerException e) {
             e.getStackTrace();
         } finally {
+            // Resets the standard error output
+            FilesAt.closeFiles();
             System.setErr(System.err);
             checkingErrors();
         }

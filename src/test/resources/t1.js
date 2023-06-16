@@ -1,8 +1,9 @@
 let a int;
 let   b  int  ;
 let bbb boolean ;
+
 a = 3;
-b=a					    		 	 	 	 	 	 	 	 	 	 	 	 	 	 	 													;
+b=a;				    		 	 	 	 	 	 	 	 	 	 	 	 	 	 	 													;
 let c boolean;
 
 c = a > b;

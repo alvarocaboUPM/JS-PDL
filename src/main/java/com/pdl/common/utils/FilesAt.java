@@ -48,7 +48,7 @@ public class FilesAt {
 
             FSource = new FileWriter(new File(outdir + "/Source.txt"));
 
-            FSource.append(new String(Source, "US-ASCII"));
+            FSource.write(new String(Source, "US-ASCII"));
 
             FTokens = new FileWriter(new File(outdir + "/Tokens.txt"));
 
@@ -68,11 +68,16 @@ public class FilesAt {
         }
     }
 
-    public static void closeFiles() throws IOException {
-        FilesAt.FSource.close();
-        FilesAt.FParser.close();
-        FilesAt.FTokens.close();
-        FilesAt.FTS.close();
-        FilesAt.FErr.close();
+    public static void closeFiles(){
+        try {
+            FilesAt.FSource.close();
+            FilesAt.FParser.close();
+            FilesAt.FTokens.close();
+            FilesAt.FTS.close();
+            FilesAt.FErr.close();
+        } catch (IOException e) {
+            System.err.println("Could not close the files");
+            e.printStackTrace();
+        }
     }
 }

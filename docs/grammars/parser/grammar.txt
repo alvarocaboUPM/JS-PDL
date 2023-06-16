@@ -56,11 +56,6 @@ BODY -> DECID BODYX           //// 35
 BODY -> SENCOM BODYX           //// 36
 BODY -> lambda              //// 37
 
-BODYX -> SENB BODYX
-BODYX -> DECID BODYX
-BODYX -> SENCOM BODYX
-
-
 EXP -> VALUE EXPX ////38
 EXP -> INC EXPX ////39
 

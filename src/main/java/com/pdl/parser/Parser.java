@@ -175,6 +175,10 @@ public class Parser implements ASin {
                 INC();
                 break;
         }
+        // if(checkTk(Constants.semicolon)){
+        //     getNext();
+        //     return ;
+        // }
         getNext();
         ckSemCol();
     }
@@ -362,7 +366,7 @@ public class Parser implements ASin {
     @Override
     public void EXPX() {
         getNext();
-
+        //TODO: Ojo con este tb
         if(checkTk(Constants.semicolon, Constants.parenthesesClose))
             return;
         if(!tk.isOperator()){
