@@ -8,14 +8,12 @@ import java.util.List;
 import com.pdl.lexer.lib.*;
 import com.pdl.Compiler;
 import com.pdl.common.*;
+import com.pdl.common.interfaces.ALex;
 import com.pdl.common.utils.Constants;
 import com.pdl.common.utils.Pretty;
 import com.pdl.common.utils.Tables;
 
-public class ALex {
-
-    // ---------GLOBAL VARIABLES-------------
-
+public class Lexer implements ALex{
 
     private static int Pointer; // Reading buffer pointer
     public static int numLineas; // Number of lines in the Compiler.Source file
@@ -25,43 +23,37 @@ public class ALex {
     // Data Structures
     public List<Token> tokenList ; // Keeps track of the tokens generated
 
-    
-    /* Métodos objeto */
 
-    /**
-     * Class constructor that initializes variables, orientated
-     * to generated a new Token iterator for the Parser
-     */
-    public ALex() {
+    public Lexer() {
         Pointer = 0;
         numLineas = 1;
         tokenList = new ArrayList<Token>();
     }
 
-    /**
-     * Acts as a it.getNext() function in a live TokenList,
-     * mixes private funcs Gen_token and AppendToken()
-     * 
-     * @return validated token
-     * @throws IOException
-     */
-    public Token nexToken() throws IOException {
+
+    public Token nxToken() throws IOException {
         Token tk;
         tk = Gen_Token(leer());
         AppendToken(tk);
         return tk;
     }
 
+
+    public List<Token> getTokens() {
+        return this.tokenList;
+    }
+
+    
+
     /**
      * Acts as a main function for the lexer
      * 
-     * @IMP: No llamar porque resetea el puntero y el num lineas (variables
-     *       estáticas)
+     * @implNote Only for debug*
      * 
      * @return TokenList List of tokens generated
      * @throws IOException
      */
-    public List<Token> Lexer() throws IOException {
+    protected List<Token> LexerDebug() throws IOException {
 
         // Variable initalization
         Token token = null;
@@ -79,25 +71,14 @@ public class ALex {
             e.printStackTrace();
             return null;
         }
-
     }
-
-    /**
-     * 
-     * @return lexer token list
-     */
-    public List<Token> getTokens() {
-        return this.tokenList;
-    }
-
-    /* Métodos de libería */
 
     /**
      * Easy constructor for tokens
      * 
      * @return new {@link Token} with lineAt <- numLineas
      */
-    public static Token nToken(String Type, Object Info) {
+    private static Token nToken(String Type, Object Info) {
         return new Token(Type, Info, numLineas);
     }
 

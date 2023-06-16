@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.pdl.Compiler;
 import com.pdl.common.ErrorAt;
-import com.pdl.lexer.ALex;
+import com.pdl.lexer.Lexer;
 import com.pdl.lexer.lib.*;
 import com.pdl.old_sintax.expresion.ExpNode;
 import com.pdl.old_sintax.expresion.ExpTree;
@@ -19,7 +19,7 @@ public class ASin {
     static SymbolAt id, funcID; // current symbol
     static int CurrID, nParams, nArgs, OffsetG, OffsetL;// Counters
     static String trace, LastType, ExpType;
-    static ALex lexer;
+    static Lexer lexer;
     static Expresion e;
     static ExpNode cursor;
 
@@ -36,7 +36,7 @@ public class ASin {
     static void getNext() {
         Token aux;
         try {
-            if ((aux = lexer.nexToken()) != null) {
+            if ((aux = lexer.nxToken()) != null) {
                 tk = aux;
             } else {
                 ParseLib.ezError(120);
@@ -54,7 +54,7 @@ public class ASin {
      * @return Full parsing trace
      */
     public static String Parser() {
-        lexer = new ALex();
+        lexer = new Lexer();
         cursor = new ExpNode();
         expresions = new ExpTree(cursor);
         e = new Expresion();
