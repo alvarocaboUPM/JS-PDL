@@ -1,11 +1,14 @@
-package com.pdl.symbols;
+package com.pdl.symbols.model;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import com.pdl.common.interfaces.TS;
+import com.pdl.common.utils.FilesAt;
+
 import com.pdl.lexer.ALex;
 import com.pdl.lexer.lib.SymbolAt;
 import com.pdl.lexer.lib.Token;
@@ -13,48 +16,37 @@ import com.pdl.old_sintax.ASin;
 
 /**
  * Instancia un Symbol Table Manager que cuenta con una estructura
- * definida por sus {@link SymbolAt}, tabla
- * global y array de tablas locales
+ * definida por sus {@link SymbolAt}, implementada con HashMaps
  */
 public class SymbolTable implements TS {
-    Map<Integer, SymbolAt> globalT = new HashMap<>();
-    Map<String, Map<Integer, SymbolAt>> localT = new HashMap<>();
-    Map<Integer, SymbolAt> curLocal;
-    private boolean Global = true, FoInLoc = false;
+    FileWriter file = FilesAt.FTS;
+    Map<Integer, SymbolAt> globalT; //Global table
+    Map<String, Map<Integer, SymbolAt>> localT; // Map of local tables
+    Map<Integer, SymbolAt> curLocal; // Current local table
 
-    static int index = 0, nLocales = 0;
+    //Flagsets
+    private boolean Global,FoInLoc;
+
+    //Counters
+    int index,nLocales;
+
+    public SymbolTable(){
+        //Initial state
+        globalT = new HashMap<>();
+        localT = new HashMap<>();
+        Global = true;
+        FoInLoc = false;
+        index = 0;
+        nLocales = 0;
+    }
 
     @Override
     public void createTS(String tableName) {
-        // index = 0;
         nLocales++;
         localT.put(new String(tableName), curLocal = new HashMap<Integer, SymbolAt>());
     }
 
-    @Override
-    public void OutTS() throws IOException {
-        file.write("TABLA PRINCIPAL #1:\n");
-        for (SymbolAt s : globalT.values()) {
-            file.write("--------- ----------\n");
-            file.write(s.toString());
-
-        }
-        int numTab = 2;
-        for (Entry<String, Map<Integer, SymbolAt>> tmp : localT.entrySet()) {
-            file.write("--------- ----------\n");
-            file.write("\nTABLA DE LA FUNCION " + tmp.getKey() + " #" + numTab++ + ":\n");
-            for (SymbolAt s : tmp.getValue().values()) {
-                file.write("--------- ----------\n");
-                file.write(s.toString());
-
-            }
-            file.write("--------- ----------\n");
-        }
-        // Liberamos los objetos
-        localT.clear();
-        globalT.clear();
-    }
-
+    
     @Override
     public Token insertAt(String ID) {
         // Check if already present in the current scope
@@ -155,5 +147,30 @@ public class SymbolTable implements TS {
     public boolean getScope() {
         return this.Global;
     }
+
+    @Override
+    public void OutTS() throws IOException {
+        file.write("TABLA PRINCIPAL #1:\n");
+        for (SymbolAt s : globalT.values()) {
+            file.write("--------- ----------\n");
+            file.write(s.toString());
+
+        }
+        int numTab = 2;
+        for (Entry<String, Map<Integer, SymbolAt>> tmp : localT.entrySet()) {
+            file.write("--------- ----------\n");
+            file.write("\nTABLA DE LA FUNCION " + tmp.getKey() + " #" + numTab++ + ":\n");
+            for (SymbolAt s : tmp.getValue().values()) {
+                file.write("--------- ----------\n");
+                file.write(s.toString());
+
+            }
+            file.write("--------- ----------\n");
+        }
+        // Liberamos los objetos
+        localT.clear();
+        globalT.clear();
+    }
+
 
 }

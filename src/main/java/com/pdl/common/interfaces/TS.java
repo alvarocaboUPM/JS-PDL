@@ -1,29 +1,20 @@
 package com.pdl.common.interfaces;
 
-import java.io.FileWriter;
+
 import java.io.IOException;
 
 import com.pdl.lexer.lib.*;
-import com.pdl.Compiler;
+
 
 /**
  * Methods required by a basic lexer-orientated Symbol Table
  */
 public interface TS {
 
-    FileWriter file = Compiler.FTS;
-
     /**
      * Creates new local TS in the array, after freeing the current one
      */
     public void createTS(String tableName);
-
-    /**
-     * Dumps the current state of the tables to the TS file
-     * 
-     * @throws IOException
-     */
-    public void OutTS() throws IOException;
 
     /**
      * Allocates a new symbol in the needed scope
@@ -60,5 +51,12 @@ public interface TS {
     public void changeScope(boolean scope);
 
     public void setGlobal(SymbolAt tmp);
+
+    /**
+     * Dumps the current state of the tables to the TS file
+     * 
+     * @throws IOException
+     */
+    public void OutTS() throws IOException;
 
 }
