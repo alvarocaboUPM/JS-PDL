@@ -6,6 +6,7 @@ import java.util.List;
 import com.pdl.Compiler;
 import com.pdl.common.ErrorAt;
 import com.pdl.lexer.Lexer;
+import com.pdl.common.utils.FilesAt;
 import com.pdl.lexer.lib.*;
 import com.pdl.old_sintax.expresion.ExpNode;
 import com.pdl.old_sintax.expresion.ExpTree;
@@ -108,7 +109,7 @@ public class ASin {
         }
 
         try {
-            Compiler.FParser.write(trace);
+            FilesAt.FParser.write(trace);
         } catch (IOException e) {
             ErrorAt.ezError(3, " Escribiendo la traza en archivo");
         }

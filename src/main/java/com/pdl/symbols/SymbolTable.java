@@ -1,76 +1,65 @@
 package com.pdl.symbols;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import com.pdl.common.interfaces.TS;
+import com.pdl.common.utils.FilesAt;
 import com.pdl.lexer.lib.SymbolAt;
-import com.pdl.lexer.lib.Token;
+
 
 /**
  * Instancia un Symbol Table Manager que cuenta con una estructura
- * definida por sus {@link SymbolAt}, tabla
- * global y array de tablas locales
+ * definida por sus {@link SymbolAt}, implementada con HashMaps
  */
 public class SymbolTable implements TS {
-    Map<Integer, SymbolAt> globalT = new HashMap<>();
-    Map<String, Map<Integer, SymbolAt>> localT = new HashMap<>();
-    Map<Integer, SymbolAt> curLocal;
-    private boolean Global = true, FoInLoc = false;
+    FileWriter file = FilesAt.FTS;
+    Map<Integer, SymbolAt> globalT; // Global table
+    Map<String, Map<Integer, SymbolAt>> localT; // Map of local tables
+    Map<Integer, SymbolAt> curLocal; // Current local table
 
-    static int index = 0, nLocales = 0;
+    // Flagsets
+    private boolean Global;
+
+    // Counters
+    int index, nLocales;
+
+    public SymbolTable() {
+        // Initial state
+        globalT = new HashMap<>();
+        localT = new HashMap<>();
+        Global = true;
+        index = 0;
+        nLocales = 0;
+    }
 
     @Override
     public void createTS(String tableName) {
-        // index = 0;
         nLocales++;
         localT.put(new String(tableName), curLocal = new HashMap<Integer, SymbolAt>());
     }
 
     @Override
-    public void OutTS() throws IOException {
-        file.write("TABLA PRINCIPAL #1:\n");
-        for (SymbolAt s : globalT.values()) {
-            file.write("--------- ----------\n");
-            file.write(s.toString());
+    public Integer insertAt(String ID) {
+        // Check if already present in the current scope
+        SymbolAt tmp;
+        tmp = lookAt(ID);
 
+        //Case 1: Global and already declared
+        if (Global && tmp != null) {
+            return tmp.getID();
         }
-        int numTab = 2;
-        for (Entry<String, Map<Integer, SymbolAt>> tmp : localT.entrySet()) {
-            file.write("--------- ----------\n");
-            file.write("\nTABLA DE LA FUNCION " + tmp.getKey() + " #" + numTab++ + ":\n");
-            for (SymbolAt s : tmp.getValue().values()) {
-                file.write("--------- ----------\n");
-                file.write(s.toString());
-
-            }
-            file.write("--------- ----------\n");
-        }
-        // Liberamos los objetos
-        localT.clear();
-        globalT.clear();
-    }
-
-    @Override
-    public Token insertAt(String ID) {
-        // // Check if already present in the current scope
-        // SymbolAt tmp;
-        // tmp = lookAt(ID);
-
-        // if (Global && tmp != null) {
-        //     // if ((ASin.inVarDec || ASin.inFunc)&&!ASin.inAss) ErrorAt.ezError(202, ID);
-        //     return Lexer.nToken("ID", tmp.getID());
-        // } else if (ASin.inFunc && tmp != null && FoInLoc) {
-        //     // if ((ASin.inVarDec || ASin.inParms)&&!ASin.inAss) ErrorAt.ezError(202, ID);
-        //     return Lexer.nToken("ID", tmp.getID());
-        // } else if (ASin.inParms && ASin.TabLex.equals(ID))
-        //     ErrorAt.ezError(202, ID);
+        // if (ASin.inFunc && tmp != null && FoInLoc) {
+        //     return tmp.getID();
+        // }  if (ASin.inParms && ASin.TabLex.equals(ID))
+        //     new ErrorAt(202, ALex.numLineas).toss(Tables.getErrorHandler(), ID);
         // else if (ASin.TabLex != null && ASin.TabLex.equals(ID))
-        //     return Lexer.nToken("ID", tmp.getID());
+        //     return tmp.getID();
         // else if (tmp != null && !ASin.inVarDec)
-        //     return Lexer.nToken("ID", tmp.getID());
+        //     return tmp.getID();
 
         // // Insert in the needed scope
         // if (Global)
@@ -78,9 +67,8 @@ public class SymbolTable implements TS {
         // else
         //     curLocal.put(index, new SymbolAt(ID, index));
 
-        // // Generating token
-        // return Lexer.nToken("ID", index++);
-        return null;
+        // Generating token
+        return index++;
     }
 
     @Override
@@ -88,14 +76,14 @@ public class SymbolTable implements TS {
         if (!Global) {
             for (SymbolAt s : curLocal.values()) {
                 if (s.getLexema().equals(ID)) {
-                    FoInLoc = true;
+                    //FoInLoc = true;
                     return s;
                 }
             }
         }
         for (SymbolAt s : globalT.values()) {
             if (s.getLexema().equals(ID)) {
-                FoInLoc = false;
+                //FoInLoc = false;
                 return s;
             }
         }
@@ -106,10 +94,10 @@ public class SymbolTable implements TS {
     public SymbolAt lookAtIndex(int index) {
         SymbolAt tmp;
         if (!Global && (tmp = curLocal.get(index)) != null) {
-            FoInLoc = true;
+            //FoInLoc = true;
             return tmp;
         } else if ((tmp = globalT.get(index)) != null) {
-            FoInLoc = false;
+            //FoInLoc = false;
             return tmp;
         }
         return null;
@@ -153,6 +141,30 @@ public class SymbolTable implements TS {
      */
     public boolean getScope() {
         return this.Global;
+    }
+
+    @Override
+    public void OutTS() throws IOException {
+        file.write("TABLA PRINCIPAL #1:\n");
+        for (SymbolAt s : globalT.values()) {
+            file.write("--------- ----------\n");
+            file.write(s.toString());
+
+        }
+        int numTab = 2;
+        for (Entry<String, Map<Integer, SymbolAt>> tmp : localT.entrySet()) {
+            file.write("--------- ----------\n");
+            file.write("\nTABLA DE LA FUNCION " + tmp.getKey() + " #" + numTab++ + ":\n");
+            for (SymbolAt s : tmp.getValue().values()) {
+                file.write("--------- ----------\n");
+                file.write(s.toString());
+
+            }
+            file.write("--------- ----------\n");
+        }
+        // Liberamos los objetos
+        localT.clear();
+        globalT.clear();
     }
 
 }

@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.pdl.lexer.lib.*;
-import com.pdl.symbols.SymbolTable;
 import com.pdl.Compiler;
 import com.pdl.common.*;
 import com.pdl.common.interfaces.ALex;
+import com.pdl.common.utils.FilesAt;
 import com.pdl.common.utils.Constants;
 import com.pdl.common.utils.Pretty;
 import com.pdl.common.utils.Tables;
@@ -17,7 +17,7 @@ import com.pdl.common.utils.Tables;
 public class Lexer implements ALex {
 
     private static int Pointer; // Reading buffer pointer
-    public static int numLineas; // Number of lines in the Compiler.Source file
+    public static int numLineas; // Number of lines in the FilesAt.Source file
     // Token-Generating tracking variables
     private static String lex;
     private static Integer num;
@@ -87,7 +87,7 @@ public class Lexer implements ALex {
     private static char leer() {
         byte aux = -1;
         try {
-            aux = Pointer >= Compiler.Source.length ? -1 : Compiler.Source[Pointer];
+            aux = Pointer >= FilesAt.Source.length ? -1 : FilesAt.Source[Pointer];
         } catch (NullPointerException e) {
 
         }
@@ -115,11 +115,11 @@ public class Lexer implements ALex {
      * @return next char
      */
     private static char peek() {
-        if (Pointer > Compiler.Source.length)
+        if (Pointer > FilesAt.Source.length)
             return 0;
-        if (Pointer == Compiler.Source.length)
+        if (Pointer == FilesAt.Source.length)
             return Constants.EOF;
-        return (char) Compiler.Source[Pointer];
+        return (char) FilesAt.Source[Pointer];
     }
 
     /**
@@ -147,7 +147,7 @@ public class Lexer implements ALex {
         Token res = null;
 
         // Checks for EOF
-        if (car == Constants.EOF || Pointer > Compiler.Source.length) {
+        if (car == Constants.EOF || Pointer > FilesAt.Source.length) {
             return new Token("Teof", null);
         }
 
@@ -208,13 +208,8 @@ public class Lexer implements ALex {
             }
             Pointer-- ;
             // Si no es una palabra reservada, mete el símbolo en la tabla de símbolos
-            // return Tables.getResWords().containsKey(lex) ? Tables.getResWords().get(lex)
-            //         : Compiler.ts.insertAt(lex);
-
-            if(Tables.getResWords().containsKey(lex))
-                return Tables.getResWords().get(lex);
-            //ID
-                
+            return Tables.getResWords().containsKey(lex) ? Tables.getResWords().get(lex)
+                    : nToken("ID", Compiler.ts.insertAt(lex));
 
         } else {
             // Checks for direct token
@@ -274,7 +269,7 @@ public class Lexer implements ALex {
             return;
         }
         this.tokenList.add(tk);
-        Compiler.FTokens.write(tk.toString());
+        FilesAt.FTokens.write(tk.toString());
     }
 
 }
