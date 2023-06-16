@@ -51,10 +51,14 @@ RX -> lambda            //// 32
 
 SENCOM -> do { BODY } while ( EXP ) ;    //// 33 > do wile
 
-BODY -> SENB BODY           //// 34
-BODY -> DECID BODY           //// 35
-BODY -> SENCOM BODY           //// 36
+BODY -> SENB BODYX           //// 34
+BODY -> DECID BODYX           //// 35
+BODY -> SENCOM BODYX           //// 36
 BODY -> lambda              //// 37
+
+BODYX -> SENB BODYX
+BODYX -> DECID BODYX
+BODYX -> SENCOM BODYX
 
 
 EXP -> VALUE EXPX ////38

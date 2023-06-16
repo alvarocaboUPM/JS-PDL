@@ -283,55 +283,104 @@ public class Parser implements ASin {
 
     @Override
     public void IFX() {
-        result += "27 ";
-        result += "28 ";
+        getNext();
+        if (checkTk(Constants.curlyBraceOpen)) {
+            result += "27 ";
+            BODY();
 
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'IFX'");
+            getNext();
+            ckKeyCl();
+        } else {
+            result += "28 ";
+            SENB();
+        }
     }
 
     @Override
     public void SENB() {
-        result += "29 ";
-        result += "30 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'SENB'");
+        if (checkTk(Constants.returnKw)) {
+            result += "30 ";
+            RX();
+        } else {
+            result += "29 ";
+            SEN();
+        }
     }
 
     @Override
     public void RX() {
+        getNext();
+        if (checkTk(Constants.semicolon)) {
+            result += "32 ";
+            return;
+        }
         result += "31 ";
-        result += "32 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'RX'");
+
+        EXP(); // Already in the expression
+        getNext();
+        ckSemCol();
     }
 
     @Override
     public void BODY() {
-        result += "34 ";
-        result += "35 ";
-        result += "36 ";
-        result += "37 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'BODY'");
+        if (checkTk(Constants.semicolon)) {
+            result += "37 ";
+            return;
+        }
+
+        if (checkTk(Constants.let)) {
+            result += "35 ";
+            DECID();
+            BODY();
+        }
+
+        else if (checkTk(Constants.ifKw, Constants.whileKw)) {
+            result += "34 ";
+            SENCOM();
+        } else {
+            result += "36 ";
+            SENB();
+        }
+
     }
 
     @Override
     public void EXP() {
-        result += "38 ";
-        result += "39 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'EXP'");
+        if (checkTk(Constants.id, Constants.parenthesesOpen) || tk.isCTE()) {
+            result += "38 ";
+            EXPX();
+            return;
+        }
+        if (checkTk(Constants.increment)) {
+            result += "39 ";
+            INC();
+        } else
+            ErrorAt.ezError(116, debugString());
+
     }
 
     @Override
     public void EXPX() {
-        result += "40 ";
-        result += "41 ";
-        result += "42 ";
-        result += "43 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'EXPX'");
+        getNext();
+
+        if(checkTk(Constants.semicolon, Constants.parenthesesClose))
+            return;
+        if(!tk.isOperator()){
+            ErrorAt.ezError(116, debugString());
+        }
+        
+        switch (tk.getType()){
+            case Constants.GT:
+            result += "40 ";
+            break;
+            case Constants.AND:
+            result += "41 ";
+            break;
+            case Constants.MOD:
+            result += "42 ";
+            break;
+        }
+        EXP();
     }
 
     @Override
@@ -341,16 +390,11 @@ public class Parser implements ASin {
             XPX();
             return;
         }
-        // TODO: pasar esto a clase token
-        if (checkTk(Constants.cad)
-                || checkTk(Constants.num)
-                || checkTk(Constants.falseKw)
-                || checkTk(Constants.trueKw)){
-
+        if (tk.isCTE()) {
             result += "45 ";
             callCTE();
-            return ;
-                }
+            return;
+        }
         if (checkTk(Constants.parenthesesOpen)) {
 
             result += "46 ";
@@ -359,17 +403,25 @@ public class Parser implements ASin {
 
     @Override
     public void XPX() {
+        getNext();
+        // TODO: Ojo a este getNext
+        if (!checkTk(Constants.parenthesesOpen)) {
+            result += "48 ";
+            return;
+        }
+
         result += "47 ";
-        result += "48 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'XPX'");
+        FCALL();
+
+        getNext();
+        ckParCl();
     }
 
     @Override
     public void INC() {
         result += "49 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'INC'");
+        getNext();
+        ckID();
     }
 
     @Override
@@ -426,8 +478,19 @@ public class Parser implements ASin {
                 "\n- ÚLTIMO TK LEIDO -> " + tk.toString());
     }
 
-    private boolean checkTk(String cmp) {
-        return tk.getType().equals(cmp);
+    /**
+     * Returns true if the token equals
+     * any of the params
+     * 
+     * @param cmp
+     * @return
+     */
+    private boolean checkTk(String... cmp) {
+        for (String string : cmp) {
+            if (tk.getType().equals(string))
+                return true;
+        }
+        return false;
     }
 
     private void ckID() {
@@ -466,17 +529,12 @@ public class Parser implements ASin {
     }
 
     private void ckCte() {
-        if (!checkTk(Constants.cad)
-                && !checkTk(Constants.num)
-                && !checkTk(Constants.falseKw)
-                && !checkTk(Constants.trueKw))
+        if (!checkTk(Constants.cad, Constants.num, Constants.falseKw, Constants.trueKw))
             ErrorAt.ezError(111, debugString());
     }
 
     private void ckType() {
-        if (!checkTk(Constants.stringType)
-                && !checkTk(Constants.booleanType)
-                && !checkTk(Constants.intType))
+        if (!checkTk(Constants.stringType, Constants.booleanType, Constants.intType))
             ErrorAt.ezError(106, debugString());
     }
 
