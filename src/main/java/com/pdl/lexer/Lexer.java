@@ -76,7 +76,7 @@ public class Lexer implements ALex {
      * 
      * @return new {@link Token} with lineAt <- numLineas
      */
-    private  Token nToken(String Type, Object Info) {
+    private Token nToken(String Type, Object Info) {
         return new Token(Type, Info, numLineas);
     }
 
@@ -137,7 +137,6 @@ public class Lexer implements ALex {
                 return;
             }
         }
-
         Pointer += 2; // Skips '*/'
     }
 
@@ -177,6 +176,7 @@ public class Lexer implements ALex {
                     // Checks for maxsize
                     if (lex.length() > Constants.STR_MAX_SIZE) {
                         ErrorAt.ezError(12, null);
+                        panic();
                     }
                 }
                 res = nToken("Cad", lex + "\"");
@@ -193,9 +193,13 @@ public class Lexer implements ALex {
                 num = Character.getNumericValue(car);
             while (Character.isDigit(car = leer())) {
                 num = (num * 10) + Character.getNumericValue(car);
-                if (num > Constants.EOF)
-                    ErrorAt.ezError(11, null);
             }
+
+            if (num > Constants.MAX_INT) {
+                ErrorAt.ezError(11, null);
+                num = Constants.MAX_INT;
+            }
+            
             res = nToken("CteInt", num);
             num = null;
             Pointer--;
@@ -208,7 +212,7 @@ public class Lexer implements ALex {
             while (Character.isAlphabetic(car = leer()) || Character.isDigit(car) || (car == '_')) {
                 lex += carString(car);
             }
-            Pointer-- ;
+            Pointer--;
             // Si no es una palabra reservada, mete el símbolo en la tabla de símbolos
             return Tables.getResWords().containsKey(lex) ? Tables.getResWords().get(lex)
                     : nToken("ID", tab.insertAt(lex));
@@ -217,7 +221,6 @@ public class Lexer implements ALex {
             // Checks for direct token
             if (Tables.getDirToken().containsKey(carString(car))) {
                 res = Tables.getDirToken().get(carString(car));
-
                 return res;
             }
 
@@ -241,11 +244,13 @@ public class Lexer implements ALex {
         switch (car) {
             case '\'':
                 ErrorAt.ezError(20, null);
+                Gen_Token('/');
                 break;
 
             default:
                 /* No valid tokens nor error generated */
                 ErrorAt.ezError(14, lex);
+                panic();
                 break;
         }
 
@@ -274,4 +279,25 @@ public class Lexer implements ALex {
         FilesAt.FTokens.write(tk.toString());
     }
 
+    /**
+     * Skips characters until it finds a safe one
+     */
+    private int panic() {
+        int res = 0;
+        while (!isSafe(leer())) {
+            res++;
+        }
+        System.out.println("Skipped " + res + "chars");
+        return res;
+    }
+
+    private static boolean isSafe(char c) {
+        char[] safe = { ';', '"', '}' };
+        for (char safeChar : safe) {
+            if (c == safeChar) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
