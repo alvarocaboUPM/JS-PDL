@@ -3,18 +3,19 @@ package com.pdl.parser;
 import java.io.IOException;
 
 import com.pdl.common.interfaces.ASin;
-import com.pdl.lexer.ALex;
+import com.pdl.common.interfaces.TS;
+import com.pdl.lexer.Lexer;
 import com.pdl.lexer.lib.Token;
 
 public class Parser implements ASin {
 
     private String result;
-    private static ALex lexer;
+    private static Lexer lexer;
     private static Token tk;
 
-    public Parser() {
+    public Parser(TS t) {
         result = "D\t ";
-        lexer = new ALex();
+        lexer = new Lexer(t);
     }
 
     private static void getNext(){
