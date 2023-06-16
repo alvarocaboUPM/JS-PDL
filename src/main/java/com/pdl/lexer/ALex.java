@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.pdl.lexer.lib.*;
-import com.pdl.Compiler;
+import com.pdl.common.utils.FilesAt;
 import com.pdl.common.*;
+import com.pdl.Compiler;
 import com.pdl.common.utils.Constants;
 import com.pdl.common.utils.Pretty;
 import com.pdl.common.utils.Tables;
@@ -18,7 +19,7 @@ public class ALex {
 
 
     private static int Pointer; // Reading buffer pointer
-    public static int numLineas; // Number of lines in the Compiler.Source file
+    public static int numLineas; // Number of lines in the FilesAt.Source file
     // Token-Generating tracking variables
     private static String Lexema;
     private static Integer num;
@@ -43,7 +44,7 @@ public class ALex {
     private static char leer() {
         byte aux = -1;
         try {
-            aux = Pointer >= Compiler.Source.length ? -1 : Compiler.Source[Pointer];
+            aux = Pointer >= FilesAt.Source.length ? -1 : FilesAt.Source[Pointer];
         } catch (NullPointerException e) {
 
         }
@@ -71,11 +72,11 @@ public class ALex {
      * @return next char
      */
     private static char peek() {
-        if (Pointer > Compiler.Source.length)
+        if (Pointer > FilesAt.Source.length)
             return 0;
-        if (Pointer == Compiler.Source.length)
+        if (Pointer == FilesAt.Source.length)
             return Constants.EOF;
-        return (char) Compiler.Source[Pointer];
+        return (char) FilesAt.Source[Pointer];
     }
 
     /**
@@ -103,7 +104,7 @@ public class ALex {
         Token res = null;
 
         // Checks for EOF
-        if (car == Constants.EOF || Pointer > Compiler.Source.length) {
+        if (car == Constants.EOF || Pointer > FilesAt.Source.length) {
             return new Token("Teof", null);
         }
 
@@ -165,7 +166,7 @@ public class ALex {
             Pointer--;
             // Si no es una palabra reservada, mete el símbolo en la tabla de símbolos
             return Tables.getResWords().containsKey(Lexema) ? Tables.getResWords().get(Lexema)
-                    : Compiler.ts.insertAt(Lexema);
+                    : nToken("ID", Compiler.ts.insertAt(Lexema));
 
         } else {
             // Checks for direct token
@@ -229,7 +230,7 @@ public class ALex {
             return;
         }
         this.TokenList.add(tk);
-        Compiler.FTokens.write(tk.toString());
+        FilesAt.FTokens.write(tk.toString());
     }
 
     /* Métodos objeto */
