@@ -1,6 +1,5 @@
 package com.pdl.parser;
 
-import java.io.File;
 import java.io.IOException;
 
 import com.pdl.common.ErrorAt;

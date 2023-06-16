@@ -78,9 +78,10 @@ public class Compiler {
             // Iniciamos tablas
             ts = new SymbolTable();
             errors = new ArrayList<>();
-            p = new Parser(ts);
             // Iniciamos los archivos
             FilesAt.initFiles(filename, folder, df);
+            // Iniciamos el parser
+            p = new Parser(ts);
         }
         
         private static void finish(){

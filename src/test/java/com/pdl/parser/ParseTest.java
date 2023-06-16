@@ -1,6 +1,5 @@
 package com.pdl.parser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.*;
 
@@ -33,6 +32,12 @@ public class ParseTest {
     @Test
     public void basicProgramTest(){
         testFile += "t1.js";
+        ok = "D	 1 10 11 52 13 1 10 11 52 13 1 10 11 54 13 2 14 18 19 38 45 56 2 14 18 19 38 44 48 1 10 11 54 13 2 14 18 19 38 44 48 40 38 44 48 3 26 38 44 48 28 29 14 18 19 38 45 56 2 14 18 19 38 44 48 42 38 44 48 2 15 24 38 44 48 2 15 24 38 44 48 4 ";
+        assertEquals(ok, p.parserDebug(testFile));
+    }
+
+    public void longExpressionTest(){
+        testFile += "t2.js";
         ok = "D	 1 10 11 52 13 1 10 11 52 13 1 10 11 54 13 2 14 18 19 38 45 56 2 14 18 19 38 44 48 1 10 11 54 13 2 14 18 19 38 44 48 40 38 44 48 3 26 38 44 48 28 29 14 18 19 38 45 56 2 14 18 19 38 44 48 42 38 44 48 2 15 24 38 44 48 2 15 24 38 44 48 4 ";
         assertEquals(ok, p.parserDebug(testFile));
     }
