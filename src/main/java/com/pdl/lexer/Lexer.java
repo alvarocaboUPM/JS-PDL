@@ -1,7 +1,9 @@
 package com.pdl.lexer;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +17,9 @@ import com.pdl.common.utils.Pretty;
 import com.pdl.common.utils.Tables;
 
 public class Lexer implements ALex {
+    //Input and output files
+    private byte[] source;
+    private FileWriter tokensFile;
 
     private int Pointer; // Reading buffer pointer
     public static int numLineas; // Number of lines in the FilesAt.Source file
@@ -30,6 +35,21 @@ public class Lexer implements ALex {
         numLineas = 1;
         tokenList = new ArrayList<Token>();
         tab = t;
+        source = FilesAt.Source;
+        tokensFile = FilesAt.FTokens;
+    }
+
+    //For testing
+    public Lexer(TS t, String input) {
+        Pointer = 0;
+        numLineas = 1;
+        tokenList = new ArrayList<Token>();
+        tab = t;
+        try {
+            source = Files.readAllBytes(new File(input).toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public Token nxToken() throws IOException {
@@ -87,7 +107,7 @@ public class Lexer implements ALex {
     private char leer() {
         byte aux = -1;
         try {
-            aux = Pointer >= FilesAt.Source.length ? -1 : FilesAt.Source[Pointer];
+            aux = Pointer >= source.length ? -1 : source[Pointer];
         } catch (NullPointerException e) {
 
         }
@@ -108,13 +128,13 @@ public class Lexer implements ALex {
         return "" + car;
     }
 
-    private char peek() {
-        if (Pointer > FilesAt.Source.length)
-            return 0;
-        if (Pointer == FilesAt.Source.length)
-            return Constants.EOF;
-        return (char) FilesAt.Source[Pointer];
-    }
+    // private char peek() {
+    //     if (Pointer > source.length)
+    //         return 0;
+    //     if (Pointer == source.length)
+    //         return Constants.EOF;
+    //     return (char) source[Pointer];
+    // }
 
     /**
      * Skips cars util it finds the end of commnent or EOF
@@ -269,7 +289,7 @@ public class Lexer implements ALex {
             return;
         }
         this.tokenList.add(tk);
-        FilesAt.FTokens.write(tk.toString());
+        tokensFile.write(tk.toString());
     }
 
     /**
