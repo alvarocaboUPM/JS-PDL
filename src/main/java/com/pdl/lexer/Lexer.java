@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.pdl.lexer.lib.*;
+import com.pdl.symbols.SymbolTable;
 import com.pdl.Compiler;
 import com.pdl.common.*;
 import com.pdl.common.interfaces.ALex;
@@ -13,7 +14,7 @@ import com.pdl.common.utils.Constants;
 import com.pdl.common.utils.Pretty;
 import com.pdl.common.utils.Tables;
 
-public class Lexer implements ALex{
+public class Lexer implements ALex {
 
     private static int Pointer; // Reading buffer pointer
     public static int numLineas; // Number of lines in the Compiler.Source file
@@ -21,15 +22,13 @@ public class Lexer implements ALex{
     private static String lex;
     private static Integer num;
     // Data Structures
-    public List<Token> tokenList ; // Keeps track of the tokens generated
-
+    public List<Token> tokenList; // Keeps track of the tokens generated
 
     public Lexer() {
         Pointer = 0;
         numLineas = 1;
         tokenList = new ArrayList<Token>();
     }
-
 
     public Token nxToken() throws IOException {
         Token tk;
@@ -38,12 +37,9 @@ public class Lexer implements ALex{
         return tk;
     }
 
-
     public List<Token> getTokens() {
         return this.tokenList;
     }
-
-    
 
     /**
      * Acts as a main function for the lexer
@@ -210,19 +206,20 @@ public class Lexer implements ALex{
             while (Character.isAlphabetic(car = leer()) || Character.isDigit(car) || (car == '_')) {
                 lex += carString(car);
             }
-            Pointer--;
+            Pointer-- ;
             // Si no es una palabra reservada, mete el símbolo en la tabla de símbolos
-            return Tables.getResWords().containsKey(lex) ? Tables.getResWords().get(lex)
-                    : Compiler.ts.insertAt(lex);
+            // return Tables.getResWords().containsKey(lex) ? Tables.getResWords().get(lex)
+            //         : Compiler.ts.insertAt(lex);
+
+            if(Tables.getResWords().containsKey(lex))
+                return Tables.getResWords().get(lex);
+            //ID
+                
 
         } else {
             // Checks for direct token
             if (Tables.getDirToken().containsKey(carString(car))) {
                 res = Tables.getDirToken().get(carString(car));
-
-                switch (res.getType()) {
-                    case "AsValue":
-                }
 
                 return res;
             }
@@ -280,7 +277,4 @@ public class Lexer implements ALex{
         Compiler.FTokens.write(tk.toString());
     }
 
-    
-
-   
 }
