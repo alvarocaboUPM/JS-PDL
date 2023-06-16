@@ -16,11 +16,11 @@ import com.pdl.common.utils.Tables;
 
 public class Lexer implements ALex {
 
-    private static int Pointer; // Reading buffer pointer
+    private int Pointer; // Reading buffer pointer
     public static int numLineas; // Number of lines in the FilesAt.Source file
     // Token-Generating tracking variables
-    private static String lex;
-    private static Integer num;
+    private String lex;
+    private Integer num;
     // Data Structures
     public List<Token> tokenList; // Keeps track of the tokens generated
     public TS tab;
@@ -76,7 +76,7 @@ public class Lexer implements ALex {
      * 
      * @return new {@link Token} with lineAt <- numLineas
      */
-    private static Token nToken(String Type, Object Info) {
+    private  Token nToken(String Type, Object Info) {
         return new Token(Type, Info, numLineas);
     }
 
@@ -86,7 +86,7 @@ public class Lexer implements ALex {
      * @return char
      * @throws IOException
      */
-    private static char leer() {
+    private char leer() {
         byte aux = -1;
         try {
             aux = Pointer >= FilesAt.Source.length ? -1 : FilesAt.Source[Pointer];
@@ -106,7 +106,7 @@ public class Lexer implements ALex {
      * @param car
      * @return String
      */
-    private static String carString(char car) {
+    private String carString(char car) {
         return "" + car;
     }
 
@@ -116,7 +116,7 @@ public class Lexer implements ALex {
      * 
      * @return next char
      */
-    private static char peek() {
+    private char peek() {
         if (Pointer > FilesAt.Source.length)
             return 0;
         if (Pointer == FilesAt.Source.length)
@@ -129,7 +129,7 @@ public class Lexer implements ALex {
      * 
      * @throws IOException
      */
-    private static void skipComment() {
+    private void skipComment() {
         char c;
         while ((c = leer()) != '*' && leer() != '/') {
             if (c == Constants.EOF) {
