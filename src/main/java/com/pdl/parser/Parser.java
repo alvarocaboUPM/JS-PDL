@@ -2,15 +2,17 @@ package com.pdl.parser;
 
 import java.io.IOException;
 
+import com.pdl.common.ErrorAt;
 import com.pdl.common.interfaces.ASin;
 import com.pdl.common.interfaces.TS;
+import com.pdl.common.utils.Constants;
 import com.pdl.lexer.Lexer;
 import com.pdl.lexer.lib.Token;
 
 public class Parser implements ASin {
 
     private String result;
-    private static Lexer lexer;
+    private Lexer lexer;
     private static Token tk;
 
     public Parser(TS t) {
@@ -18,7 +20,11 @@ public class Parser implements ASin {
         lexer = new Lexer(t);
     }
 
-    private static void getNext(){
+    public String getResult() {
+        return this.result;
+    }
+
+    private void getNext() {
         try {
             tk = lexer.nxToken();
         } catch (IOException e) {
@@ -27,26 +33,88 @@ public class Parser implements ASin {
     }
 
     @Override
-    public void START() {
-        result += "1 ";
-        result += "2 ";
-        result += "3 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'START'");
+    public String START() {
+        getNext();
+        switch (tk.getType()) {
+            // 1. Declaraciones
+            case Constants.function:
+            case Constants.let:
+                result += "1 ";
+                DEC();
+                return START();
+
+            // 2. Sentencias simples
+            case Constants.id:
+            case Constants.print:
+            case Constants.input:
+            case Constants.increment:
+                result += "2 ";
+                SEN();
+                return START();
+
+            // 3. Sentencias complejas
+            case Constants.ifKw:
+            case Constants.doKw:
+                result += "3 ";
+                SENCOM();
+                return START();
+
+            case Constants.eof:
+                result += "4 ";
+                break;
+
+            default:
+                if (tk.isType()) {
+                    ErrorAt.ezError(213, debugString());
+                    break;
+                } else {
+                    ErrorAt.ezError(100, debugString());
+                    break;
+                }
+        }
+
+        return result;
     }
 
     @Override
     public void DEC() {
-        result += "5 ";
-        result += "10 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'DEC'");
+        if (checkTk(Constants.function)) {
+            result += "5 ";
+            getNext();
+            ckID();
+            TX();
+
+            getNext();
+            ckParOp();
+            PARM();
+            getNext();
+            ckParCl();
+
+            getNext();
+            ckKeyOp();
+            BODY();
+            getNext();
+            ckKeyCl();
+
+            return;
+        }
+
+        if (checkTk(Constants.let)) {
+            result += "10 ";
+            DECID();
+            return;
+        }
     }
 
     @Override
     public void PARM() {
+        getNext();
+        if (!tk.isType()) {
+            result += "7 ";
+            return;
+        }
         result += "6 ";
-        result += "7 ";
+
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'PARM'");
     }
@@ -62,8 +130,10 @@ public class Parser implements ASin {
     @Override
     public void DECID() {
         result += "11 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'DECID'");
+        getNext();
+        ckID();
+        T();
+        DECLX();
     }
 
     @Override
@@ -174,7 +244,7 @@ public class Parser implements ASin {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'EXP'");
     }
-    
+
     @Override
     public void EXPX() {
         result += "40 ";
@@ -184,7 +254,7 @@ public class Parser implements ASin {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'EXPX'");
     }
-    
+
     @Override
     public void VALUE() {
         result += "44 ";
@@ -193,7 +263,7 @@ public class Parser implements ASin {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'VALUE'");
     }
-    
+
     @Override
     public void XPX() {
         result += "47 ";
@@ -201,39 +271,115 @@ public class Parser implements ASin {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'XPX'");
     }
-    
+
     @Override
     public void INC() {
         result += "49 ";
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'INC'");
     }
-    
+
     @Override
     public void TX() {
+        if (!tk.isType()) {
+            result += "51 ";
+            return;
+        }
+
         result += "50 ";
-        result += "51 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'TX'");
+        T();
     }
-    
+
     @Override
     public void T() {
-        result += "52 ";
-        result += "53 ";
-        result += "54 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'T'");
+        switch (tk.getType()) {
+            case Constants.intType:
+                result += "52 ";
+                break;
+            case Constants.stringType:
+                result += "53 ";
+                break;
+            case Constants.booleanType:
+                result += "54 ";
+                break;
+            default:
+                ckType();
+        }
     }
-    
+
     @Override
     public void CTE() {
-        result += "55 ";
-        result += "56 ";
-        result += "57 ";
-        result += "58 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'CTE'");
+        switch (tk.getType()) {
+            case Constants.cad:
+                result += "55 ";
+                break;
+            case Constants.num:
+                result += "56 ";
+                break;
+            case Constants.trueKw:
+                result += "57 ";
+                break;
+            case Constants.falseKw:
+                result += "57 ";
+                break;
+            default:
+                ckCte();
+        }
+
+    }
+
+    private String debugString() {
+        return new String("\n- TRAZA -> " + result +
+                "\n- ÚLTIMO TK LEIDO -> " + tk.toString());
+    }
+
+    private boolean checkTk(String cmp) {
+        return tk.getType().equals(cmp);
+    }
+
+    private void ckID() {
+        if (!checkTk(Constants.id))
+            ErrorAt.ezError(105, debugString());
+    }
+
+    private void ckParOp() {
+        if (!checkTk(Constants.parenthesesOpen))
+            ErrorAt.ezError(103, debugString());
+    }
+
+    private void ckKeyOp() {
+        if (!checkTk(Constants.curlyBraceOpen))
+            ErrorAt.ezError(104, debugString());
+    }
+
+    private void ckParCl() {
+        if (!checkTk(Constants.parenthesesClose))
+            ErrorAt.ezError(113, debugString());
+    }
+
+    private void ckKeyCl() {
+        if (!checkTk(Constants.curlyBraceClose))
+            ErrorAt.ezError(114, debugString());
+    }
+
+    private void ckPrint() {
+        if (!checkTk(Constants.print))
+            ErrorAt.ezError(109, debugString());
+    }
+
+    private void ckCte() {
+        if (!checkTk(Constants.cad)
+                && !checkTk(Constants.num)
+                && !checkTk(Constants.falseKw)
+                && !checkTk(Constants.trueKw))
+            ErrorAt.ezError(111, debugString());
+    }
+
+    private void ckType() {
+        if (!checkTk(Constants.stringType)
+                && !checkTk(Constants.booleanType)
+                && !checkTk(Constants.intType))
+            ErrorAt.ezError(106, debugString());
     }
 
 }
