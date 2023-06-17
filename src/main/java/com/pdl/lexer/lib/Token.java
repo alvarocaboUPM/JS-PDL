@@ -1,16 +1,11 @@
 package com.pdl.lexer.lib;
 
-import com.pdl.common.interfaces.TS;
-import com.pdl.common.utils.Tables;
+import com.pdl.common.utils.Constants;
 
 public class Token {
     protected String Type;
     protected Object Info;
     int lineAt;
-
-    public static enum Tipado {
-        INT, BOOL, STRING, DEFAULT
-    }
 
     /**
      * Default Token constructor
@@ -44,41 +39,9 @@ public class Token {
      * @return true | false
      */
     public boolean isType() {
-        int[] tipados = { 0, 5, 9 };
-        int index = Tables.getValidTokens().indexOf(this.Type);
-        for (int i : tipados) {
-            if (index == i)
-                return true;
-        }
-        return false;
-    }
-
-    /**
-     * Tries to find the typing of the token
-     * 
-     * @return Tipado | Default if no valid type found
-     */
-    public Tipado getTipado(TS t) {
-        if (this.Type.equals("CteInt"))
-            return Tipado.INT;
-        if (this.Type.equals("Cad"))
-            return Tipado.STRING;
-        if (this.Type.equals("TokF") || this.Type.equals("TokT"))
-            return Tipado.BOOL;
-        if (this.Type.equals("ID")) {
-            SymbolAt aux = t.lookAtIndex((int) Info);
-            switch (aux.getType()) {
-                case "TypeInt":
-                    return Tipado.INT;
-                case "TypeString":
-                    return Tipado.STRING;
-                case "TypeBool":
-                    return Tipado.BOOL;
-                default:
-                    break;
-            }
-        }
-        return Tipado.DEFAULT;
+        return Type.equals(Constants.stringType)
+                || Type.equals(Constants.intType)
+                || Type.equals(Constants.booleanType);
 
     }
 
@@ -88,13 +51,21 @@ public class Token {
      * @return true | false
      */
     public boolean isOperator() {
-        int[] operands = { 22, 23, 24 };
-        int index = Tables.getValidTokens().indexOf(this.Type);
-        for (int i : operands) {
-            if (index == i)
-                return true;
-        }
-        return false;
+        return Type.equals(Constants.MOD)
+                || Type.equals(Constants.AND)
+                || Type.equals(Constants.GT);
+    }
+
+    /**
+     * Checks if the token is a typing
+     * 
+     * @return true | false
+     */
+    public boolean isCTE() {
+        return Type.equals(Constants.cad)
+                || Type.equals(Constants.num)
+                || Type.equals(Constants.falseKw)
+                || Type.equals(Constants.trueKw);
     }
 
     public String toString() {

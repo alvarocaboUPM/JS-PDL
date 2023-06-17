@@ -11,8 +11,7 @@ import com.pdl.common.ErrorAt;
 import com.pdl.common.utils.FilesAt;
 import com.pdl.common.utils.Pretty;
 import com.pdl.common.utils.Tables;
-//Project modules
-import com.pdl.old_sintax.*;
+import com.pdl.parser.Parser;
 import com.pdl.symbols.SymbolTable;
 
 /**
@@ -24,17 +23,17 @@ import com.pdl.symbols.SymbolTable;
 public class Compiler {
    
     public static List<Integer> errors;
-    public static SymbolTable ts;
-
-    static String filename, folder, df;
+    static SymbolTable ts;
+    static Parser p;
+    static String filename, folder, df, ast;
 
     public static void main(String args[]) {
         askInput();
         init();
-        ASin.Parser(ts);
+        ast = p.START();
         finish();
     }
-
+    
     private static void askInput() {
         Scanner sc = new Scanner(System.in);
         System.out.println("\nSelecciona la temática de la prueba");
@@ -49,49 +48,53 @@ public class Compiler {
         } catch (Exception e) {
             a = 3;
         }
-
+        
         switch (a) {
             case 1:
-                folder = "errors/";
+            folder = "errors/";
                 df = "e1.js";
                 break;
-
-            case 2:
+                
+                case 2:
                 folder = "sentencias/";
                 df = "s5.js";
                 break;
-
+                
             default:
                 folder = "";
-                df = "examen2.js";
+                df = "t1.js";
                 break;
+            }
+            
+            System.out.print("Nombre del archivo a analizar [por defecto " + df + "]: ");
+            
+            filename = sc.nextLine();
+            if (filename.isBlank())
+            filename = df;
+            sc.close();
         }
 
-        System.out.print("Nombre del archivo a analizar [por defecto " + df + "]: ");
-
-        filename = sc.nextLine();
-        if (filename.isBlank())
-            filename = df;
-        sc.close();
-    }
-
-    private static void init() {
-        // Iniciamos tablas
-        ts = new SymbolTable();
-        errors = new ArrayList<>();
-        // Iniciamos los archivos
-        FilesAt.initFiles(filename, folder, df);
-    }
-
-    private static void finish() {
-        try {
+        private static void init() {
+            // Iniciamos tablas
+            ts = new SymbolTable();
+            errors = new ArrayList<>();
+            // Iniciamos los archivos
+            FilesAt.initFiles(filename, folder, df);
+            // Iniciamos el parser
+            p = new Parser(ts);
+        }
+        
+        private static void finish(){
+            try {
+            // Dupms Ast
+            FilesAt.FParser.write(ast);
             // Dumps TS
-            ts.OutTS();
-            // Resets the standard error output
-            FilesAt.closeFiles();
+            //ts.OutTS();
         } catch (IOException | NullPointerException e) {
             e.getStackTrace();
         } finally {
+            // Resets the standard error output
+            FilesAt.closeFiles();
             System.setErr(System.err);
             checkingErrors();
         }

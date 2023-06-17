@@ -1,223 +1,567 @@
 package com.pdl.parser;
 
+import java.io.IOException;
+
+import com.pdl.common.ErrorAt;
 import com.pdl.common.interfaces.ASin;
+import com.pdl.common.interfaces.TS;
+import com.pdl.common.utils.Constants;
+import com.pdl.lexer.Lexer;
+import com.pdl.lexer.lib.Token;
 
 public class Parser implements ASin {
 
     private String result;
+    private Lexer lexer;
+    private static Token tk;
+    private TS t;
 
-    public Parser() {
+    public Parser(TS t) {
         result = "D\t ";
+        lexer = new Lexer(t);
+        this.t = t;
+    }
+
+    protected String parserDebug(String testFile) {
+        result = "D\t ";
+        lexer = new Lexer(t, testFile);
+
+        return START();
+    }
+
+    public String getResult() {
+        return this.result;
+    }
+
+    private void getNext() {
+        try {
+            tk = lexer.nxToken();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void START() {
-        result += "1 ";
-        result += "2 ";
-        result += "3 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'START'");
+    public String START() {
+        getNext();
+        switch (tk.getType()) {
+            // 1. Declaraciones
+            case Constants.function:
+            case Constants.let:
+                result += "1 ";
+                DEC();
+                return START();
+
+            // 2. Sentencias simples
+            case Constants.id:
+            case Constants.print:
+            case Constants.input:
+            case Constants.increment:
+                result += "2 ";
+                SEN();
+                return START();
+
+            // 3. Sentencias complejas
+            case Constants.ifKw:
+            case Constants.doKw:
+                result += "3 ";
+                SENCOM();
+                return START();
+
+            case Constants.eof:
+                result += "4 ";
+                break;
+
+            default:
+                if (tk.isType()) {
+                    ErrorAt.ezError(213, debugString());
+                    break;
+                } else {
+                    ErrorAt.ezError(100, debugString());
+                    break;
+                }
+        }
+
+        return result;
     }
 
     @Override
     public void DEC() {
-        result += "5 ";
-        result += "10 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'DEC'");
+        if (checkTk(Constants.function)) {
+            result += "5 ";
+            getNext();
+            ckID();
+            callTX();
+
+            ckParOp();
+            PARM();
+
+            getNext();
+            ckKeyOp();
+            BODY();
+
+            return;
+        }
+
+        if (checkTk(Constants.let)) {
+            result += "10 ";
+            DECID();
+            return;
+        }
     }
 
     @Override
     public void PARM() {
+        getNext();
+        if (checkTk(Constants.parenthesesClose)) {
+            result += "7 ";
+            return;
+        }
         result += "6 ";
-        result += "7 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'PARM'");
+        T(); // Should already be at type token
+        getNext();
+        ckID();
+        PARMX();
     }
 
     @Override
     public void PARMX() {
-        result += "8 ";
-        result += "9 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'PARMX'");
+        getNext();
+        if (checkTk(Constants.comma)) {
+            result += "8 ";
+            callT();
+            getNext();
+            ckID();
+            PARMX();
+        }
+        if (checkTk(Constants.parenthesesClose)) {
+            result += "9 ";
+            return;
+        } else
+            ErrorAt.ezError(113, debugString());
+
     }
 
     @Override
     public void DECID() {
         result += "11 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'DECID'");
+        getNext();
+        ckID();
+        callT();
+        DECLX();
     }
 
     @Override
     public void DECLX() {
-        result += "12 ";
-        result += "13 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'DECLX'");
+        getNext();
+        if (checkTk(Constants.equals)) {
+            result += "12 ";
+            ASIGN();
+        }
+        if (checkTk(Constants.semicolon)) {
+            result += "13 ";
+        } else
+            ErrorAt.ezError(107, debugString());
     }
 
     @Override
     public void SEN() {
-        result += "14 ";
-        result += "15 ";
-        result += "16 ";
+        switch (tk.getType()) {
+            case Constants.id:
+                result += "14 ";
+                ASCALL();
 
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'SEN'");
+                return;
+            case Constants.print:
+            case Constants.input:
+                result += "15 ";
+                IO();
+                return;
+            case Constants.increment:
+                result += "16 ";
+                INC();
+
+                break;
+        }
     }
 
     @Override
     public void ASCALL() {
-        result += "17 ";
-        result += "18 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'ASCALL'");
+        getNext();
+        if (checkTk(Constants.parenthesesOpen)) {
+            result += "17 ";
+            FCALL();
+            getNext();
+            ckSemCol();
+            return;
+        }
+        if (checkTk(Constants.equals)) {
+            result += "18 ";
+            ASIGN();
+
+        }
     }
 
     @Override
     public void ASIGN() {
+        // Cursor sobre el =
         result += "19 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'ASIGN'");
+        callEXP();
+
     }
 
     @Override
     public void FCALL() {
+        getNext();
+        if (checkTk(Constants.parenthesesClose)) {
+            result += "21 ";
+
+            return;
+        }
         result += "20 ";
-        result += "21 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'FCALL'");
+        EXP(); // Ya sobre la expresion
+        FCALLX();
     }
 
     @Override
     public void FCALLX() {
-        result += "22 ";
-        result += "23 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'FCALLX'");
+        if (checkTk(Constants.comma)) {
+            result += "22 ";
+            callEXP();
+            FCALLX();
+            return;
+        }
+
+        if (checkTk(Constants.parenthesesClose)) {
+            result += "23 ";
+            return;
+        } else
+            ErrorAt.ezError(113, debugString());
     }
 
     @Override
     public void IO() {
-        result += "24 ";
-        result += "25 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'IO'");
+        if (checkTk(Constants.print)) {
+            result += "24 ";
+            callEXP();
+            return;
+        }
+        if (checkTk(Constants.input)) {
+            getNext();
+            ckID();
+            getNext();
+            ckSemCol();
+            return;
+        } else {
+            ErrorAt.ezError(109, debugString());
+        }
     }
 
     @Override
     public void SENCOM() {
-        result += "26 ";
-        result += "33 ";
+        if (checkTk(Constants.ifKw)) {
+            result += "26 ";
+            getNext();
+            ckParOp();
+            callEXP();
 
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'SENCOM'");
+            IFX();
+            return;
+        }
+        if (checkTk(Constants.doKw)) {
+            result += "33 ";
+            getNext();
+            ckKeyOp();
+            BODY();
+
+            getNext();
+            ckWhile();
+            getNext();
+            ckParOp();
+            callEXP();
+
+            getNext();
+            ckSemCol();
+
+        }
+
     }
 
     @Override
     public void IFX() {
-        result += "27 ";
-        result += "28 ";
+        getNext();
+        if (checkTk(Constants.curlyBraceOpen)) {
+            result += "27 ";
+            BODY();
 
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'IFX'");
+            getNext();
+            ckKeyCl();
+        } else {
+            result += "28 ";
+            SENB();
+
+        }
     }
 
     @Override
     public void SENB() {
-        result += "29 ";
-        result += "30 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'SENB'");
+        if (checkTk(Constants.returnKw)) {
+            result += "30 ";
+            RX();
+        } else {
+            result += "29 ";
+            SEN();
+
+        }
     }
 
     @Override
     public void RX() {
+        getNext();
+        if (checkTk(Constants.semicolon)) {
+            result += "32 ";
+            return;
+        }
         result += "31 ";
-        result += "32 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'RX'");
+
+        EXP(); // Already in the expression
     }
 
     @Override
     public void BODY() {
-        result += "34 ";
-        result += "35 ";
-        result += "36 ";
-        result += "37 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'BODY'");
+        getNext();
+        if (checkTk(Constants.curlyBraceClose)) {
+            result += "37 ";
+            return;
+        }
+
+        if (checkTk(Constants.let)) {
+            result += "35 ";
+            DECID();
+            BODY();
+        }
+
+        else if (checkTk(Constants.ifKw, Constants.whileKw)) {
+            result += "34 ";
+            SENCOM();
+            BODY();
+        } else {
+            result += "36 ";
+            SENB();
+            BODY();
+        }
+
     }
 
     @Override
     public void EXP() {
-        result += "38 ";
-        result += "39 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'EXP'");
+        if (checkTk(Constants.id, Constants.parenthesesOpen) || tk.isCTE()) {
+            result += "38 ";
+            VALUE();
+            EXPX();
+            return;
+        }
+        if (checkTk(Constants.increment)) {
+            result += "39 ";
+            INC();
+        } else
+            ErrorAt.ezError(116, debugString());
+
     }
-    
+
     @Override
     public void EXPX() {
-        result += "40 ";
-        result += "41 ";
-        result += "42 ";
-        result += "43 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'EXPX'");
+        if (checkTk(Constants.semicolon, Constants.comma, Constants.parenthesesClose)) {
+            return;
+        }
+
+        if (!tk.isOperator()) {
+            ErrorAt.ezError(116, debugString());
+        }
+        switch (tk.getType()) {
+            case Constants.GT:
+                result += "40 ";
+                break;
+            case Constants.AND:
+                result += "41 ";
+                break;
+            case Constants.MOD:
+                result += "42 ";
+                break;
+        }
+        callEXP();
     }
-    
+
     @Override
     public void VALUE() {
-        result += "44 ";
-        result += "45 ";
-        result += "46 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'VALUE'");
+        if (checkTk(Constants.id)) {
+            result += "44 ";
+            XPX();
+            return;
+        }
+        if (tk.isCTE()) {
+            result += "45 ";
+            CTE();
+            getNext();
+            return;
+        }
+        if (checkTk(Constants.parenthesesOpen)) {
+            result += "46 ";
+            callEXP();
+            getNext();
+        }
     }
-    
+
     @Override
     public void XPX() {
+        getNext();
+        // TODO: Ojo a este getNext
+        if (!checkTk(Constants.parenthesesOpen)) {
+            result += "48 ";
+            return;
+        }
+
         result += "47 ";
-        result += "48 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'XPX'");
+        FCALL();
+        getNext();
     }
-    
+
     @Override
     public void INC() {
         result += "49 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'INC'");
+        getNext();
+        ckID();
+
     }
-    
+
     @Override
     public void TX() {
+        if (!tk.isType()) {
+            result += "51 ";
+            return;
+        }
+
         result += "50 ";
-        result += "51 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'TX'");
+        T();
+        getNext();
     }
-    
+
     @Override
     public void T() {
-        result += "52 ";
-        result += "53 ";
-        result += "54 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'T'");
+        switch (tk.getType()) {
+            case Constants.intType:
+                result += "52 ";
+                break;
+            case Constants.stringType:
+                result += "53 ";
+                break;
+            case Constants.booleanType:
+                result += "54 ";
+                break;
+            default:
+                ckType();
+        }
     }
-    
+
     @Override
     public void CTE() {
-        result += "55 ";
-        result += "56 ";
-        result += "57 ";
-        result += "58 ";
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'CTE'");
+        switch (tk.getType()) {
+            case Constants.cad:
+                result += "55 ";
+                break;
+            case Constants.num:
+                result += "56 ";
+                break;
+            case Constants.trueKw:
+                result += "57 ";
+                break;
+            case Constants.falseKw:
+                result += "57 ";
+                break;
+            default:
+                ckCte();
+        }
+
+    }
+
+    private String debugString() {
+        return new String("\n- TRAZA -> " + result +
+                "\n- ÚLTIMO TK LEIDO -> " + tk.toString());
+    }
+
+    /**
+     * Returns true if the token equals
+     * any of the params
+     * 
+     * @param cmp
+     * @return
+     */
+    private boolean checkTk(String... cmp) {
+        for (String string : cmp) {
+            if (tk.getType().equals(string))
+                return true;
+        }
+        return false;
+    }
+
+    private void ckID() {
+        if (!checkTk(Constants.id))
+            ErrorAt.ezError(105, debugString());
+    }
+
+    private void ckParOp() {
+        if (!checkTk(Constants.parenthesesOpen))
+            ErrorAt.ezError(103, debugString());
+    }
+
+    private void ckKeyOp() {
+        if (!checkTk(Constants.curlyBraceOpen))
+            ErrorAt.ezError(104, debugString());
+    }
+
+    private void ckKeyCl() {
+        if (!checkTk(Constants.curlyBraceClose))
+            ErrorAt.ezError(114, debugString());
+    }
+
+    private void ckSemCol() {
+        if (!checkTk(Constants.semicolon))
+            ErrorAt.ezError(107, debugString());
+    }
+
+    private void ckWhile() {
+        if (!checkTk(Constants.whileKw))
+            ErrorAt.ezError(118, debugString());
+    }
+
+    private void ckCte() {
+        if (!checkTk(Constants.cad, Constants.num, Constants.falseKw, Constants.trueKw))
+            ErrorAt.ezError(111, debugString());
+    }
+
+    private void ckType() {
+        if (!checkTk(Constants.stringType, Constants.booleanType, Constants.intType))
+            ErrorAt.ezError(106, debugString());
+    }
+
+    private void callTX() {
+        getNext();
+        TX();
+    }
+
+    private void callT() {
+        getNext();
+        T();
+    }
+
+    private void callEXP() {
+        getNext();
+        EXP();
+    }
+
+    private void callCTE() {
+        getNext();
+        CTE();
     }
 
 }

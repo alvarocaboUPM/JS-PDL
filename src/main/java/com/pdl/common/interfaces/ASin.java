@@ -4,8 +4,9 @@ public interface ASin {
     /**
      * Allows declarations, sentences and complex sentences
      * [1-3]
+     * @return final trace
      */
-    void START();
+    String START();
 
     /**
      * Allows function and variables declarations
