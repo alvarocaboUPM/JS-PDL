@@ -341,7 +341,7 @@ public class Parser implements ASin {
             BODY();
         }
 
-        else if (checkTk(Constants.ifKw, Constants.whileKw)) {
+        else if (checkTk(Constants.ifKw, Constants.doKw)) {
             result += "34 ";
             SENCOM();
             BODY();
