@@ -1,7 +1,9 @@
 package com.pdl.lexer;
 
-import java.io.IOException;
+import java.io.File;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +17,9 @@ import com.pdl.common.utils.Pretty;
 import com.pdl.common.utils.Tables;
 
 public class Lexer implements ALex {
-
+    //Input and output files
+    private byte[] source;
+    private boolean onTest;
     private int Pointer; // Reading buffer pointer
     public static int numLineas; // Number of lines in the FilesAt.Source file
     // Token-Generating tracking variables
@@ -30,6 +34,22 @@ public class Lexer implements ALex {
         numLineas = 1;
         tokenList = new ArrayList<Token>();
         tab = t;
+        source = FilesAt.Source;
+        onTest=false;
+    }
+    
+    //For testing
+    public Lexer(TS t, String input) {
+        Pointer = 0;
+        numLineas = 1;
+        tokenList = new ArrayList<Token>();
+        tab = t;
+        try {
+            source = Files.readAllBytes(new File(input).toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        onTest=true;
     }
 
     public Token nxToken() throws IOException {
@@ -39,9 +59,6 @@ public class Lexer implements ALex {
         return tk;
     }
 
-    public List<Token> getTokens() {
-        return this.tokenList;
-    }
 
     /**
      * Acts as a main function for the lexer
@@ -81,15 +98,16 @@ public class Lexer implements ALex {
     }
 
     /**
-     * Reads 1 byte and seeks the pointer 1 position
+     * Acts as a it.getNext() function in a live TokenList,
+     * mixes private funcs Gen_token and AppendToken()
      * 
-     * @return char
+     * @return validated token
      * @throws IOException
      */
     private char leer() {
         byte aux = -1;
         try {
-            aux = Pointer >= FilesAt.Source.length ? -1 : FilesAt.Source[Pointer];
+            aux = Pointer >= source.length ? -1 : source[Pointer];
         } catch (NullPointerException e) {
 
         }
@@ -100,29 +118,23 @@ public class Lexer implements ALex {
 
     }
 
-    /**
-     * Casts a char variable to String
-     * 
-     * @param car
-     * @return String
-     */
+    public List<Token> getTokens() {
+        return this.tokenList;
+    }
+
+    /* Métodos de libería */
+
     private String carString(char car) {
         return "" + car;
     }
 
-    @SuppressWarnings("unused")
-    /**
-     * Peeks next char without increasing the pointer
-     * 
-     * @return next char
-     */
-    private char peek() {
-        if (Pointer > FilesAt.Source.length)
-            return 0;
-        if (Pointer == FilesAt.Source.length)
-            return Constants.EOF;
-        return (char) FilesAt.Source[Pointer];
-    }
+    // private char peek() {
+    //     if (Pointer > source.length)
+    //         return 0;
+    //     if (Pointer == source.length)
+    //         return Constants.EOF;
+    //     return (char) source[Pointer];
+    // }
 
     /**
      * Skips cars util it finds the end of commnent or EOF
@@ -141,6 +153,7 @@ public class Lexer implements ALex {
     }
 
     /**
+     * Iterates through the source code and tokenizes it
      * @return validToken | null in case of Error
      */
     private Token Gen_Token(char car) throws IOException {
@@ -148,7 +161,7 @@ public class Lexer implements ALex {
         Token res = null;
 
         // Checks for EOF
-        if (car == Constants.EOF || Pointer > FilesAt.Source.length) {
+        if (car == Constants.EOF || Pointer > source.length) {
             return new Token("Teof", null);
         }
 
@@ -160,7 +173,7 @@ public class Lexer implements ALex {
                     ErrorAt.ezError(13, "'/'" + car);
                 skipComment();
 
-                // Skippable cases
+            // Skippable cases
             case '\n':
                 numLineas++;
             case '\r':
@@ -276,7 +289,9 @@ public class Lexer implements ALex {
             return;
         }
         this.tokenList.add(tk);
-        FilesAt.FTokens.write(tk.toString());
+        if(!onTest){
+            FilesAt.FTokens.write(tk.toString());
+        }
     }
 
     /**

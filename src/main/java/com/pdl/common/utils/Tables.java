@@ -111,7 +111,7 @@ public class Tables {
                 put(106, "Se esperaba un tipado de la variable");
                 put(107, "Se esperaba ';'");
                 put(108, "Se esperaba un identificador, ++, return o operacion E-S");
-                put(109, "Se esperaba 'ResPrint'");
+                put(109, "Se esperaba una operación de entrada-salida");
                 put(110, "Se esperaba una variable o una expresión");
                 put(111, "Se esperaba una constante");
                 put(113, "Se esperaba el cierre de la expresión: ')'");

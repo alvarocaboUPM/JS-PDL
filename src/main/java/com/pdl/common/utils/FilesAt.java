@@ -11,12 +11,6 @@ import com.pdl.common.ErrorAt;
 
 public class FilesAt {
 
-    // Paths
-    private static final String home = new File("").getAbsolutePath();
-    private static final String test = home + "/src/test/resources/";
-    // Path de los archivos de output
-    public final static String output = test + "outfiles/";
-
     // Byte[] que guarda el fichero fuente
     public static byte[] Source;
 
@@ -36,11 +30,11 @@ public class FilesAt {
     public static PrintStream FErr;
 
     public static void initFiles(String filename, String folder, String df) {
-        String input = test + folder + filename;
+        String input = Constants.TEST_FOLDER + folder + filename;
         try {
             Source = Files.readAllBytes(new File(input).toPath());
             // Directorio outfiles
-            File outdir = new File(output + filename);
+            File outdir = new File(Constants.OUTPUT + filename);
 
             if (!outdir.exists()) {
                 outdir.mkdirs();
@@ -48,7 +42,7 @@ public class FilesAt {
 
             FSource = new FileWriter(new File(outdir + "/Source.txt"));
 
-            FSource.append(new String(Source, "US-ASCII"));
+            FSource.write(new String(Source, "US-ASCII"));
 
             FTokens = new FileWriter(new File(outdir + "/Tokens.txt"));
 
@@ -68,11 +62,16 @@ public class FilesAt {
         }
     }
 
-    public static void closeFiles() throws IOException {
-        FilesAt.FSource.close();
-        FilesAt.FParser.close();
-        FilesAt.FTokens.close();
-        FilesAt.FTS.close();
-        FilesAt.FErr.close();
+    public static void closeFiles(){
+        try {
+            FilesAt.FSource.close();
+            FilesAt.FParser.close();
+            FilesAt.FTokens.close();
+            FilesAt.FTS.close();
+            FilesAt.FErr.close();
+        } catch (IOException e) {
+            System.err.println("Could not close the files");
+            e.printStackTrace();
+        }
     }
 }
