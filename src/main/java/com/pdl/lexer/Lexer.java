@@ -174,8 +174,9 @@ public class Lexer implements ALex {
         switch (car) {
             // Coments
             case '/':
-                if ((car = leer()) != '*')
-                    ErrorAt.ezError(13, "'/'" + car);
+                if ((car = leer()) != '*'){
+                    break;
+                }
                 skipComment();
                 return Gen_Token(leer());
 
@@ -233,6 +234,14 @@ public class Lexer implements ALex {
                 lex += carString(car);
             }
             Pointer--;
+
+            //Check for unimplemented kws
+            if(Tables.getUnimplementedKW().contains(lex)){
+                ErrorAt.ezError(24, lex);
+                panic();
+                return Gen_Token(leer());
+            }
+
             // Si no es una palabra reservada, mete el símbolo en la tabla de símbolos
             return Tables.getResWords().containsKey(lex) ? Tables.getResWords().get(lex)
                     : nToken("ID", tab.insertAt(lex));
@@ -264,17 +273,37 @@ public class Lexer implements ALex {
         switch (car) {
             case '\'':
                 ErrorAt.ezError(20, null);
-                Gen_Token('/');
+                return Gen_Token('"');
+
+            case '/':
+                ErrorAt.ezError(23, null);
+                while(leer()!='\n'){}
+                numLineas++;
                 break;
+
+            case '*':
+            case '+':
+            case '-':
+                ErrorAt.ezError(22, carString(car));
+                return nToken(Constants.MOD, null);
+
+            case '<':
+                ErrorAt.ezError(22, carString(car));
+                return nToken(Constants.GT, null);
+
+            case '|':
+            case '!':
+                ErrorAt.ezError(22, carString(car));
+                return nToken(Constants.AND, null);
 
             default:
                 /* No valid tokens nor error generated */
-                ErrorAt.ezError(14, lex);
+                ErrorAt.ezError(14, carString(car));
                 panic();
                 break;
         }
 
-        return null;
+        return Gen_Token(leer());
     }
 
     /**
@@ -314,9 +343,10 @@ public class Lexer implements ALex {
     }
 
     private static boolean isSafe(char c) {
-        char[] safe = { ';', '"', '}' };
+        char[] safe = { ';', '"', '}'};
         for (char safeChar : safe) {
             if (c == safeChar) {
+                
                 return true;
             }
         }

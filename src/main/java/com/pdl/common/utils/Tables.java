@@ -8,6 +8,8 @@ public class Tables {
     private static List<String> validTokens;
     private static Map<String, Token> DirToken;
     private static Map<String, Token> ResWords;
+    private static List<String> invalidTokens;
+    private static List<String> unimplementedKW;
     private static Map<Integer, String> ErrorHandler;
     private static Map<Integer, String> Analyzers;
 
@@ -21,6 +23,8 @@ public class Tables {
         ResWords = new HashMap<String, Token>();
         ErrorHandler = new HashMap<Integer, String>();
         Analyzers = new HashMap<Integer, String>();
+        unimplementedKW = new ArrayList<String>();
+        invalidTokens = new ArrayList<>();
 
          // ------------VALID TOKENS TABLE ----------
 
@@ -82,6 +86,17 @@ public class Tables {
         ResWords.put("true", new Token(validTokens.get(25), null));
         ResWords.put("false", new Token(validTokens.get(26), null));
 
+
+        unimplementedKW.add("for");
+        unimplementedKW.add("switch");
+        unimplementedKW.add("else");
+        unimplementedKW.add("case");
+        unimplementedKW.add("default");
+        
+        invalidTokens.add("arithmetic-operand");
+        invalidTokens.add("comparator-operand");
+        invalidTokens.add("logic-operand");
+
         /*
          * *******************ERROR HANDLER*******************
          * CODE: 1-10 Main || 11-99 Lexer || 100-199 Sintax || 200 - 299 Semantic
@@ -97,10 +112,12 @@ public class Tables {
                 put(11, "SE HA SUPERADO EL MÁXIMO INT");
                 put(12, "String demasiado largo");
                 put(13, "INVALID TOKEN: ");
-                put(14, "No ha formado token -> ");
+                put(14, "No ha formado token: ");
                 put(20, "Utilice commillas dobles para indicar string");
                 put(21, "Debe cerrar el comentario");
                 put(22, "Operador no disponible: ");
+                put(23, "Utilice comentarios con forma '/* */'");
+                put(24, "Keyword no disponible: ");
                  // Sintax
                 put(100, "Error sintáctico genérico");
                 put(101, "Se esperaba fin de fichero");
@@ -175,5 +192,9 @@ public class Tables {
 
     public static Map<Integer, String> getAnalyzers() {
         return Analyzers;
+    }
+
+    public static List<String> getUnimplementedKW(){
+        return unimplementedKW;
     }
 }
