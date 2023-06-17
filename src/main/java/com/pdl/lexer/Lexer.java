@@ -150,6 +150,10 @@ public class Lexer implements ALex {
                 return;
             }
 
+            if(nextChar1 == '\n'){
+                numLineas++;
+            }
+
             nextChar1 = nextChar2;
             nextChar2 = leer();
         }
