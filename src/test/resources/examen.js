@@ -27,7 +27,7 @@ function printeaEsta (string s, int RR)	/* Cambio de nombre */
 	print (0132765 % (8 %3)%a);
 }
 
-/*s_s = "%%%%%%Helloooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"; */
+s_s = "%%%%%%Helloooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"; 
 
 function  cadena string (string kk)
 {

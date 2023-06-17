@@ -17,7 +17,7 @@ import com.pdl.common.utils.Pretty;
 import com.pdl.common.utils.Tables;
 
 public class Lexer implements ALex {
-    //Input and output files
+    // Input and output files
     private byte[] source;
     private boolean onTest;
     private int Pointer; // Reading buffer pointer
@@ -35,10 +35,10 @@ public class Lexer implements ALex {
         tokenList = new ArrayList<Token>();
         tab = t;
         source = FilesAt.Source;
-        onTest=false;
+        onTest = false;
     }
-    
-    //For testing
+
+    // For testing
     public Lexer(TS t, String input) {
         Pointer = 0;
         numLineas = 1;
@@ -49,7 +49,7 @@ public class Lexer implements ALex {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        onTest=true;
+        onTest = true;
     }
 
     public Token nxToken() throws IOException {
@@ -58,7 +58,6 @@ public class Lexer implements ALex {
         AppendToken(tk);
         return tk;
     }
-
 
     /**
      * Acts as a main function for the lexer
@@ -129,11 +128,11 @@ public class Lexer implements ALex {
     }
 
     // private char peek() {
-    //     if (Pointer > source.length)
-    //         return 0;
-    //     if (Pointer == source.length)
-    //         return Constants.EOF;
-    //     return (char) source[Pointer];
+    // if (Pointer > source.length)
+    // return 0;
+    // if (Pointer == source.length)
+    // return Constants.EOF;
+    // return (char) source[Pointer];
     // }
 
     /**
@@ -142,18 +141,24 @@ public class Lexer implements ALex {
      * @throws IOException
      */
     private void skipComment() {
-        char c;
-        while ((c = leer()) != '*' && leer() != '/') {
-            if (c == Constants.EOF) {
+        char nextChar1 = leer();
+        char nextChar2 = leer();
+
+        while (nextChar1 != '*' || nextChar2 != '/') {
+            if (nextChar1 == Constants.EOF) {
                 ErrorAt.ezError(17, null);
                 return;
             }
+
+            nextChar1 = nextChar2;
+            nextChar2 = leer();
         }
-        Pointer += 2; // Skips '*/'
+
     }
 
     /**
      * Iterates through the source code and tokenizes it
+     * 
      * @return validToken | null in case of Error
      */
     private Token Gen_Token(char car) throws IOException {
@@ -172,6 +177,7 @@ public class Lexer implements ALex {
                 if ((car = leer()) != '*')
                     ErrorAt.ezError(13, "'/'" + car);
                 skipComment();
+                return Gen_Token(leer());
 
             // Skippable cases
             case '\n':
@@ -190,6 +196,7 @@ public class Lexer implements ALex {
                     if (lex.length() > Constants.STR_MAX_SIZE) {
                         ErrorAt.ezError(12, null);
                         panic();
+                        break;
                     }
                 }
                 res = nToken("Cad", lex + "\"");
@@ -212,7 +219,7 @@ public class Lexer implements ALex {
                 ErrorAt.ezError(11, null);
                 num = Constants.MAX_INT;
             }
-            
+
             res = nToken("CteInt", num);
             num = null;
             Pointer--;
@@ -289,7 +296,7 @@ public class Lexer implements ALex {
             return;
         }
         this.tokenList.add(tk);
-        if(!onTest){
+        if (!onTest) {
             FilesAt.FTokens.write(tk.toString());
         }
     }
@@ -302,7 +309,7 @@ public class Lexer implements ALex {
         while (!isSafe(leer())) {
             res++;
         }
-        System.out.println("Skipped " + res + "chars");
+        System.err.println("Skipped " + res + " chars");
         return res;
     }
 
