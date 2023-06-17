@@ -75,4 +75,13 @@ public class ParseTest {
         assertEquals(ok, res);
     }
 
+    @Test
+    public void loopTest1() {
+        testFile += "t5.js";
+        ok = "D	 1 10 11 53 13 1 10 11 52 13 1 10 11 54 13 1 5 50 53 6 53 9 34 33 36 29 15 24 38 46 38 45 55 35 11 52 13 36 29 14 18 19 38 44 48 34 26 38 44 48 28 30 31 38 44 48 37 38 44 48 40 38 45 56 41 38 44 48 36 29 14 18 19 38 44 47 20 38 44 48 22 38 44 48 22 38 44 48 23 36 29 14 18 19 38 45 55 36 30 31 38 44 48 37 4 ";
+        String res = p.parserDebug(testFile);
+        assertTrue(Compiler.errors.isEmpty());
+        assertEquals(ok, res);
+    }
+
 }
