@@ -97,8 +97,9 @@ public class Tables {
                 put(11, "SE HA SUPERADO EL MÁXIMO INT");
                 put(12, "String demasiado largo");
                 put(13, "INVALID TOKEN: ");
-                put(14, "No ha formado token -> ");
+                put(14, "No ha formado token: ");
                 put(20, "Utilice commillas dobles para indicar string");
+                put(23, "Utilice comentarios con forma '/* */'");
                 put(21, "Debe cerrar el comentario");
                 put(22, "Operador no disponible: ");
                  // Sintax
