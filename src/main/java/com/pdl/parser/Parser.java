@@ -75,13 +75,11 @@ public class Parser implements ASin {
             default:
                 if (tk.isType()) {
                     ErrorAt.ezError(213, debugString());
-                    break;
                 } else {
                     ErrorAt.ezError(100, debugString());
-                    break;
                 }
+                return START();
         }
-
         return result;
     }
 
@@ -557,11 +555,6 @@ public class Parser implements ASin {
     private void callEXP() {
         getNext();
         EXP();
-    }
-
-    private void callCTE() {
-        getNext();
-        CTE();
     }
 
 }

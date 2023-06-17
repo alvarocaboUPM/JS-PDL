@@ -234,6 +234,14 @@ public class Lexer implements ALex {
                 lex += carString(car);
             }
             Pointer--;
+
+            //Check for unimplemented kws
+            if(Tables.getUnimplementedKW().contains(lex)){
+                ErrorAt.ezError(24, lex);
+                panic();
+                return Gen_Token(leer());
+            }
+
             // Si no es una palabra reservada, mete el símbolo en la tabla de símbolos
             return Tables.getResWords().containsKey(lex) ? Tables.getResWords().get(lex)
                     : nToken("ID", tab.insertAt(lex));
