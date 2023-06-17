@@ -22,7 +22,7 @@ public class Parser implements ASin {
         this.t = t;
     }
 
-    protected String parserDebug(String testFile){
+    protected String parserDebug(String testFile) {
         result = "D\t ";
         lexer = new Lexer(t, testFile);
 
@@ -93,14 +93,13 @@ public class Parser implements ASin {
             ckID();
             callTX();
 
-            
             ckParOp();
             PARM();
 
             getNext();
             ckKeyOp();
             BODY();
-            
+
             return;
         }
 
@@ -171,7 +170,7 @@ public class Parser implements ASin {
             case Constants.id:
                 result += "14 ";
                 ASCALL();
-                
+
                 return;
             case Constants.print:
             case Constants.input:
@@ -181,7 +180,7 @@ public class Parser implements ASin {
             case Constants.increment:
                 result += "16 ";
                 INC();
-                
+
                 break;
         }
     }
@@ -199,7 +198,7 @@ public class Parser implements ASin {
         if (checkTk(Constants.equals)) {
             result += "18 ";
             ASIGN();
-            
+
         }
     }
 
@@ -208,7 +207,7 @@ public class Parser implements ASin {
         // Cursor sobre el =
         result += "19 ";
         callEXP();
-        
+
     }
 
     @Override
@@ -216,7 +215,7 @@ public class Parser implements ASin {
         getNext();
         if (checkTk(Constants.parenthesesClose)) {
             result += "21 ";
-            
+
             return;
         }
         result += "20 ";
@@ -230,9 +229,9 @@ public class Parser implements ASin {
             result += "22 ";
             callEXP();
             FCALLX();
-            return ;
+            return;
         }
-        // TODO: OJO
+
         if (checkTk(Constants.parenthesesClose)) {
             result += "23 ";
             return;
@@ -252,7 +251,7 @@ public class Parser implements ASin {
             ckID();
             getNext();
             ckSemCol();
-            return ;
+            return;
         } else {
             ErrorAt.ezError(109, debugString());
         }
@@ -274,8 +273,6 @@ public class Parser implements ASin {
             getNext();
             ckKeyOp();
             BODY();
-
-            
 
             getNext();
             ckWhile();
@@ -303,7 +300,6 @@ public class Parser implements ASin {
             result += "28 ";
             SENB();
 
-            
         }
     }
 
@@ -348,6 +344,7 @@ public class Parser implements ASin {
         else if (checkTk(Constants.ifKw, Constants.whileKw)) {
             result += "34 ";
             SENCOM();
+            BODY();
         } else {
             result += "36 ";
             SENB();
@@ -362,7 +359,6 @@ public class Parser implements ASin {
             result += "38 ";
             VALUE();
             EXPX();
-            //TODO: Falla si después de una expresión viene un ;
             return;
         }
         if (checkTk(Constants.increment)) {
@@ -378,7 +374,7 @@ public class Parser implements ASin {
         if (checkTk(Constants.semicolon, Constants.comma, Constants.parenthesesClose)) {
             return;
         }
-        
+
         if (!tk.isOperator()) {
             ErrorAt.ezError(116, debugString());
         }
@@ -427,6 +423,7 @@ public class Parser implements ASin {
 
         result += "47 ";
         FCALL();
+        getNext();
     }
 
     @Override
@@ -434,7 +431,7 @@ public class Parser implements ASin {
         result += "49 ";
         getNext();
         ckID();
-        
+
     }
 
     @Override
@@ -445,7 +442,8 @@ public class Parser implements ASin {
         }
 
         result += "50 ";
-        callT();
+        T();
+        getNext();
     }
 
     @Override

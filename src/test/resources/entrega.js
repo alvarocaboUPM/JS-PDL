@@ -7,7 +7,7 @@ function Func1 int (int x, boolean y2)
    z = "hola";
    return x;
    /* 
-   //return y2;
+   return y2;
     */
 }
 

@@ -17,7 +17,8 @@ print	33
 function ff boolean(boolean ss)
 {
 	varglobal = 8;
-	if (l1) l2 = ff (ss);
+	if (l1) 
+		l2 = ff (ss, a);
 	return ss;
 }
 		
