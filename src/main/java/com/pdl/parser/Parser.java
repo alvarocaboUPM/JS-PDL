@@ -92,9 +92,11 @@ public class Parser implements ASin {
             default:
                 if (tk.isType()) {
                     ErrorAt.ezError(213, debugString());
+
                 } else {
                     ErrorAt.ezError(100, debugString());
                 }
+                panic();
                 return START();
         }
         return result;
@@ -128,6 +130,10 @@ public class Parser implements ASin {
                 SENB();
                 break;
             }
+            default:
+                ErrorAt.ezError(100, debugString());
+                panic();
+
         }
     }
 
@@ -183,11 +189,11 @@ public class Parser implements ASin {
      * Handles > && % and entering a ending an expresion
      */
     public void EXPX() {
-        if(checkTk(Constants.parenthesesClose, Constants.semicolon, Constants.comma)){
+        if (checkTk(Constants.parenthesesClose, Constants.semicolon, Constants.comma)) {
             result += "14 ";
             return;
-        } 
-            
+        }
+
         switch (tk.getType()) {
             case Constants.GT: {
                 tmpExp.add("GT");
@@ -651,7 +657,6 @@ public class Parser implements ASin {
         TDX();
         inFunc = true;
 
-
         ckParOp();
         t.setLocal();
         getNext();
@@ -662,7 +667,6 @@ public class Parser implements ASin {
         getNext();
         ckKeyOp();
         BODY();
-
         OffsetG += OffsetL; // revisar
         OffsetL = 0;
 
@@ -750,48 +754,66 @@ public class Parser implements ASin {
     }
 
     private void ckID() {
-        if (!checkTk(Constants.id))
+        if (!checkTk(Constants.id)) {
             ErrorAt.ezError(105, debugString());
+            panic();
+        }
     }
 
     private void ckParOp() {
-        if (!checkTk(Constants.parenthesesOpen))
+        if (!checkTk(Constants.parenthesesOpen)) {
             ErrorAt.ezError(103, debugString());
+            panic();
+        }
     }
 
     private void ckParCl() {
-        if (!checkTk(Constants.parenthesesClose))
+        if (!checkTk(Constants.parenthesesClose)) {
             ErrorAt.ezError(99, debugString());
+            panic();
+        }
     }
 
     private void ckKeyOp() {
-        if (!checkTk(Constants.curlyBraceOpen))
+        if (!checkTk(Constants.curlyBraceOpen)) {
             ErrorAt.ezError(104, debugString());
+            panic();
+        }
     }
 
     private void ckKeyCl() {
-        if (!checkTk(Constants.curlyBraceClose))
+        if (!checkTk(Constants.curlyBraceClose)) {
             ErrorAt.ezError(114, debugString());
+            panic();
+        }
     }
 
     private void ckSemCol() {
-        if (!checkTk(Constants.semicolon))
+        if (!checkTk(Constants.semicolon)) {
             ErrorAt.ezError(107, debugString());
+            panic();
+        }
     }
 
     private void ckWhile() {
-        if (!checkTk(Constants.whileKw))
+        if (!checkTk(Constants.whileKw)) {
             ErrorAt.ezError(118, debugString());
+            panic();
+        }
     }
 
     private void ckCte() {
-        if (!checkTk(Constants.cad, Constants.num, Constants.falseKw, Constants.trueKw))
+        if (!checkTk(Constants.cad, Constants.num, Constants.falseKw, Constants.trueKw)) {
             ErrorAt.ezError(111, debugString());
+            panic();
+        }
     }
 
     private void ckType() {
-        if (!checkTk(Constants.stringType, Constants.booleanType, Constants.intType))
+        if (!checkTk(Constants.stringType, Constants.booleanType, Constants.intType)) {
             ErrorAt.ezError(106, debugString());
+            panic();
+        }
     }
 
     public void IncOffset(String Type) {
@@ -827,5 +849,27 @@ public class Parser implements ASin {
         } catch (Exception e) {
             return;
         }
+    }
+
+    /**
+     * Skips characters until it finds a safe one
+     */
+    private int panic() {
+        int res = 0;
+        while (!isSafe(tk.getType())) {
+            res++;
+        }
+        System.err.println("Skipped " + res + " chars");
+        return res;
+    }
+
+    private static boolean isSafe(String c) {
+        String[] safe = { Constants.semicolon, Constants.parenthesesClose, Constants.curlyBraceClose };
+        for (String safeChar : safe) {
+            if (c == safeChar) {
+                return true;
+            }
+        }
+        return false;
     }
 }
