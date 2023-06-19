@@ -30,8 +30,8 @@ public class Tables {
 
         // TOKENS INMEDIATOS Y RES
         validTokens.add("TypeBool"); // 0
-        validTokens.add("LoopDo");  // 1
-        validTokens.add("FunID");  // 2
+        validTokens.add("LoopDo"); // 1
+        validTokens.add("FunID"); // 2
         validTokens.add("CondIf"); // 3
         validTokens.add("ResIn"); // 4
         validTokens.add("TypeInt"); // 5
@@ -86,14 +86,13 @@ public class Tables {
         ResWords.put("true", new Token(validTokens.get(25), null));
         ResWords.put("false", new Token(validTokens.get(26), null));
 
-
         unimplementedKW.add("for");
         unimplementedKW.add("switch");
         unimplementedKW.add("else");
         unimplementedKW.add("case");
         unimplementedKW.add("default");
         unimplementedKW.add("number");
-        
+
         invalidTokens.add("arithmetic-operand");
         invalidTokens.add("comparator-operand");
         invalidTokens.add("logic-operand");
@@ -135,7 +134,6 @@ public class Tables {
                 put(111, "Se esperaba una constante");
                 put(113, "Se esperaba el cierre de la expresión: ')'");
                 put(114, "Se esperaba el cierre de la declaración: '}'");
-                put(116, "Expresion Invalida");
                 put(117, "Necesaria previa declaracion de las funciones ");
                 put(118, "Estructura inválida del bucle do { something } while(cond); ");
                 put(120, "El parser ha recibido un token nulo");
@@ -152,12 +150,15 @@ public class Tables {
                 put(213, "Use 'let' para declarar variables globales");
                 put(214, "las operacion de entrada o salida solo aceptan un valor entero o cadena");
                 put(215, "Constante inválida introducida -> ");
-                put(220, "Intentando declarar una expresión ternaria");
-                put(221, "Intentando declarar una expresión vacía/inválida");
+                put(220, "Intentando declarar una expresión ternaria: ");
+                put(221, "Intentando declarar una expresión vacía/inválida; ");
                 put(230, "Error de tipo: int % int -> int");
                 put(231, "Error de tipo: int > int -> bool");
                 put(232, "Error de tipo: bool && bool -> int");
                 put(233, "Error de tipo: Expresión sin tipo");
+                put(234, "Incompatibilidad tipo y operador");
+                put(235, "Expresion Invalida");
+
             }
         });
 
@@ -196,7 +197,7 @@ public class Tables {
         return Analyzers;
     }
 
-    public static List<String> getUnimplementedKW(){
+    public static List<String> getUnimplementedKW() {
         return unimplementedKW;
     }
 }
