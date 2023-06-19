@@ -92,11 +92,11 @@ public class Parser implements ASin {
             default:
                 if (tk.isType()) {
                     ErrorAt.ezError(213, debugString());
-                    panic();
+
                 } else {
                     ErrorAt.ezError(100, debugString());
-                    panic();
                 }
+                panic();
                 return START();
         }
         return result;
@@ -189,11 +189,11 @@ public class Parser implements ASin {
      * Handles > && % and entering a ending an expresion
      */
     public void EXPX() {
-        if(checkTk(Constants.parenthesesClose, Constants.semicolon, Constants.comma)){
+        if (checkTk(Constants.parenthesesClose, Constants.semicolon, Constants.comma)) {
             result += "14 ";
             return;
-        } 
-            
+        }
+
         switch (tk.getType()) {
             case Constants.GT: {
                 tmpExp.add("GT");
@@ -657,7 +657,6 @@ public class Parser implements ASin {
         TDX();
         inFunc = true;
 
-
         ckParOp();
         t.setLocal();
         getNext();
@@ -868,7 +867,6 @@ public class Parser implements ASin {
         String[] safe = { Constants.semicolon, Constants.parenthesesClose, Constants.curlyBraceClose };
         for (String safeChar : safe) {
             if (c == safeChar) {
-
                 return true;
             }
         }
