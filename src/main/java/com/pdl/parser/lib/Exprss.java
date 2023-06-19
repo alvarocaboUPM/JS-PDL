@@ -12,12 +12,13 @@ public class Exprss {
      * Método para evaluar las expresiones utilizando el algoritmo Shunting Yard
      * 
      * @param tokens una lista de tokens de la expresión a evaluar
-     * @return el tipo de la expresión evaluada, o NULL si la expresión es inválida
+     * @return el tipo de la expresión evaluada, o "NULL" si la expresión es inválida
      */
     public static String evaluate(List<String> tokens) {
         // Verificamos si la lista de tokens está vacía
         if (tokens.isEmpty()) {
             ErrorAt.ezError(221, "Token list is empty");
+            return "NULL";
         }
 
         // Verificamos casos especiales
@@ -42,6 +43,7 @@ public class Exprss {
         // Lanzamos una excepción si los paréntesis no están equilibrados
         if (openParens != closeParens) {
             ErrorAt.ezError(220, "Mismatched parentheses in expression");
+            return "NULL";
         }
 
         // Procesamos las expresiones dentro de los paréntesis
@@ -117,6 +119,7 @@ public class Exprss {
                         || val1.equals("TypeBool") && val2.equals("TypeInt")) {
 
                     ErrorAt.ezError(232, null);
+                    return "NULL";
                 }
 
                 // Evaluamos el operador
@@ -128,6 +131,7 @@ public class Exprss {
                     evalStack.push(val1.equals("TypeInt") && val2.equals("TypeInt") ? "TypeInt" : "NULL");
                 } else {
                     ErrorAt.ezError(234, null);
+                    return "NULL";
                 }
             }
         }
@@ -135,7 +139,7 @@ public class Exprss {
         // Verificamos que hay un resultado en la pila de evaluación
         if (evalStack.isEmpty()) {
             ErrorAt.ezError(235, null);
-
+            return "NULL";
         }
 
         // Devolvemos el resultado

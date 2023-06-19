@@ -158,6 +158,7 @@ public class Tables {
                 put(233, "Error de tipo: Expresión sin tipo");
                 put(234, "Incompatibilidad tipo y operador");
                 put(235, "Expresion Invalida");
+                
 
             }
         });
