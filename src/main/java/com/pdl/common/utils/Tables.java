@@ -26,9 +26,9 @@ public class Tables {
         unimplementedKW = new ArrayList<String>();
         invalidTokens = new ArrayList<>();
 
-         // ------------VALID TOKENS TABLE ----------
+        // ------------VALID TOKENS TABLE ----------
 
-         // TOKENS INMEDIATOS Y RES
+        // TOKENS INMEDIATOS Y RES
         validTokens.add("TypeBool"); // 0
         validTokens.add("LoopDo");  // 1
         validTokens.add("FunID");  // 2
@@ -58,7 +58,7 @@ public class Tables {
         validTokens.add("TokF"); // 26
         validTokens.add("Teof"); // 27
 
-         // ------------DIRECT TOKENS TABLE ----------
+        // ------------DIRECT TOKENS TABLE ----------
         DirToken.put("{", new Token(validTokens.get(20), null));
         DirToken.put("}", new Token(validTokens.get(21), null));
         DirToken.put("(", new Token(validTokens.get(18), null));
@@ -70,7 +70,7 @@ public class Tables {
         DirToken.put("%", new Token(validTokens.get(22), null));
         DirToken.put(">", new Token(validTokens.get(23), null));
 
-         // -----------RESERVED WORDS TABLE-----------
+        // -----------RESERVED WORDS TABLE-----------
         ResWords.put("do", new Token(validTokens.get(1), null));
         ResWords.put("while", new Token(validTokens.get(10), null));
         ResWords.put("boolean", new Token(validTokens.get(0), null));
@@ -82,7 +82,7 @@ public class Tables {
         ResWords.put("print", new Token(validTokens.get(7), null));
         ResWords.put("return", new Token(validTokens.get(8), null));
         ResWords.put("if", new Token(validTokens.get(3), null));
-         // -----------SPECIAL WORDS -----------
+        // -----------SPECIAL WORDS -----------
         ResWords.put("true", new Token(validTokens.get(25), null));
         ResWords.put("false", new Token(validTokens.get(26), null));
 
@@ -108,7 +108,7 @@ public class Tables {
                 put(2, "NullPointer");
                 put(3, "InOut Exception");
                 put(4, "Error al volcar la tabla de símbolos");
-                 // Lexer
+                // Lexer
                 put(11, "SE HA SUPERADO EL MÁXIMO INT");
                 put(12, "String demasiado largo");
                 put(13, "INVALID TOKEN: ");
@@ -118,7 +118,7 @@ public class Tables {
                 put(22, "Operador no disponible: ");
                 put(23, "Utilice comentarios con forma '/* */'");
                 put(24, "Keyword no disponible: ");
-                 // Sintax
+                // Sintax
                 put(100, "Error sintáctico genérico");
                 put(101, "Se esperaba fin de fichero");
                 put(102, "Se esperaba una declaración o un condicional");
@@ -137,7 +137,7 @@ public class Tables {
                 put(117, "Necesaria previa declaracion de las funciones ");
                 put(118, "Estructura inválida del bucle do { something } while(cond); ");
                 put(120, "El parser ha recibido un token nulo");
-                 // Semantics
+                // Semantics
                 put(200, "Error semántico genérico");
                 put(201, "Se está intentando declarar una variable global en un ámbito local");
                 put(202, "Error de unicidad; se ha declarado de nuevo el identificador: ");

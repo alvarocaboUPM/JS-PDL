@@ -1,6 +1,7 @@
 package com.pdl.common.interfaces;
 
 import java.io.IOException;
+import java.util.Map;
 
 import com.pdl.lexer.lib.SymbolAt;
 
@@ -57,5 +58,14 @@ public interface TS {
      * @throws IOException
      */
     public void OutTS() throws IOException;
+
+    public void setLocal();
+
+    public void functionOn();
+    public void functionOff();
+    public boolean functionState();
+    public Map<Integer, SymbolAt> getCurrentLocalTs();
+    public boolean ShadowingState(); //REMOVE
+    public void shadowing(boolean state);//REMOVE
 
 }

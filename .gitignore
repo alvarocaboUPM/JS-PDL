@@ -1,8 +1,6 @@
 
-
+.idea
 utils/*
-!utils/gh-md-toc
-src/test/resources/outfiles/
 .vscode
 
 *.iml

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.pdl.common.ErrorAt;
-
 import com.pdl.common.utils.FilesAt;
 import com.pdl.common.utils.Pretty;
 import com.pdl.common.utils.Tables;
@@ -17,7 +16,7 @@ import com.pdl.symbols.SymbolTable;
 /**
  * Frontend class of the JS-PDL FilesAt
  * 
- * @author Álvaro Cabo / Usema El-Hatifi
+ * @author Álvaro Cabo / Oussama El-Hatifi
  * @version 1.0
  */
 public class Compiler {

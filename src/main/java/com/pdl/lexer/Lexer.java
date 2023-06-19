@@ -61,9 +61,9 @@ public class Lexer implements ALex {
 
     /**
      * Acts as a main function for the lexer
-     * 
+     *
      * @implNote Only for debug*
-     * 
+     *
      * @return TokenList List of tokens generated
      * @throws IOException
      */
@@ -89,7 +89,7 @@ public class Lexer implements ALex {
 
     /**
      * Easy constructor for tokens
-     * 
+     *
      * @return new {@link Token} with lineAt <- numLineas
      */
     private Token nToken(String Type, Object Info) {
@@ -99,7 +99,7 @@ public class Lexer implements ALex {
     /**
      * Acts as a it.getNext() function in a live TokenList,
      * mixes private funcs Gen_token and AppendToken()
-     * 
+     *
      * @return validated token
      * @throws IOException
      */
@@ -137,7 +137,7 @@ public class Lexer implements ALex {
 
     /**
      * Skips cars util it finds the end of commnent or EOF
-     * 
+     *
      * @throws IOException
      */
     private void skipComment() {
@@ -150,7 +150,7 @@ public class Lexer implements ALex {
                 return;
             }
 
-            if(nextChar1 == '\n'){
+            if (nextChar1 == '\n') {
                 numLineas++;
             }
 
@@ -162,7 +162,7 @@ public class Lexer implements ALex {
 
     /**
      * Iterates through the source code and tokenizes it
-     * 
+     *
      * @return validToken | null in case of Error
      */
     private Token Gen_Token(char car) throws IOException {
@@ -178,7 +178,7 @@ public class Lexer implements ALex {
         switch (car) {
             // Coments
             case '/':
-                if ((car = leer()) != '*'){
+                if ((car = leer()) != '*') {
                     break;
                 }
                 skipComment();
@@ -239,16 +239,42 @@ public class Lexer implements ALex {
             }
             Pointer--;
 
-            //Check for unimplemented kws
-            if(Tables.getUnimplementedKW().contains(lex)){
+            // Check for unimplemented kws
+            if (Tables.getUnimplementedKW().contains(lex)) {
                 ErrorAt.ezError(24, lex);
                 panic();
                 return Gen_Token(leer());
             }
 
-            // Si no es una palabra reservada, mete el símbolo en la tabla de símbolos
-            return Tables.getResWords().containsKey(lex) ? Tables.getResWords().get(lex)
-                    : nToken("ID", tab.insertAt(lex));
+            // Si no es una palabra reservada
+            if (Tables.getResWords().containsKey(lex))
+                return Tables.getResWords().get(lex);
+
+            // Mete el símbolo en la tabla de símbolos
+            SymbolAt tmp = new SymbolAt();
+            // Existe el símbolo
+            if ((tmp = tab.lookAt(lex)) != null) {
+                if (tab.getScope())
+                    // estamos en la tabla global
+                    return new Token(Constants.id, tmp.getID());
+
+                // estamos en la tabla local
+                if (tab.getCurrentLocalTs().containsValue(tmp))
+                    return new Token(Constants.id, tmp.getID());
+
+                // el lexema está en la global, pero no en la local
+                // Añadir flag Shadowing
+                tab.shadowing(true);
+                return nToken(Constants.id, tab.insertAt(lex)); // insertamos el lexema en la local y devolvemos el
+                                                                // token correspondiente
+            }
+
+            if (tab.getScope()) {// estamos en la tabla global
+                if (tab.functionState()) // comprobamos si estamos empezando a analizar una funcion
+                    tab.createTS(lex); // Creamos tabla local
+                return nToken("ID", tab.insertAt(lex));
+            }
+            return nToken("ID", tab.insertAt(lex));
 
         } else {
             // Checks for direct token
@@ -281,7 +307,8 @@ public class Lexer implements ALex {
 
             case '/':
                 ErrorAt.ezError(23, null);
-                while(leer()!='\n'){}
+                while (leer() != '\n') {
+                }
                 numLineas++;
                 break;
 
@@ -314,7 +341,7 @@ public class Lexer implements ALex {
      * Allows to write the tokens to the file
      * and keep them in the tokens array while
      * they're being generated
-     * 
+     *
      * @param tk Token to be written
      * @exception InvalidToken if its type is not contained in the
      *                         valid Tokens list
@@ -350,7 +377,6 @@ public class Lexer implements ALex {
         char[] safe = { ';', '"', '}'};
         for (char safeChar : safe) {
             if (c == safeChar) {
-                
                 return true;
             }
         }

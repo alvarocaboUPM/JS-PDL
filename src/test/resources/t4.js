@@ -8,21 +8,21 @@ l1 = l2;
 if (l1&& l2) cad = "hello";
 n2 = n1 % 378;
 
-print	33 
-		% 
-		n1 
-		% 
-		n2;
+print	33
+%
+n1
+%
+n2;
 
 function ff boolean(boolean ss)
 {
-	varglobal = 8;
-	if (l1) 
-		l2 = ff (ss, a);
-	return ss;
+    varglobal = 8;
+    if (l1)
+        l2 = ff (ss, a);
+    return ss;
 }
-		
-		
-		
-if (ff(l2)) 
+
+
+
+if (ff(l2))
     print varglobal;

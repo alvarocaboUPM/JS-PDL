@@ -15,6 +15,16 @@ public class SymbolAt extends Object {
     /**
      * Default values constructor
      */
+    public SymbolAt(){
+        this.Lexema = "";
+        this.ID = -1;
+        this.type = "Unknown";
+        this.NumParams = -1;
+        this.TypesParams = new ArrayList<>();
+        this.ReturnType = "Unknown";
+        this.offset = -1;
+
+    }
     public SymbolAt(String Lexema, int index) {
         this.Lexema = Lexema;
         this.ID = index;
@@ -139,6 +149,8 @@ public class SymbolAt extends Object {
     public void setReturnType(String ReturnType) {
         this.ReturnType = ReturnType;
     }
+    public void setID(int ID) { this.ID = ID; }
+    public void setLexema(String Lexema) { this.Lexema = Lexema; }
 
     public int getOffset() {
         return this.offset;
@@ -147,5 +159,4 @@ public class SymbolAt extends Object {
     public void setOffset(int offset) {
         this.offset = offset;
     }
-
 }
