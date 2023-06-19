@@ -16,7 +16,7 @@ import com.pdl.lexer.lib.Token;
 import com.pdl.parser.lib.Exprss;
 
 public class Parser implements ASin {
-//public class Parser {
+    // public class Parser {
     private String result;
     private Lexer lexer;
     private static Token tk;
@@ -28,11 +28,12 @@ public class Parser implements ASin {
     private Queue<List<String>> ExpQueue = new LinkedList<>();
     private List<String> tmpExp, Emded;
     private List<String> tmpArgs;
-    
+
     private String TabLex;
     // Flagset
     private boolean inFunc, inCond, inVarDec, noErr,
             inParms, setID, inFCall, nestedExp, inAss;
+
     public Parser(TS t) {
         result = "D\t ";
         lexer = new Lexer(t);
@@ -40,7 +41,6 @@ public class Parser implements ASin {
         inFunc = inCond = inVarDec = nestedExp = inAss = false;
         this.t = t;
     }
-
 
     protected String parserDebug(String testFile) {
         result = "D\t ";
@@ -92,8 +92,10 @@ public class Parser implements ASin {
             default:
                 if (tk.isType()) {
                     ErrorAt.ezError(213, debugString());
+                    panic();
                 } else {
                     ErrorAt.ezError(100, debugString());
+                    panic();
                 }
                 return START();
         }
@@ -130,6 +132,7 @@ public class Parser implements ASin {
             }
             default:
                 ErrorAt.ezError(100, debugString());
+                panic();
 
         }
     }
@@ -214,6 +217,7 @@ public class Parser implements ASin {
             }
         }
     }
+
     /**
      * Handles {@link Expresion} operands
      */
@@ -227,12 +231,11 @@ public class Parser implements ASin {
             } catch (Exception e) {
                 return;
             }
-            //ParseLib.setID();
+            // ParseLib.setID();
             getNext();
             XPX();
             return;
-        }
-        else if(checkTk(Constants.parenthesesOpen)){
+        } else if (checkTk(Constants.parenthesesOpen)) {
             tmpExp.add("ParOpen");
             result += "17 ";
             // TODO Set Priority??
@@ -242,16 +245,16 @@ public class Parser implements ASin {
             tmpExp.add("ParClose");
             getNext();
             return;
-        }
-        else if(checkTk(Constants.num,Constants.trueKw,Constants.falseKw,Constants.cad)){
+        } else if (checkTk(Constants.num, Constants.trueKw, Constants.falseKw, Constants.cad)) {
             result += "16 ";
             CTE();
             return;
         }
-        //ckSemCol();//TODO revisar
-        //ParseLib.ezError(221); //Todo Throw detailed error??
+        // ckSemCol();//TODO revisar
+        // ParseLib.ezError(221); //Todo Throw detailed error??
     }
-    //------------------
+
+    // ------------------
     /**
      * Handles constant declarations
      */
@@ -274,19 +277,20 @@ public class Parser implements ASin {
                 result += "7 ";
                 break;
             default:
-                //ALex.ezError(215, tk.getType()); TODO error?
+                // ALex.ezError(215, tk.getType()); TODO error?
         }
-        //ParseLib.insertOperand();
+        // ParseLib.insertOperand();
         getNext();
     }
-    //------------------
+
+    // ------------------
     /**
      * Permite utilizar el retorno de una función en una expresión
      */
     public void XPX() {
         if (checkTk(Constants.parenthesesOpen)) {
-            if (id.getType() != "Function") //ParseLib.ezError(117); TODO error?
-            LastType = t.lookAtIndex(CurrID).getReturnType();
+            if (id.getType() != "Function") // ParseLib.ezError(117); TODO error?
+                LastType = t.lookAtIndex(CurrID).getReturnType();
             tmpExp.add(id.getReturnType()); // TODO review
             SymbolAt tmp = id;
             result += "18 ";
@@ -295,20 +299,20 @@ public class Parser implements ASin {
             inFCall = true;
             Emded = tmpExp;
             nArgs = 0;
-            //ExpQueue.add(tmpExp);
+            // ExpQueue.add(tmpExp);
             FCALL();
             tmpExp = Emded;
-            if(!tmpArgs.equals(tmp.getTypesParams())) //ParseLib.ezError(237,tmp.getLexema()); TODO error
-            if (nArgs != tmp.getNumParams()) //ParseLib.ezError(204, tmp.getLexema()); TODO error
-            inFCall = false;
+            if (!tmpArgs.equals(tmp.getTypesParams())) // ParseLib.ezError(237,tmp.getLexema()); TODO error
+                if (nArgs != tmp.getNumParams()) // ParseLib.ezError(204, tmp.getLexema()); TODO error
+                    inFCall = false;
 
         } else {
             CheckExplicitness();
-            tmpExp.add(id.getType());//todo review
+            tmpExp.add(id.getType());// todo review
             result += "19 ";// lambda
         }
     }
-    //------------------
+    // ------------------
 
     /**
      * Handles function calls
@@ -320,7 +324,7 @@ public class Parser implements ASin {
             EXP();
             ExpQueue.add(tmpExp);
             tmpArgs = new ArrayList<>();
-            tmpArgs.add(Exprss.evaluate(ExpQueue.poll()));//Todo review
+            tmpArgs.add(Exprss.evaluate(ExpQueue.poll()));// Todo review
             nArgs++;
             FCALLX();
         } else {
@@ -328,7 +332,8 @@ public class Parser implements ASin {
             getNext();
         } // lambda
     }
-    //------------
+
+    // ------------
     /**
      * Function call handle
      */
@@ -346,10 +351,10 @@ public class Parser implements ASin {
             result += "48 ";
             getNext();
         } // lambda
-        //else TODO check what error to return !
-            //ParseLib.ezError(113);
+          // else TODO check what error to return !
+          // ParseLib.ezError(113);
     }
-    //------------------
+    // ------------------
 
     /**
      * Handles lower scope declarations
@@ -390,7 +395,8 @@ public class Parser implements ASin {
         DECLX();
         inVarDec = false;
     }
-    //------------------
+
+    // ------------------
     /**
      * Gestión de tipos
      */
@@ -408,7 +414,7 @@ public class Parser implements ASin {
                 break;
             default:
                 id.setType("Unknown");
-                //ParseLib.ezError(106); TODO review if should ret error
+                // ParseLib.ezError(106); TODO review if should ret error
         }
     }
 
@@ -431,8 +437,7 @@ public class Parser implements ASin {
         getNext();
     }
 
-
-    //------------------
+    // ------------------
     /**
      * Aux declaration handle
      */
@@ -464,7 +469,7 @@ public class Parser implements ASin {
      */
     public void WILE() {
         result += "34 ";
-        ckWhile(); //checks token =? while
+        ckWhile(); // checks token =? while
         getNext();
         ckParOp();
         inCond = true;
@@ -472,12 +477,13 @@ public class Parser implements ASin {
         tmpExp = new ArrayList<>();
         EXP();
         ExpQueue.add(tmpExp);
-        if(!Exprss.evaluate(ExpQueue.poll()).equals("TypeBool")) //ParseLib.ezError(239); //Todo ret proper error!!
-        getNext();
+        if (!Exprss.evaluate(ExpQueue.poll()).equals("TypeBool")) // ParseLib.ezError(239); //Todo ret proper error!!
+            getNext();
         inCond = false;
         ckSemCol();
     }
-    //------------------
+
+    // ------------------
     /**
      * Handles if conditionals with no { } structure
      * Handles sentences with IO operations or ++
@@ -509,16 +515,17 @@ public class Parser implements ASin {
                 break;
             }
             default: {
-                //ParseLib.ezError(108); TODO throw error?
+                // ParseLib.ezError(108); TODO throw error?
             }
         }
     }
-    //----------------
+
+    // ----------------
     /**
      * Hadles value assigment to vars and function calls
      */
     public void IDX() {
-        //ParseLib.setID();
+        // ParseLib.setID();
         ckID();
         try {
             id = t.lookAtIndex((int) tk.getInfo());
@@ -539,11 +546,11 @@ public class Parser implements ASin {
             // Comprobar numero de parametros
             inFCall = true;
             FCALL();
-            inFCall = false; //Should I?
-            if(!tmpArgs.equals(tmp.getTypesParams())) //ParseLib.ezError(237,tmp.getLexema()); Sementic error
-            ckSemCol();
-        } //else TODO Throw error?
-            //ParseLib.ezError(103);
+            inFCall = false; // Should I?
+            if (!tmpArgs.equals(tmp.getTypesParams())) // ParseLib.ezError(237,tmp.getLexema()); Sementic error
+                ckSemCol();
+        } // else TODO Throw error?
+          // ParseLib.ezError(103);
     }
 
     /*
@@ -555,8 +562,9 @@ public class Parser implements ASin {
         tmpExp = new ArrayList<>();
         EXP();
         ExpQueue.add(tmpExp);
-        if(!Exprss.evaluate(ExpQueue.poll()).equals( TypeToCmp)) //ParseLib.ezError(234,"Tipo de la Expresion != " + TypeToCmp); Semantic Error //TODO Throw proper error
-        ckSemCol();
+        if (!Exprss.evaluate(ExpQueue.poll()).equals(TypeToCmp)) // ParseLib.ezError(234,"Tipo de la Expresion != " +
+                                                                 // TypeToCmp); Semantic Error //TODO Throw proper error
+            ckSemCol();
     }
 
     /**
@@ -573,10 +581,12 @@ public class Parser implements ASin {
             } catch (Exception e) {
                 return;
             }
-                CheckExplicitness();
-                if (id.getType() != "TypeInt" && id.getType() != "TypeString")// TODO Throw proper Error /  ErrorAt.ezError(214, debugString()); // Semantic Error
+            CheckExplicitness();
+            if (id.getType() != "TypeInt" && id.getType() != "TypeString")// TODO Throw proper Error /
+                                                                          // ErrorAt.ezError(214, debugString()); //
+                                                                          // Semantic Error
                 getNext();
-               ckSemCol();
+            ckSemCol();
 
         } else if (checkTk(Constants.print)) {
             result += "29 ";
@@ -584,12 +594,13 @@ public class Parser implements ASin {
             tmpExp = new ArrayList<>();
             EXP();
             ExpQueue.add(tmpExp);
-            String type  = Exprss.evaluate(ExpQueue.poll());
-            if(!type.equals("TypeInt") && !type.equals("TypeString")) //ParseLib.ezError(240); semantic Error TODO Throw proper Error
-            ckSemCol();
+            String type = Exprss.evaluate(ExpQueue.poll());
+            if (!type.equals("TypeInt") && !type.equals("TypeString")) // ParseLib.ezError(240); semantic Error TODO
+                                                                       // Throw proper Error
+                ckSemCol();
 
-        } //else
-            //ParseLib.ezError(109); TODO throw error?
+        } // else
+          // ParseLib.ezError(109); TODO throw error?
     }
 
     /**
@@ -599,14 +610,15 @@ public class Parser implements ASin {
         getNext();
         if (checkTk(Constants.semicolon)) {
             result += "50 ";
-            if (!funcID.getReturnType().equals("Void")); //ParseLib.ezError(238, funcID.getLexema()); semantic error //TODO throw Error
-        }
-        else {
+            if (!funcID.getReturnType().equals("Void"))
+                ; // ParseLib.ezError(238, funcID.getLexema()); semantic error //TODO throw Error
+        } else {
             result += "49 ";
             tmpExp = new ArrayList<>();
             EXP();
             ExpQueue.add(tmpExp);
-            if(!Exprss.evaluate(ExpQueue.poll()).equals(funcID.getReturnType())); //ParseLib.ezError(238, funcID.getLexema()); // TODO throw semantic error
+            if (!Exprss.evaluate(ExpQueue.poll()).equals(funcID.getReturnType()))
+                ; // ParseLib.ezError(238, funcID.getLexema()); // TODO throw semantic error
         }
     }
 
@@ -628,7 +640,8 @@ public class Parser implements ASin {
         CheckExplicitness();
         tmpExp = new ArrayList<>();
         tmpExp.add(id.getType());
-        if (!id.getType().equals("TypeInt")); //ParseLib.ezError(205); semantic error? //TODO Throw semantic Error
+        if (!id.getType().equals("TypeInt"))
+            ; // ParseLib.ezError(205); semantic error? //TODO Throw semantic Error
     }
 
     /**
@@ -646,7 +659,8 @@ public class Parser implements ASin {
         TabLex = funcID.getLexema();
         //
         funcID.setType("Function");
-        funcID.setOffset(OffsetG++);//Todo ver cuanto hay que incrementar el offset en caso de funcion, como no se especifica en el enunciado +1??
+        funcID.setOffset(OffsetG++);// Todo ver cuanto hay que incrementar el offset en caso de funcion, como no se
+                                    // especifica en el enunciado +1??
         getNext();
         TDX();
         inFunc = true;
@@ -662,7 +676,7 @@ public class Parser implements ASin {
         ckKeyOp();
         BODY();
         //
-        OffsetG += OffsetL; //revisar
+        OffsetG += OffsetL; // revisar
         OffsetL = 0;
         //
         t.functionOff();
@@ -695,8 +709,8 @@ public class Parser implements ASin {
 
         } else if (checkTk(Constants.parenthesesClose))
             result += "55 ";
-        //else
-            //ParseLib.ezError(113); TODO throw error?
+        // else
+        // ParseLib.ezError(113); TODO throw error?
     }
 
     /**
@@ -718,20 +732,19 @@ public class Parser implements ASin {
                 } catch (Exception e) {
                     return;
                 }
-                    CurrID = (int) tk.getInfo();
-                    id.setOffset(OffsetL);
-                    IncOffset(LastType);
-                    id.setType(LastType);
-                    getNext();
-                    PARAMX();
-                //}
+                CurrID = (int) tk.getInfo();
+                id.setOffset(OffsetL);
+                IncOffset(LastType);
+                id.setType(LastType);
+                getNext();
+                PARAMX();
+                // }
             }
         } else if (checkTk(Constants.parenthesesClose))
             result += "57 ";
-        //else
-            //ParseLib.ezError(113); todo throw error?
+        // else
+        // ParseLib.ezError(113); todo throw error?
     }
-
 
     private String debugString() {
         return new String("\n- TRAZA -> " + result +
@@ -754,47 +767,68 @@ public class Parser implements ASin {
     }
 
     private void ckID() {
-        if (!checkTk(Constants.id))
+        if (!checkTk(Constants.id)) {
             ErrorAt.ezError(105, debugString());
+            panic();
+        }
     }
 
     private void ckParOp() {
-        if (!checkTk(Constants.parenthesesOpen))
+        if (!checkTk(Constants.parenthesesOpen)) {
             ErrorAt.ezError(103, debugString());
+            panic();
+        }
     }
+
     private void ckParCl() {
-        if (!checkTk(Constants.parenthesesClose))
+        if (!checkTk(Constants.parenthesesClose)) {
             ErrorAt.ezError(99, debugString());
+            panic();
+        }
     }
+
     private void ckKeyOp() {
-        if (!checkTk(Constants.curlyBraceOpen))
+        if (!checkTk(Constants.curlyBraceOpen)) {
             ErrorAt.ezError(104, debugString());
+            panic();
+        }
     }
 
     private void ckKeyCl() {
-        if (!checkTk(Constants.curlyBraceClose))
+        if (!checkTk(Constants.curlyBraceClose)) {
             ErrorAt.ezError(114, debugString());
+            panic();
+        }
     }
 
     private void ckSemCol() {
-        if (!checkTk(Constants.semicolon))
+        if (!checkTk(Constants.semicolon)) {
             ErrorAt.ezError(107, debugString());
+            panic();
+        }
     }
 
     private void ckWhile() {
-        if (!checkTk(Constants.whileKw))
+        if (!checkTk(Constants.whileKw)) {
             ErrorAt.ezError(118, debugString());
+            panic();
+        }
     }
 
     private void ckCte() {
-        if (!checkTk(Constants.cad, Constants.num, Constants.falseKw, Constants.trueKw))
+        if (!checkTk(Constants.cad, Constants.num, Constants.falseKw, Constants.trueKw)) {
             ErrorAt.ezError(111, debugString());
+            panic();
+        }
     }
 
     private void ckType() {
-        if (!checkTk(Constants.stringType, Constants.booleanType, Constants.intType))
+        if (!checkTk(Constants.stringType, Constants.booleanType, Constants.intType)) {
             ErrorAt.ezError(106, debugString());
+            panic();
+        }
     }
+
     public void IncOffset(String Type) {
         switch (Type) {
             case "TypeInt":
@@ -814,18 +848,42 @@ public class Parser implements ASin {
             }
         }
     }
-     void CheckExplicitness() {
-         try {// Debug
-             id = t.lookAtIndex((int) tk.getInfo());
-             if (id.getType().equals("Unknown")) {
-                 id.setType("TypeInt");
-                 id.setOffset(OffsetG++);
-                 //TODO Decrementar offset de la tabla global??
-                 if (inFunc)
-                     t.setGlobal(id);
-             }
-         } catch (Exception e) {
-             return;
-         }
+
+    void CheckExplicitness() {
+        try {// Debug
+            id = t.lookAtIndex((int) tk.getInfo());
+            if (id.getType().equals("Unknown")) {
+                id.setType("TypeInt");
+                id.setOffset(OffsetG++);
+                // TODO Decrementar offset de la tabla global??
+                if (inFunc)
+                    t.setGlobal(id);
+            }
+        } catch (Exception e) {
+            return;
+        }
+    }
+
+    /**
+     * Skips characters until it finds a safe one
+     */
+    private int panic() {
+        int res = 0;
+        while (!isSafe(tk.getType())) {
+            res++;
+        }
+        System.err.println("Skipped " + res + " chars");
+        return res;
+    }
+
+    private static boolean isSafe(String c) {
+        String[] safe = { Constants.semicolon, Constants.parenthesesClose, Constants.curlyBraceClose };
+        for (String safeChar : safe) {
+            if (c == safeChar) {
+
+                return true;
+            }
+        }
+        return false;
     }
 }
