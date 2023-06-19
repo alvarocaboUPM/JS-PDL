@@ -2,7 +2,7 @@ Terminales = { eof  let  id  ;  if  (  )  {   }  while % do else
             function return input print int boolean string and >  =
             cad num  ++  , &&  true false  }
 NoTerminales = {  START  SENA  CTE  INC  EXP    EXPX  VALUE  XPX  ASIGN  DECL   DECLX  TD  TDX  INOUT
-                 WILE  SENB  BODY  IFX  FCALL  FCALLX  RX  IDX	IFAX   FUN  PARM  PARMX EXPA }
+                 WILE  SENB  BODY  IFX  FCALL  FCALLX  RX  IDX	IFAX   FUN  PARM  PARAMX EXPA }
 
 Axioma = START
 
@@ -85,10 +85,10 @@ IDX -> ( FCALL ) ;      //// 52
 
 FUN -> function id TDX ( PARM ) { BODY }    //// 53
 
-PARM -> TD id PARMX     //// 54
-PARM -> lambda      //// 55
-PARMX -> , TD id PARMX  //// 56
-PARMX -> lambda //// 57
+PARAM -> TD id PARAMX     //// 54
+PARAM -> lambda      //// 55
+PARAMX -> , TD id PARAMX  //// 56
+PARAMX -> lambda //// 57
 
 
 }
