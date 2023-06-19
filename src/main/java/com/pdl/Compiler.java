@@ -16,7 +16,7 @@ import com.pdl.symbols.SymbolTable;
 /**
  * Frontend class of the JS-PDL FilesAt
  * 
- * @author Álvaro Cabo / Usema El-Hatifi
+ * @author Álvaro Cabo / Oussama El-Hatifi
  * @version 1.0
  */
 public class Compiler {

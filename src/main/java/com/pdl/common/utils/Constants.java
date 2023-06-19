@@ -8,8 +8,8 @@ public class Constants {
     public static final int MAX_INT = 32767;
 
      // Paths
-    //public static final String HOME = new File("").getAbsolutePath();
-    public static final String HOME = "/home/varo/UPM/3ero/PDL/JAVA/js-pdl";
+    public static final String HOME = new File("").getAbsolutePath();
+    //public static final String HOME = "/home/varo/UPM/3ero/PDL/JAVA/js-pdl";
     public static final String TEST_FOLDER = HOME + "/src/test/resources/";
     // Path de los archivos de output
     public final static String OUTPUT = TEST_FOLDER + "outfiles/";

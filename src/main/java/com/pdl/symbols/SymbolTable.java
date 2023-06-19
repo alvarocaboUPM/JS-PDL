@@ -19,98 +19,128 @@ public class SymbolTable implements TS {
     FileWriter file = FilesAt.FTS;
     Map<Integer, SymbolAt> globalT; // Global table
     Map<String, Map<Integer, SymbolAt>> localT; // Map of local tables
-    Map<Integer, SymbolAt> curLocal; // Current local table
-
+     Map<Integer, SymbolAt> curLocal; // Current local table
+    public String CurrentLTSName;
     // Flagsets
-    private boolean Global;
+    private boolean Global, function, shadowing; //flags para saber el scope global, funcion; Shadowing es un flag que controla declaraciones en distintos ambitos de un mismo id
+
 
     // Counters
-    int index, nLocales;
+    int indexL, indexG, nLocales;
 
     public SymbolTable() {
         // Initial state
         globalT = new HashMap<>();
         localT = new HashMap<>();
         Global = true;
-        index = 0;
-        nLocales = 0;
+        function = false;
+        indexL = indexG = nLocales = 0;
+        CurrentLTSName = null;
     }
 
     @Override
     public void createTS(String tableName) {
+        indexL = 0;
+        CurrentLTSName = tableName;
         nLocales++;
         localT.put(new String(tableName), curLocal = new HashMap<Integer, SymbolAt>());
     }
 
     @Override
     public Integer insertAt(String ID) {
-        // Check if already present in the current scope
         SymbolAt tmp;
-        tmp = lookAt(ID);
 
-        //Case 1: Global and already declared
-        if (Global && tmp != null) {
-            return tmp.getID();
+        // Check in the current scope only
+        if (Global) {
+            for (SymbolAt s : globalT.values()) {
+                if (s.getLexema().equals(ID)) {
+                    tmp = s;
+                    return tmp.getID();
+                }
+            }
+            // If not found, insert
+            globalT.put(indexG, new SymbolAt(ID, indexG));
+            return indexG++;
+        } else {
+            for (SymbolAt s : curLocal.values()) {
+                if (s.getLexema().equals(ID)) {
+                    tmp = s;
+                    return tmp.getID();
+                }
+            }
+            // If not found, insert
+            localT.get(CurrentLTSName).put(indexL, new SymbolAt(ID, indexL));
+            return indexL++;
         }
-        // if (ASin.inFunc && tmp != null && FoInLoc) {
-        //     return tmp.getID();
-        // }  if (ASin.inParms && ASin.TabLex.equals(ID))
-        //     new ErrorAt(202, ALex.numLineas).toss(Tables.getErrorHandler(), ID);
-        // else if (ASin.TabLex != null && ASin.TabLex.equals(ID))
-        //     return tmp.getID();
-        // else if (tmp != null && !ASin.inVarDec)
-        //     return tmp.getID();
-
-        // // Insert in the needed scope
-        // if (Global)
-        //     globalT.put(index, new SymbolAt(ID, index));
-        // else
-        //     curLocal.put(index, new SymbolAt(ID, index));
-
-        // Generating token
-        return index++;
     }
+
 
     @Override
     public SymbolAt lookAt(String ID) {
         if (!Global) {
             for (SymbolAt s : curLocal.values()) {
                 if (s.getLexema().equals(ID)) {
-                    //FoInLoc = true;
                     return s;
                 }
             }
         }
+
         for (SymbolAt s : globalT.values()) {
             if (s.getLexema().equals(ID)) {
-                //FoInLoc = false;
                 return s;
             }
         }
+
         return null;
     }
+
 
     @Override
     public SymbolAt lookAtIndex(int index) {
         SymbolAt tmp;
         if (!Global && (tmp = curLocal.get(index)) != null) {
-            //FoInLoc = true;
             return tmp;
-        } else if ((tmp = globalT.get(index)) != null) {
-            //FoInLoc = false;
+        } else if ((tmp = globalT.get(index)) != null){// && !shadowing) {
             return tmp;
         }
         return null;
     }
 
-    public void setGlobal(SymbolAt tmp) {
+    public void setGlobal(SymbolAt tmp) {// ???
 
         int id = tmp.getID();
         // tmp.setPosition(index);
-        globalT.put(id, tmp);
+        globalT.put(indexG++, tmp);
+        indexL--;
         // index++;
         rmID(id);
     }
+
+    public void setLocal() {
+        this.Global = false;
+    }
+    public void setCurLocal() {
+
+    }
+    //----
+    public void functionOn() {
+        this.function = true;
+    }
+    public void functionOff() {
+        this.function = false;
+    }
+    public boolean functionState() {
+        return function;
+    }
+    public void shadowing(boolean state) { //REMOVE
+        this.shadowing = state;
+    }
+    public boolean ShadowingState() { ////REMOVE
+        return shadowing;
+    }
+
+
+    //----
 
     public void rmID(int index) {
         if (!Global)
@@ -141,6 +171,9 @@ public class SymbolTable implements TS {
      */
     public boolean getScope() {
         return this.Global;
+    }
+    public Map<Integer, SymbolAt> getCurrentLocalTs() {
+        return this.curLocal;
     }
 
     @Override

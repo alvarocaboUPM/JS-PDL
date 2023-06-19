@@ -61,9 +61,9 @@ public class Lexer implements ALex {
 
     /**
      * Acts as a main function for the lexer
-     * 
+     *
      * @implNote Only for debug*
-     * 
+     *
      * @return TokenList List of tokens generated
      * @throws IOException
      */
@@ -89,7 +89,7 @@ public class Lexer implements ALex {
 
     /**
      * Easy constructor for tokens
-     * 
+     *
      * @return new {@link Token} with lineAt <- numLineas
      */
     private Token nToken(String Type, Object Info) {
@@ -99,7 +99,7 @@ public class Lexer implements ALex {
     /**
      * Acts as a it.getNext() function in a live TokenList,
      * mixes private funcs Gen_token and AppendToken()
-     * 
+     *
      * @return validated token
      * @throws IOException
      */
@@ -137,7 +137,7 @@ public class Lexer implements ALex {
 
     /**
      * Skips cars util it finds the end of commnent or EOF
-     * 
+     *
      * @throws IOException
      */
     private void skipComment() {
@@ -150,6 +150,10 @@ public class Lexer implements ALex {
                 return;
             }
 
+            if(nextChar1 == '\n'){
+                numLineas++;
+            }
+
             nextChar1 = nextChar2;
             nextChar2 = leer();
         }
@@ -158,7 +162,7 @@ public class Lexer implements ALex {
 
     /**
      * Iterates through the source code and tokenizes it
-     * 
+     *
      * @return validToken | null in case of Error
      */
     private Token Gen_Token(char car) throws IOException {
@@ -174,8 +178,9 @@ public class Lexer implements ALex {
         switch (car) {
             // Coments
             case '/':
-                if ((car = leer()) != '*')
-                    ErrorAt.ezError(13, "'/'" + car);
+                if ((car = leer()) != '*'){
+                    break;
+                }
                 skipComment();
                 return Gen_Token(leer());
 
@@ -233,10 +238,42 @@ public class Lexer implements ALex {
                 lex += carString(car);
             }
             Pointer--;
-            // Si no es una palabra reservada, mete el símbolo en la tabla de símbolos
-            return Tables.getResWords().containsKey(lex) ? Tables.getResWords().get(lex)
-                    : nToken("ID", tab.insertAt(lex));
 
+            //Check for unimplemented kws
+            if(Tables.getUnimplementedKW().contains(lex)){
+                ErrorAt.ezError(24, lex);
+                panic();
+                return Gen_Token(leer());
+            }
+
+            // Si no es una palabra reservada, mete el símbolo en la tabla de símbolos
+            if(Tables.getResWords().containsKey(lex)) return Tables.getResWords().get(lex);
+            else{
+                SymbolAt tmp = new SymbolAt();
+                if((tmp = tab.lookAt(lex)) != null){
+                    if(tab.getScope()){ //estamos en la tabla global
+                        return new Token(Constants.id, tmp.getID());
+                    } else { // estamos en la tabla local
+                        if (!tab.getCurrentLocalTs().containsValue(tmp)) { // el lexema está en la global, pero no en la local
+                            //Añadir flag Shadowing
+                            tab.shadowing(true);
+                            return nToken("ID", tab.insertAt(lex)); // insertamos el lexema en la local y devolvemos el token correspondiente
+                        } else { // el lexema ya está en la local
+                            return new Token(Constants.id, tmp.getID());
+                        }
+                    }
+                }
+                else{
+                    if (tab.getScope()) {//estamos en la tabla global
+                        if (tab.functionState())
+                            tab.createTS(lex);//comprobamos si estamos empezando a analizar una funcion, si lo estamos Creamos tabla  local
+                        return nToken("ID", tab.insertAt(lex));
+                    } else {
+                        return nToken("ID", tab.insertAt(lex));
+                    }
+                }
+
+            }
         } else {
             // Checks for direct token
             if (Tables.getDirToken().containsKey(carString(car))) {
@@ -264,24 +301,44 @@ public class Lexer implements ALex {
         switch (car) {
             case '\'':
                 ErrorAt.ezError(20, null);
-                Gen_Token('/');
+                return Gen_Token('"');
+
+            case '/':
+                ErrorAt.ezError(23, null);
+                while(leer()!='\n'){}
+                numLineas++;
                 break;
+
+            case '*':
+            case '+':
+            case '-':
+                ErrorAt.ezError(22, carString(car));
+                return nToken(Constants.MOD, null);
+
+            case '<':
+                ErrorAt.ezError(22, carString(car));
+                return nToken(Constants.GT, null);
+
+            case '|':
+            case '!':
+                ErrorAt.ezError(22, carString(car));
+                return nToken(Constants.AND, null);
 
             default:
                 /* No valid tokens nor error generated */
-                ErrorAt.ezError(14, lex);
+                ErrorAt.ezError(14, carString(car));
                 panic();
                 break;
         }
 
-        return null;
+        return Gen_Token(leer());
     }
 
     /**
      * Allows to write the tokens to the file
      * and keep them in the tokens array while
      * they're being generated
-     * 
+     *
      * @param tk Token to be written
      * @exception InvalidToken if its type is not contained in the
      *                         valid Tokens list
@@ -314,9 +371,10 @@ public class Lexer implements ALex {
     }
 
     private static boolean isSafe(char c) {
-        char[] safe = { ';', '"', '}' };
+        char[] safe = { ';', '"', '}'};
         for (char safeChar : safe) {
             if (c == safeChar) {
+
                 return true;
             }
         }

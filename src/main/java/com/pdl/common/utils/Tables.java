@@ -8,6 +8,8 @@ public class Tables {
     private static List<String> validTokens;
     private static Map<String, Token> DirToken;
     private static Map<String, Token> ResWords;
+    private static List<String> invalidTokens;
+    private static List<String> unimplementedKW;
     private static Map<Integer, String> ErrorHandler;
     private static Map<Integer, String> Analyzers;
 
@@ -21,10 +23,12 @@ public class Tables {
         ResWords = new HashMap<String, Token>();
         ErrorHandler = new HashMap<Integer, String>();
         Analyzers = new HashMap<Integer, String>();
+        unimplementedKW = new ArrayList<String>();
+        invalidTokens = new ArrayList<>();
 
-         // ------------VALID TOKENS TABLE ----------
+        // ------------VALID TOKENS TABLE ----------
 
-         // TOKENS INMEDIATOS Y RES
+        // TOKENS INMEDIATOS Y RES
         validTokens.add("TypeBool"); // 0
         validTokens.add("LoopDo");  // 1
         validTokens.add("FunID");  // 2
@@ -54,7 +58,7 @@ public class Tables {
         validTokens.add("TokF"); // 26
         validTokens.add("Teof"); // 27
 
-         // ------------DIRECT TOKENS TABLE ----------
+        // ------------DIRECT TOKENS TABLE ----------
         DirToken.put("{", new Token(validTokens.get(20), null));
         DirToken.put("}", new Token(validTokens.get(21), null));
         DirToken.put("(", new Token(validTokens.get(18), null));
@@ -66,7 +70,7 @@ public class Tables {
         DirToken.put("%", new Token(validTokens.get(22), null));
         DirToken.put(">", new Token(validTokens.get(23), null));
 
-         // -----------RESERVED WORDS TABLE-----------
+        // -----------RESERVED WORDS TABLE-----------
         ResWords.put("do", new Token(validTokens.get(1), null));
         ResWords.put("while", new Token(validTokens.get(10), null));
         ResWords.put("boolean", new Token(validTokens.get(0), null));
@@ -78,9 +82,20 @@ public class Tables {
         ResWords.put("print", new Token(validTokens.get(7), null));
         ResWords.put("return", new Token(validTokens.get(8), null));
         ResWords.put("if", new Token(validTokens.get(3), null));
-         // -----------SPECIAL WORDS -----------
+        // -----------SPECIAL WORDS -----------
         ResWords.put("true", new Token(validTokens.get(25), null));
         ResWords.put("false", new Token(validTokens.get(26), null));
+
+
+        unimplementedKW.add("for");
+        unimplementedKW.add("switch");
+        unimplementedKW.add("else");
+        unimplementedKW.add("case");
+        unimplementedKW.add("default");
+
+        invalidTokens.add("arithmetic-operand");
+        invalidTokens.add("comparator-operand");
+        invalidTokens.add("logic-operand");
 
         /*
          * *******************ERROR HANDLER*******************
@@ -93,15 +108,17 @@ public class Tables {
                 put(2, "NullPointer");
                 put(3, "InOut Exception");
                 put(4, "Error al volcar la tabla de símbolos");
-                 // Lexer
+                // Lexer
                 put(11, "SE HA SUPERADO EL MÁXIMO INT");
                 put(12, "String demasiado largo");
                 put(13, "INVALID TOKEN: ");
-                put(14, "No ha formado token -> ");
+                put(14, "No ha formado token: ");
                 put(20, "Utilice commillas dobles para indicar string");
                 put(21, "Debe cerrar el comentario");
                 put(22, "Operador no disponible: ");
-                 // Sintax
+                put(23, "Utilice comentarios con forma '/* */'");
+                put(24, "Keyword no disponible: ");
+                // Sintax
                 put(100, "Error sintáctico genérico");
                 put(101, "Se esperaba fin de fichero");
                 put(102, "Se esperaba una declaración o un condicional");
@@ -120,7 +137,7 @@ public class Tables {
                 put(117, "Necesaria previa declaracion de las funciones ");
                 put(118, "Estructura inválida del bucle do { something } while(cond); ");
                 put(120, "El parser ha recibido un token nulo");
-                 // Semantics
+                // Semantics
                 put(200, "Error semántico genérico");
                 put(201, "Se está intentando declarar una variable global en un ámbito local");
                 put(202, "Error de unicidad; se ha declarado de nuevo el identificador: ");
@@ -175,5 +192,9 @@ public class Tables {
 
     public static Map<Integer, String> getAnalyzers() {
         return Analyzers;
+    }
+
+    public static List<String> getUnimplementedKW(){
+        return unimplementedKW;
     }
 }
