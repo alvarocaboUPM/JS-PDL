@@ -1,6 +1,6 @@
 package com.pdl.symbols;
 
-import java.io.FileWriter;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +15,6 @@ import com.pdl.lexer.lib.SymbolAt;
  * definida por sus {@link SymbolAt}, implementada con HashMaps
  */
 public class SymbolTable implements TS {
-    FileWriter file = FilesAt.FTS;
     Map<Integer, SymbolAt> globalT; // Global table
     Map<String, Map<Integer, SymbolAt>> localT; // Map of local tables
      Map<Integer, SymbolAt> curLocal; // Current local table
@@ -177,22 +176,22 @@ public class SymbolTable implements TS {
 
     @Override
     public void OutTS() throws IOException {
-        file.write("TABLA PRINCIPAL #1:\n");
+        FilesAt.FTS.write("TABLA PRINCIPAL #1:\n");
         for (SymbolAt s : globalT.values()) {
-            file.write("--------- ----------\n");
-            file.write(s.toString());
+            FilesAt.FTS.write("--------- ----------\n");
+            FilesAt.FTS.write(s.toString());
 
         }
         int numTab = 2;
         for (Entry<String, Map<Integer, SymbolAt>> tmp : localT.entrySet()) {
-            file.write("--------- ----------\n");
-            file.write("\nTABLA DE LA FUNCION " + tmp.getKey() + " #" + numTab++ + ":\n");
+            FilesAt.FTS.write("--------- ----------\n");
+            FilesAt.FTS.write("\nTABLA DE LA FUNCION " + tmp.getKey() + " #" + numTab++ + ":\n");
             for (SymbolAt s : tmp.getValue().values()) {
-                file.write("--------- ----------\n");
-                file.write(s.toString());
+                FilesAt.FTS.write("--------- ----------\n");
+                FilesAt.FTS.write(s.toString());
 
             }
-            file.write("--------- ----------\n");
+            FilesAt.FTS.write("--------- ----------\n");
         }
         // Liberamos los objetos
         localT.clear();
