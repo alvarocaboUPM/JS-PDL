@@ -579,7 +579,7 @@ public class Parser implements ASin {
             }
             CheckExplicitness();
             if (id.getType() != "TypeInt" && id.getType() != "TypeString"){
-                ErrorAt.ezError(240, type);
+                ErrorAt.ezError(240, id.getType());
             }
             getNext();
             ckSemCol();
