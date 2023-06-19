@@ -195,7 +195,7 @@ public class Lexer implements ALex {
             // Strings
             case '"':
                 lex = carString(car);
-                while ((car = leer()) != '"' && 
+                while ((car = leer()) != '"' &&
                         car != '\'') {
                     // Checks for not close string (no genera token)
                     if (car == '\n') {
@@ -328,9 +328,11 @@ public class Lexer implements ALex {
             case '|':
             case '&':
             case '!':
-                ErrorAt.ezError(22, carString(car));
-                return nToken(Constants.AND, null);
-
+                if (!tokenList.get(tokenList.size() - 1).getType().equals(Constants.AND)) {
+                    ErrorAt.ezError(22, carString(car));
+                    return nToken(Constants.AND, null);
+                }
+                return Gen_Token(leer());
             default:
                 /* No valid tokens nor error generated */
                 ErrorAt.ezError(14, carString(car));
