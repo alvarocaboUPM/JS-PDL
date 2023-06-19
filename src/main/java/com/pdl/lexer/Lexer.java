@@ -380,7 +380,7 @@ public class Lexer implements ALex {
     }
 
     private static boolean isSafe(char c) {
-        char[] safe = { ';', '"', '}', '\n' };
+        char[] safe = { ';', '"', '}', '\n', ')' };
         for (char safeChar : safe) {
             if (c == safeChar) {
 
