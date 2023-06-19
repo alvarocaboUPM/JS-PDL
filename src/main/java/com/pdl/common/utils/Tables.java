@@ -92,6 +92,7 @@ public class Tables {
         unimplementedKW.add("else");
         unimplementedKW.add("case");
         unimplementedKW.add("default");
+        unimplementedKW.add("number");
         
         invalidTokens.add("arithmetic-operand");
         invalidTokens.add("comparator-operand");
@@ -118,6 +119,7 @@ public class Tables {
                 put(22, "Operador no disponible: ");
                 put(23, "Utilice comentarios con forma '/* */'");
                 put(24, "Keyword no disponible: ");
+                put(24, "Debe cerrar el string");
                 // Sintax
                 put(100, "Error sintáctico genérico");
                 put(101, "Se esperaba fin de fichero");

@@ -34,7 +34,7 @@ public class FilesAt {
         try {
             Source = Files.readAllBytes(new File(input).toPath());
             // Directorio outfiles
-            File outdir = new File(Constants.OUTPUT + filename);
+            File outdir = new File(Constants.OUTPUT + folder+filename);
 
             if (!outdir.exists()) {
                 outdir.mkdirs();

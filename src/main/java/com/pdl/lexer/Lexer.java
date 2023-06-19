@@ -195,14 +195,21 @@ public class Lexer implements ALex {
             // Strings
             case '"':
                 lex = carString(car);
-                while ((car = leer()) != '"') {
-                    lex += carString(car);
+                while ((car = leer()) != '"' && 
+                        car != '\'') {
+                    // Checks for not close string (no genera token)
+                    if (car == '\n') {
+                        ErrorAt.ezError(12, null);
+                        numLineas++;
+                        return Gen_Token(leer());
+                    }
                     // Checks for maxsize
                     if (lex.length() > Constants.STR_MAX_SIZE) {
                         ErrorAt.ezError(12, null);
                         panic();
                         break;
                     }
+                    lex += carString(car);
                 }
                 res = nToken("Cad", lex + "\"");
                 return res;
@@ -287,14 +294,10 @@ public class Lexer implements ALex {
             if (car == '+') {
                 if (leer() == '+')
                     return nToken("ResAutoSum", null);
-                else
-                    ErrorAt.ezError(22, lex);
             }
             if (car == '&') {
                 if (leer() == '&')
                     return nToken("AND", null);
-                else
-                    ErrorAt.ezError(22, lex);
             }
 
         }
@@ -323,6 +326,7 @@ public class Lexer implements ALex {
                 return nToken(Constants.GT, null);
 
             case '|':
+            case '&':
             case '!':
                 ErrorAt.ezError(22, carString(car));
                 return nToken(Constants.AND, null);
@@ -374,7 +378,7 @@ public class Lexer implements ALex {
     }
 
     private static boolean isSafe(char c) {
-        char[] safe = { ';', '"', '}'};
+        char[] safe = { ';', '"', '}', '\n' };
         for (char safeChar : safe) {
             if (c == safeChar) {
                 return true;
