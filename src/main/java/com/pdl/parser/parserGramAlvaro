@@ -1,0 +1,729 @@
+package com.pdl.parser;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
+import com.pdl.common.ErrorAt;
+import com.pdl.common.interfaces.ASin;
+import com.pdl.common.interfaces.TS;
+import com.pdl.common.utils.Constants;
+import com.pdl.lexer.Lexer;
+import com.pdl.lexer.lib.SymbolAt;
+import com.pdl.lexer.lib.Token;
+
+public class Parser implements ASin {
+
+    private String result;
+    private Lexer lexer;
+    private static Token tk;
+    private TS t;
+    static SymbolAt id, funcID; // current symbol
+    static int CurrID, nParams, nArgs, OffsetG, OffsetL;// Counters
+    static String trace, LastType, TypeToCmp;
+    // for evaluating expresions
+    static Queue<List<String>> ExpQueue = new LinkedList<>();
+    static List<String> tmpExp, Emded;
+    static List<String> tmpArgs;
+    //static Exprss Evaluator = new Exprss();
+    //
+    public static String TabLex;
+    // Flagset
+    public static boolean inFunc, inCond, inVarDec, noErr,
+            inParms, setID, inFCall, nestedExp, inAss;
+    public Parser(TS t) {
+        result = "D\t ";
+        lexer = new Lexer(t);
+        nParams = OffsetG = OffsetL = 0;
+        inFunc = inCond = inVarDec = nestedExp = inAss = false;
+        this.t = t;
+    }
+
+
+    protected String parserDebug(String testFile) {
+        result = "D\t ";
+        lexer = new Lexer(t, testFile);
+
+        return START();
+    }
+
+    public String getResult() {
+        return this.result;
+    }
+
+    private void getNext() {
+        try {
+            tk = lexer.nxToken();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public String START() {
+        getNext();
+        switch (tk.getType()) {
+            // 1. Declaraciones
+            case Constants.function:
+            case Constants.let:
+                inVarDec = true;
+                result += "1 ";
+                DEC();
+                return START();
+
+            // 2. Sentencias simples
+            case Constants.id:
+            case Constants.print:
+            case Constants.input:
+            case Constants.increment:
+                result += "2 ";
+                SEN();
+                return START();
+
+            // 3. Sentencias complejas
+            case Constants.ifKw:
+            case Constants.doKw:
+                result += "3 ";
+                SENCOM();
+                return START();
+
+            case Constants.eof:
+                result += "4 ";
+                break;
+
+            default:
+                if (tk.isType()) {
+                    ErrorAt.ezError(213, debugString());
+                    break;
+                } else {
+                    ErrorAt.ezError(100, debugString());
+                    break;
+                }
+        }
+
+        return result;
+    }
+
+    @Override
+    public void DEC() {
+        if (checkTk(Constants.function)) { //TODO Set New Ts for local scope
+            //FuncSymbol = new SymbolAt();
+            t.functionOn();
+            result += "5 ";
+            getNext();
+            ckID();//TODO check if already declared
+            try {
+                funcID = t.lookAtIndex((int) tk.getInfo());
+            } catch (Exception e) {
+                return;
+            }
+            TabLex = funcID.getLexema();
+            funcID.setType("Function");
+            funcID.setOffset(OffsetG);
+
+            inFunc = true;
+            t.setLocal();
+            callTX(); //TODO check type (overloading Posible??)
+            //funcID.setReturnType((String) tk.getInfo());
+            ckParOp();
+            inParms = true;
+            PARM(); // TODO Count and Set parameters in TS
+            inParms = false;
+            funcID.setNumParams(nParams);
+
+            getNext();
+            ckKeyOp();
+            BODY(); // TODO add local ID on TS
+            OffsetG += OffsetL;
+            OffsetL = 0;
+            t.functionOff();
+            inFunc = false;
+            nParams = 0;
+            return;
+        }
+        //onDeclaration = true;
+        if (checkTk(Constants.let)) {
+           // tmpSymbol = new SymbolAt();
+            result += "10 ";
+            DECID();
+            return;
+        }
+        //onDeclaration = false;
+    }
+
+    @Override
+    public void PARM() {
+        getNext();
+        if (checkTk(Constants.parenthesesClose)) {
+            result += "7 ";
+            return;
+        }
+        result += "6 ";
+        T(); // Should already be at type token
+        funcID.addTypesParams(tk.getType());
+        LastType = tk.getType();
+        getNext();
+        ckID();
+        try {
+            id = t.lookAtIndex((int) tk.getInfo());
+        } catch (Exception e) {
+            return;
+        }
+        CurrID = (int) tk.getInfo();
+        id.setOffset(OffsetL);
+        IncOffset(LastType);
+        id.setType(LastType);
+        nParams++;
+        PARMX();
+    }
+
+    @Override
+    public void PARMX() {
+        getNext();
+        if (checkTk(Constants.comma)) {
+            result += "8 ";
+            callT();
+            funcID.addTypesParams(LastType = tk.getType());
+            nParams++;
+            getNext();
+            ckID();
+            try {
+                id = t.lookAtIndex((int) tk.getInfo());
+            } catch (Exception e) {
+                return;
+            }
+            CurrID = (int) tk.getInfo();
+            id.setOffset(OffsetL);
+            IncOffset(LastType);
+            id.setType(LastType);
+            PARMX();
+        }
+        if (checkTk(Constants.parenthesesClose)) {
+            result += "9 ";
+            return;
+        } else
+            ErrorAt.ezError(113, debugString());
+
+    }
+
+    @Override
+    public void DECID() {
+        //tmpSymbol = new SymbolAt();
+        result += "11 ";
+        getNext();
+        ckID();
+        try {
+            id = t.lookAtIndex((int) tk.getInfo());
+        } catch (Exception e) {
+            return;
+        }
+        callT();
+        id.setOffset(inFunc ? OffsetL : OffsetG);
+        IncOffset(tk.getType());
+        id.setType(tk.getType());
+        DECLX();
+        inVarDec = false;
+
+    }
+
+    @Override
+    public void DECLX() {
+        getNext();
+        if (checkTk(Constants.equals)) {
+            result += "12 ";
+            inAss = true;
+            ASIGN();
+            inAss = false;
+        }
+        if (checkTk(Constants.semicolon)) {
+            result += "13 ";
+        } else
+            ErrorAt.ezError(107, debugString());
+    }
+
+    @Override
+    public void SEN() {
+        switch (tk.getType()) {
+            case Constants.id: //Review
+
+                result += "14 ";
+                ASCALL();
+
+                return;
+            case Constants.print:
+            case Constants.input:
+                result += "15 ";
+                IO();
+                return;
+            case Constants.increment:
+                result += "16 ";
+                INC();
+
+                break;
+        }
+    }
+
+    @Override
+    public void ASCALL() {
+        CheckExplicitness();
+        SymbolAt tmp = id;
+        TypeToCmp = tmp.getType();
+        getNext();
+        if (checkTk(Constants.equals)) {
+            result += "17 ";
+            ASIGN();
+        }
+        if (checkTk(Constants.parenthesesOpen)) {
+            result += "18 ";
+            inFCall = true;
+            FCALL();
+            getNext();
+            ckSemCol();
+            return;
+        }
+
+    }
+
+    @Override
+    public void ASIGN() {
+        // Cursor sobre el =
+        result += "19 ";
+        tmpExp = new ArrayList<>();
+        callEXP();
+        ExpQueue.add(tmpExp);
+        //if(!Evaluator.evaluate(ExpQueue.poll()).equals( TypeToCmp)) ParseLib.ezError(234,"Tipo de la Expresion != " + TypeToCmp);;
+
+
+    }
+
+    @Override
+    public void FCALL() {
+        getNext(); //mirar si ya se hace en el paso anterior
+        if (checkTk(Constants.parenthesesClose)) {
+            result += "21 ";
+        }else {
+            result += "20 ";
+            tmpExp = new ArrayList<>();
+            //getNext();//TODO Review
+            EXP(); // Ya sobre la expresion
+            ExpQueue.add(tmpExp);
+            tmpArgs = new ArrayList<>();
+            //tmpArgs.add(Evaluator.evaluate(ExpQueue.poll()));
+            nArgs++;
+            FCALLX();
+        }
+    }
+
+    @Override
+    public void FCALLX() {
+        if (checkTk(Constants.comma)) {
+            result += "22 ";
+            tmpExp = new ArrayList<>();
+            callEXP();
+            ExpQueue.add(tmpExp);
+            //tmpArgs.add(Evaluator.evaluate(ExpQueue.poll()));
+            nArgs++;
+            FCALLX();
+            return;
+        }
+
+        if (checkTk(Constants.parenthesesClose)) {
+            result += "23 ";
+            return;
+        } else
+            ErrorAt.ezError(113, debugString());
+    }
+
+    @Override
+    public void IO() {
+        if (checkTk(Constants.print)) {
+            result += "24 ";
+            tmpExp = new ArrayList<>();
+            callEXP();
+            ExpQueue.add(tmpExp);
+            //  String tp  = Evaluator.evaluate(ExpQueue.poll());
+            return;
+        }
+        if (checkTk(Constants.input)) {
+            getNext();
+            ckID();//TODO CHECK USAGES
+            try {// Debug
+                id = t.lookAtIndex((int) tk.getInfo());
+            } catch (Exception e) {
+                return;
+            }
+            CheckExplicitness();
+            //tmpExp.add(id.getType());
+            getNext();
+            ckSemCol();
+            return;
+        } else {
+            ErrorAt.ezError(109, debugString());
+        }
+    }
+
+    @Override
+    public void SENCOM() {
+        if (checkTk(Constants.ifKw)) {
+            result += "26 ";
+            getNext();
+            ckParOp();
+            callEXP();
+
+            IFX();
+            return;
+        }
+        if (checkTk(Constants.doKw)) {
+            result += "33 ";
+            getNext();
+            ckKeyOp();
+            BODY();
+
+            getNext();
+            ckWhile();
+            getNext();
+            ckParOp();
+            callEXP();
+
+            getNext();
+            ckSemCol();
+
+        }
+
+    }
+
+    @Override
+    public void IFX() {
+        getNext();
+        if (checkTk(Constants.curlyBraceOpen)) {
+            result += "27 ";
+            BODY();
+
+            getNext();
+            ckKeyCl();
+        } else {
+            result += "28 ";
+            SENB();
+
+        }
+    }
+
+    @Override
+    public void SENB() {
+        if (checkTk(Constants.returnKw)) { // SEMANTIC
+            result += "30 ";
+            RX();
+        } else {
+            result += "29 ";
+            SEN();
+
+        }
+    }
+
+    @Override
+    public void RX() {
+        getNext();
+        if (checkTk(Constants.semicolon)) {
+            result += "32 ";
+            return;
+        }
+        result += "31 ";
+        tmpExp = new ArrayList<>();
+        EXP(); // Already in the expression
+        ExpQueue.add(tmpExp);
+    }
+
+    @Override
+    public void BODY() {
+        getNext();
+        if (checkTk(Constants.curlyBraceClose)) {
+            result += "37 ";
+            return;
+        }
+
+        if (checkTk(Constants.let)) {
+            result += "35 ";
+            DECID();
+            BODY();
+        }
+
+        else if (checkTk(Constants.ifKw, Constants.doKw)) {
+            result += "34 ";
+            SENCOM();
+            BODY();
+        } else {
+            result += "36 ";
+            SENB();
+            BODY();
+        }
+
+    }
+
+    @Override
+    public void EXP() {
+        if (checkTk(Constants.id, Constants.parenthesesOpen) || tk.isCTE()) {
+            result += "38 ";
+            //getNext(); //TODO review
+            VALUE();
+            EXPX();
+            return;
+        }
+        if (checkTk(Constants.increment)) {
+            result += "39 ";
+            INC();
+        } else
+            ErrorAt.ezError(116, debugString());
+
+    }
+
+    @Override
+    public void EXPX() {
+        //getNext(); //TODO Review
+        if (checkTk(Constants.semicolon, Constants.comma, Constants.parenthesesClose)) {
+            return;
+        }
+
+        if (!tk.isOperator()) {
+            ErrorAt.ezError(116, debugString());
+        }
+        switch (tk.getType()) {
+            case Constants.GT:
+                result += "40 ";
+                break;
+            case Constants.AND:
+                result += "41 ";
+                break;
+            case Constants.MOD:
+                result += "42 ";
+                break;
+        }
+        callEXP();
+    }
+
+    @Override
+    public void VALUE() {
+         if (checkTk(Constants.id)) {
+            result += "44 ";
+            //getNext();//TODO review
+            XPX();
+            return;
+        }
+        if (tk.isCTE()) {
+            result += "45 ";
+            CTE();
+            getNext();
+            return;
+        }
+        if (checkTk(Constants.parenthesesOpen)) {
+            result += "46 ";
+            callEXP();
+            getNext();
+        }
+    }
+
+    @Override
+    public void XPX() {
+
+        getNext();// TODO review
+        if (!checkTk(Constants.parenthesesOpen)) {
+            CheckExplicitness();//TODO review usage
+            tmpExp.add(id.getType());
+            result += "48 ";
+            return;
+        }else{
+            tmpExp.add(id.getReturnType());
+            SymbolAt tmp = id;
+            result += "47 ";
+            inFCall = true;
+            Emded = tmpExp; // Mirar que hace .-.
+            nArgs = 0; // Semantic: Inicializamos el contador de argumentos para luego comprobar que la funcion tiene el mismo numero de argumentos
+            //getNext();
+            FCALL();
+            tmpExp = Emded;
+            getNext();
+        }
+    }
+
+    @Override
+    public void INC() {
+        result += "49 ";
+        getNext();
+        ckID();
+        CheckExplicitness();
+        tmpExp = new ArrayList<>();
+        tmpExp.add(id.getType());
+        //ParseLib.insertOperand();
+
+    }
+
+    @Override
+    public void TX() {
+        if (!tk.isType()) {
+
+            result += "51 ";
+            return;
+        }
+
+        result += "50 ";
+        T();
+        if(inFunc) funcID.setReturnType((String) tk.getType());
+        getNext();
+    }
+
+    @Override
+    public void T() {
+        switch (tk.getType()) {
+            case Constants.intType:
+                result += "52 ";
+
+                break;
+            case Constants.stringType:
+                result += "53 ";
+
+                break;
+            case Constants.booleanType:
+                result += "54 ";
+
+                break;
+            default:
+                ckType();
+
+        }
+    }
+
+    @Override
+    public void CTE() {
+        switch (tk.getType()) {
+            case Constants.cad:
+                result += "55 ";
+                break;
+            case Constants.num:
+                result += "56 ";
+                break;
+            case Constants.trueKw:
+                result += "57 ";
+                break;
+            case Constants.falseKw:
+                result += "57 ";
+                break;
+            default:
+                ckCte();
+        }
+
+    }
+
+    private String debugString() {
+        return new String("\n- TRAZA -> " + result +
+                "\n- ÚLTIMO TK LEIDO -> " + tk.toString());
+    }
+
+    /**
+     * Returns true if the token equals
+     * any of the params
+     *
+     * @param cmp
+     * @return
+     */
+    private boolean checkTk(String... cmp) { //
+        for (String string : cmp) {
+            if (tk.getType().equals(string))
+                return true;
+        }
+        return false;
+    }
+
+    private void ckID() {
+        if (!checkTk(Constants.id))
+            ErrorAt.ezError(105, debugString());
+    }
+
+    private void ckParOp() {
+        if (!checkTk(Constants.parenthesesOpen))
+            ErrorAt.ezError(103, debugString());
+    }
+
+    private void ckKeyOp() {
+        if (!checkTk(Constants.curlyBraceOpen))
+            ErrorAt.ezError(104, debugString());
+    }
+
+    private void ckKeyCl() {
+        if (!checkTk(Constants.curlyBraceClose))
+            ErrorAt.ezError(114, debugString());
+    }
+
+    private void ckSemCol() {
+        if (!checkTk(Constants.semicolon))
+            ErrorAt.ezError(107, debugString());
+    }
+
+    private void ckWhile() {
+        if (!checkTk(Constants.whileKw))
+            ErrorAt.ezError(118, debugString());
+    }
+
+    private void ckCte() {
+        if (!checkTk(Constants.cad, Constants.num, Constants.falseKw, Constants.trueKw))
+            ErrorAt.ezError(111, debugString());
+    }
+
+    private void ckType() {
+        if (!checkTk(Constants.stringType, Constants.booleanType, Constants.intType))
+            ErrorAt.ezError(106, debugString());
+    }
+
+    private void callTX() {
+        getNext();
+        TX();
+    }
+
+    private void callT() {
+        getNext();
+        T();
+    }
+
+    private void callEXP() {
+        getNext();
+        EXP();
+    }
+
+    private void callCTE() {
+        getNext();
+        CTE();
+    }
+    static void IncOffset(String Type) {
+        switch (Type) {
+            case "TypeInt":
+            case "TypeBool": {
+                if (inFunc)
+                    OffsetL++;
+                else
+                    OffsetG++;
+                break;
+            }
+            case "TypeString": {
+                if (inFunc)
+                    OffsetL += 64;
+                else
+                    OffsetG += 64;
+                break;
+            }
+        }
+    }
+     void CheckExplicitness() {
+         try {// Debug
+             id = t.lookAtIndex((int) tk.getInfo());
+             if (id.getType().equals("Unknown")) {
+                 id.setType("TypeInt");
+                 id.setOffset(OffsetG++);
+                 //TODO Decrementar offset de la tabla global??
+                 if (inFunc)
+                     t.setGlobal(id);
+             }
+         } catch (Exception e) {
+             return;
+         }
+    }
+}
