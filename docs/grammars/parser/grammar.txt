@@ -1,4 +1,4 @@
-Terminales = { eof  let  id  ;  if  (  )  {   }  while % do else
+Terminales = { lambda eof  let  id  ;  if  (  )  {   }  while % do else
             function return input print int boolean string and >  =
             cad num  ++  , &&  true false  }
 NoTerminales = {  START  SENA  CTE  INC  EXP    EXPX  VALUE  XPX  ASIGN  DECL   DECLX  TD  TDX  INOUT
@@ -27,9 +27,9 @@ EXPX -> &&  EXP ////12
 EXPX -> % EXP ////13
 EXPX -> lambda ////14
 
-VALUE -> id XPX ////15
-VALUE -> CTE    ////16
-VALUE -> ( EXP ) ////17
+SEN-> id ASCALL ;  ////14
+SEN-> IO ;////15
+SEN-> INC ;////16
 
 
 XPX -> ( FCALL ) ////18
@@ -42,9 +42,10 @@ DECL -> let id TD DECLX ; //// 21
 DECLX -> ASIGN //// 22
 DECLX -> lambda //// 23
 
-TD -> int //// 24 tipos de datos
-TD -> string //// 25
-TD -> boolean   //// 26
+BODY -> SENB BODYX           //// 34
+BODY -> DECID BODYX           //// 35
+BODY -> SENCOM BODYX           //// 36
+BODY -> lambda              //// 37
 
 TDX -> TD   //// 27
 TDX -> lambda   //// 28

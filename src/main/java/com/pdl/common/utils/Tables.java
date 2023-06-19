@@ -92,7 +92,7 @@ public class Tables {
         unimplementedKW.add("else");
         unimplementedKW.add("case");
         unimplementedKW.add("default");
-
+        
         invalidTokens.add("arithmetic-operand");
         invalidTokens.add("comparator-operand");
         invalidTokens.add("logic-operand");
