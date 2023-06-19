@@ -3,8 +3,6 @@ package com.pdl.parser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.util.ArrayList;
 
 import com.pdl.lexer.lib.SymbolAt;
@@ -13,7 +11,7 @@ import org.junit.jupiter.api.*;
 import com.pdl.Compiler;
 import com.pdl.common.interfaces.TS;
 import com.pdl.common.utils.Constants;
-import com.pdl.common.utils.FilesAt;
+
 import com.pdl.symbols.SymbolTable;
 
 public class ParseTest {
