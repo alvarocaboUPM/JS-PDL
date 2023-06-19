@@ -88,9 +88,9 @@ public class Compiler {
             // Dupms Ast
             FilesAt.FParser.write(ast);
             // Dumps TS
-            //ts.OutTS();
+            ts.OutTS();
         } catch (IOException | NullPointerException e) {
-            e.getStackTrace();
+            e.printStackTrace();
         } finally {
             // Resets the standard error output
             FilesAt.closeFiles();
