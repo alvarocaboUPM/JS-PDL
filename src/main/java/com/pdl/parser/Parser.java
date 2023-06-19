@@ -26,8 +26,7 @@ public class Parser {
     static Queue<List<String>> ExpQueue = new LinkedList<>();
     static List<String> tmpExp, Emded;
     static List<String> tmpArgs;
-    // static Exprss Evaluator = new Exprss();
-    //
+
     public static String TabLex;
     // Flagset
     public static boolean inFunc, inCond, inVarDec, noErr,
@@ -129,9 +128,9 @@ public class Parser {
                 SENB();
                 break;
             }
-            default: {
-                // ParseLib.ezError(102); ERROR!!
-            }
+            default: 
+                ErrorAt.ezError(100, debugString());
+            
         }
     }
 
@@ -143,10 +142,7 @@ public class Parser {
         getNext();
         tmpExp = new ArrayList<>();
         EXP();
-        // erro punto y com
         ExpQueue.add(tmpExp);
-        // if(!Evaluator.evaluate(ExpQueue.poll()).equals("TypeBool"))
-        // ParseLib.ezError(239);
         ckParCl();
         getNext();
         inCond = false;
@@ -164,8 +160,6 @@ public class Parser {
      * Handles expressions and operands
      */
     public void EXP() {
-
-        // cursor.data == null
         switch (tk.getType()) {
             case Constants.parenthesesOpen:
             case Constants.id:
@@ -186,10 +180,10 @@ public class Parser {
                 break;
             }
             default:
-                // ParseLib.ezError(221); Error??
+                
         }
         // Fin de la expresión (Lee el ;)
-        // ParseLib.operatorPreference();
+        
     }
 
     /**
@@ -238,7 +232,7 @@ public class Parser {
             } catch (Exception e) {
                 return;
             }
-            // ParseLib.setID();
+            
             getNext();
             XPX();
         } else if (checkTk(Constants.parenthesesOpen)) {
@@ -282,7 +276,7 @@ public class Parser {
             default:
                 // ALex.ezError(215, tk.getType()); TODO error?
         }
-        // ParseLib.insertOperand();
+        
         getNext();
     }
 
@@ -291,7 +285,7 @@ public class Parser {
      */
     public void XPX() {
         if (checkTk(Constants.parenthesesOpen)) {
-            if (id.getType() != "Function") // ParseLib.ezError(117); TODO error?
+            if (id.getType() != "Function") 
                 // LastType = Compiler.ts.lookAtIndex(CurrID).getReturnType();
                 tmpExp.add(id.getReturnType()); // TODO review
             SymbolAt tmp = id;
@@ -305,7 +299,7 @@ public class Parser {
             FCALL();
             tmpExp = Emded;
             // if(!tmpArgs.equals(tmp.getTypesParams()))
-            // ParseLib.ezError(237,tmp.getLexema());
+            
             // if (nArgs != tmp.getNumParams()) ParseLib.ezError(204, tmp.getLexema());
             inFCall = false;
 
@@ -353,7 +347,7 @@ public class Parser {
             getNext();
         } // lambda
           // else TODO check what error to return !
-          // ParseLib.ezError(113);
+          
     }
 
     /**
@@ -414,7 +408,7 @@ public class Parser {
                 break;
             default:
                 id.setType("Unknown"); // TODO review
-                // ParseLib.ezError(106); TODO review if should ret error
+                
         }
     }
 
@@ -475,8 +469,8 @@ public class Parser {
         tmpExp = new ArrayList<>();
         EXP();
         ExpQueue.add(tmpExp);
-        // if(!Evaluator.evaluate(ExpQueue.poll()).equals("TypeBool"))
-        // ParseLib.ezError(239);
+        
+        
         getNext();
         inCond = false;
         ckSemCol();
@@ -514,7 +508,7 @@ public class Parser {
                 break;
             }
             default: {
-                // ParseLib.ezError(108); TODO throw error?
+                
             }
         }
     }
@@ -523,7 +517,7 @@ public class Parser {
      * Hadles value assigment to vars and function calls
      */
     public void IDX() {
-        // ParseLib.setID();
+        
         ckID();
         try {
             id = t.lookAtIndex((int) tk.getInfo());
@@ -545,10 +539,10 @@ public class Parser {
             inFCall = true;
             FCALL();
             // if(!tmpArgs.equals(tmp.getTypesParams()))
-            // ParseLib.ezError(237,tmp.getLexema()); Sementic error
+            
             ckSemCol();
         } // else TODO Throw error?
-          // ParseLib.ezError(103);
+          
     }
 
     /*
@@ -561,7 +555,7 @@ public class Parser {
         EXP();
         ExpQueue.add(tmpExp);
         // if(!Evaluator.evaluate(ExpQueue.poll()).equals( TypeToCmp))
-        // ParseLib.ezError(234,"Tipo de la Expresion != " + TypeToCmp); Semantic Error
+        
         ckSemCol();
     }
 
@@ -598,7 +592,7 @@ public class Parser {
             ckSemCol();
 
         } // else
-          // ParseLib.ezError(109); TODO throw error?
+          
     }
 
     /**
@@ -616,7 +610,7 @@ public class Parser {
             EXP();
             ExpQueue.add(tmpExp);
             // if(!Evaluator.evaluate(ExpQueue.poll()).equals(funcID.getReturnType()))
-            // ParseLib.ezError(238, funcID.getLexema());
+            
         }
     }
 
@@ -629,7 +623,7 @@ public class Parser {
     public void INC() {
         result += "8 ";
         getNext();
-        // ParseLib.setID();
+        
         ckID();
         try {
             id = t.lookAtIndex((int) tk.getInfo());
@@ -639,7 +633,7 @@ public class Parser {
         CheckExplicitness();
         tmpExp = new ArrayList<>();
         tmpExp.add(id.getType());
-        // ParseLib.insertOperand();
+        
         // if (!id.getType().equals("TypeInt")) ParseLib.ezError(205); semantic error?
     }
 
@@ -698,7 +692,7 @@ public class Parser {
             } catch (Exception e) {
                 return;
             }
-            // ParseLib.setID();
+            
             id.setOffset(OffsetL);
             IncOffset(LastType);
             id.setType(LastType);
@@ -709,7 +703,7 @@ public class Parser {
         } else if (checkTk(Constants.parenthesesClose))
             result += "55 ";
         // else
-        // ParseLib.ezError(113); TODO throw error?
+        
     }
 
     /**
@@ -743,7 +737,7 @@ public class Parser {
         } else if (checkTk(Constants.parenthesesClose))
             result += "57 ";
         // else
-        // ParseLib.ezError(113); todo throw error?
+        
     }
 
     private String debugString() {
