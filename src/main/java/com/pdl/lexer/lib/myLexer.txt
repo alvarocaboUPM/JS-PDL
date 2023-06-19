@@ -150,10 +150,6 @@ public class Lexer implements ALex {
                 return;
             }
 
-            if (nextChar1 == '\n') {
-                numLineas++;
-            }
-
             nextChar1 = nextChar2;
             nextChar2 = leer();
         }
@@ -178,9 +174,8 @@ public class Lexer implements ALex {
         switch (car) {
             // Coments
             case '/':
-                if ((car = leer()) != '*') {
-                    break;
-                }
+                if ((car = leer()) != '*')
+                    ErrorAt.ezError(13, "'/'" + car);
                 skipComment();
                 return Gen_Token(leer());
 
@@ -195,21 +190,14 @@ public class Lexer implements ALex {
             // Strings
             case '"':
                 lex = carString(car);
-                while ((car = leer()) != '"' &&
-                        car != '\'') {
-                    // Checks for not close string (no genera token)
-                    if (car == '\n') {
-                        ErrorAt.ezError(12, null);
-                        numLineas++;
-                        return Gen_Token(leer());
-                    }
+                while ((car = leer()) != '"') {
+                    lex += carString(car);
                     // Checks for maxsize
                     if (lex.length() > Constants.STR_MAX_SIZE) {
                         ErrorAt.ezError(12, null);
                         panic();
                         break;
                     }
-                    lex += carString(car);
                 }
                 res = nToken("Cad", lex + "\"");
                 return res;
@@ -245,43 +233,18 @@ public class Lexer implements ALex {
                 lex += carString(car);
             }
             Pointer--;
+            // Si no es una palabra reservada, mete el símbolo en la tabla de símbolos
+            if(Tables.getResWords().containsKey(lex)) return Tables.getResWords().get(lex);
+            else{
+                if(tab.getScope()){
+                    if(tab.functionState()) tab.createTS(lex);
+                        return nToken("ID", tab.insertAt(lex));
+                }
+                else{
+                    return nToken("ID", tab.insertAt(lex));
+                }
 
-            // Check for unimplemented kws
-            if (Tables.getUnimplementedKW().contains(lex)) {
-                ErrorAt.ezError(24, lex);
-                panic();
-                return Gen_Token(leer());
             }
-
-            // Si no es una palabra reservada
-            if (Tables.getResWords().containsKey(lex))
-                return Tables.getResWords().get(lex);
-
-            // Mete el símbolo en la tabla de símbolos
-            SymbolAt tmp = new SymbolAt();
-            // Existe el símbolo
-            if ((tmp = tab.lookAt(lex)) != null) {
-                if (tab.getScope())
-                    // estamos en la tabla global
-                    return new Token(Constants.id, tmp.getID());
-
-                // estamos en la tabla local
-                if (tab.getCurrentLocalTs().containsValue(tmp))
-                    return new Token(Constants.id, tmp.getID());
-
-                // el lexema está en la global, pero no en la local
-                // Añadir flag Shadowing
-                tab.shadowing(true);
-                return nToken(Constants.id, tab.insertAt(lex)); // insertamos el lexema en la local y devolvemos el
-                                                                // token correspondiente
-            }
-
-            if (tab.getScope()) {// estamos en la tabla global
-                if (tab.functionState()) // comprobamos si estamos empezando a analizar una funcion
-                    tab.createTS(lex); // Creamos tabla local
-                return nToken("ID", tab.insertAt(lex));
-            }
-            return nToken("ID", tab.insertAt(lex));
 
         } else {
             // Checks for direct token
@@ -294,10 +257,14 @@ public class Lexer implements ALex {
             if (car == '+') {
                 if (leer() == '+')
                     return nToken("ResAutoSum", null);
+                else
+                    ErrorAt.ezError(22, lex);
             }
             if (car == '&') {
                 if (leer() == '&')
                     return nToken("AND", null);
+                else
+                    ErrorAt.ezError(22, lex);
             }
 
         }
@@ -306,41 +273,17 @@ public class Lexer implements ALex {
         switch (car) {
             case '\'':
                 ErrorAt.ezError(20, null);
-                return Gen_Token('"');
-
-            case '/':
-                ErrorAt.ezError(23, null);
-                while (leer() != '\n') {
-                }
-                numLineas++;
+                Gen_Token('/');
                 break;
 
-            case '*':
-            case '+':
-            case '-':
-                ErrorAt.ezError(22, carString(car));
-                return nToken(Constants.MOD, null);
-
-            case '<':
-                ErrorAt.ezError(22, carString(car));
-                return nToken(Constants.GT, null);
-
-            case '|':
-            case '&':
-            case '!':
-                if (!tokenList.get(tokenList.size() - 1).getType().equals(Constants.AND)) {
-                    ErrorAt.ezError(22, carString(car));
-                    return nToken(Constants.AND, null);
-                }
-                return Gen_Token(leer());
             default:
                 /* No valid tokens nor error generated */
-                ErrorAt.ezError(14, carString(car));
+                ErrorAt.ezError(14, lex);
                 panic();
                 break;
         }
 
-        return Gen_Token(leer());
+        return null;
     }
 
     /**
@@ -380,10 +323,9 @@ public class Lexer implements ALex {
     }
 
     private static boolean isSafe(char c) {
-        char[] safe = { ';', '"', '}', '\n' };
+        char[] safe = { ';', '"', '}' };
         for (char safeChar : safe) {
             if (c == safeChar) {
-
                 return true;
             }
         }

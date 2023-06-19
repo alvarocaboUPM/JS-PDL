@@ -59,6 +59,12 @@ function imprime (string s, string msg, int f)	/* función que recibe 3 argument
 	return;	/* finaliza la ejecución de la función (en este caso, se podría omitir) */
 }
 
+function cadena string (boolean log)
+{
+	if (!log) {return s;}
+	else      {return"Fin";}
+}	// fin cadena: función que devuelve una cadena
+
 // Parte del programa principal:
 s = "El factorial ";	// Primera sentencia que se ejecutaría
 
@@ -100,9 +106,21 @@ switch (num)
 function bisiesto boolean (int a)	
 {			
 	return 
-		(a % 4 && 0 && a % 100 && 0 && a % 400 && 0);	//se tienen en cuenta la precedencia de operadores
+		(a % 4 == 0 && a % 100 != 0 || a % 400 == 0);	//se tienen en cuenta la precedencia de operadores
 } // fin de bisiesto: función lógica
 
+function dias int (int m, int a)
+{
+	switch (m)
+	{
+		case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+			return 31; break;
+		case 4: case 6: case 9: case 11:
+			return 30;
+		case 2: if (bisiesto (a))  return(29); 
+			return(28);
+		default: print "Error: mes incorrecto: "; print m; print salto(); return 0;
+	}
 } // fin de dias. Todos los return devuelven un entero y la función es entera
 
 function esFechaCorrecta boolean (int d, int m, int a)	
