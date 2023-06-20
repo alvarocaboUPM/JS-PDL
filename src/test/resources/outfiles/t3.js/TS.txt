@@ -1,0 +1,71 @@
+TABLA PRINCIPAL #1:
+--------- ----------
+* Lexema:'texto'
+   Atributos:
+   + type:'TypeString'
+   + offset:0
+
+--------- ----------
+* Lexema:'esto_es_un_nombre_de_variable_global_de_tipo_entero_que_tiene_que_aparecer_en_la_TS_global'
+   Atributos:
+   + type:'Unknown'
+   + offset:-1
+
+--------- ----------
+* Lexema:'x__x'
+   Atributos:
+   + type:'TypeString'
+   + offset:-1
+
+--------- ----------
+* Lexema:'alert'
+   Atributos:
+   + type:'Function'
+   + NumParams:1
+   + TypesParams:'[TypeString]'
+   + ReturnType:'Void'
+   + offset:-1
+
+--------- ----------
+* Lexema:'pideTexto'
+   Atributos:
+   + type:'Function'
+   + NumParams:0
+   + TypesParams:'[]'
+   + ReturnType:'Void'
+   + offset:-1
+
+--------- ----------
+* Lexema:'texto'
+   Atributos:
+   + type:'Unknown'
+   + offset:-1
+
+--------- ----------
+* Lexema:'pideTexto'
+   Atributos:
+   + type:'Unknown'
+   + offset:-1
+
+--------- ----------
+* Lexema:'alert'
+   Atributos:
+   + type:'Unknown'
+   + offset:-1
+
+--------- ----------
+* Lexema:'texto'
+   Atributos:
+   + type:'Unknown'
+   + offset:-1
+
+--------- ----------
+
+TABLA DE LA FUNCION alert #2:
+--------- ----------
+* Lexema:'msg_'
+   Atributos:
+   + type:'TypeString'
+   + offset:0
+
+--------- ----------

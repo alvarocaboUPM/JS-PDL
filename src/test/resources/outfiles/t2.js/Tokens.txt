@@ -51,5 +51,7 @@
 <MOD,>
 <CteInt,7>
 <ParClose,>
+<GT,>
+<CteInt,5>
 <SemCol,>
 <Teof,>

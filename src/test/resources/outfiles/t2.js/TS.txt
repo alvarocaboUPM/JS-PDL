@@ -3,23 +3,23 @@ TABLA PRINCIPAL #1:
 * Lexema:'x'
    Atributos:
    + type:'TypeInt'
-   + offset:1
+   + offset:0
 
 --------- ----------
 * Lexema:'b'
    Atributos:
    + type:'TypeBool'
-   + offset:3
+   + offset:1
 
 --------- ----------
 * Lexema:'z'
    Atributos:
    + type:'TypeInt'
-   + offset:5
+   + offset:2
 
 --------- ----------
 * Lexema:'y'
    Atributos:
-   + type:'TypeInt'
-   + offset:6
+   + type:'Unknown'
+   + offset:-1
 
