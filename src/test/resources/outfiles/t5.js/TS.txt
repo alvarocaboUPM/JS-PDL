@@ -1,0 +1,170 @@
+TABLA PRINCIPAL #1:
+--------- ----------
+* Lexema:'s_s'
+   Atributos:
+   + type:'TypeString'
+   + offset:1
+
+--------- ----------
+* Lexema:'a'
+   Atributos:
+   + type:'TypeInt'
+   + offset:66
+
+--------- ----------
+* Lexema:'bb'
+   Atributos:
+   + type:'TypeString'
+   + offset:68
+
+--------- ----------
+* Lexema:'cadena'
+   Atributos:
+   + type:'Function'
+   + NumParams:1
+   + TypesParams:'[TypeString]'
+   + ReturnType:'TypeString'
+   + offset:69
+
+--------- ----------
+* Lexema:'xx'
+   Atributos:
+   + type:'TypeInt'
+   + offset:64
+
+--------- ----------
+* Lexema:'xx'
+   Atributos:
+   + type:'TypeInt'
+   + offset:64
+
+--------- ----------
+* Lexema:'xx'
+   Atributos:
+   + type:'TypeInt'
+   + offset:134
+
+--------- ----------
+* Lexema:'xx'
+   Atributos:
+   + type:'TypeInt'
+   + offset:134
+
+--------- ----------
+* Lexema:'s_s'
+   Atributos:
+   + type:'TypeInt'
+   + offset:135
+
+--------- ----------
+* Lexema:'s_s'
+   Atributos:
+   + type:'TypeInt'
+   + offset:135
+
+--------- ----------
+* Lexema:'bb'
+   Atributos:
+   + type:'TypeInt'
+   + offset:136
+
+--------- ----------
+* Lexema:'bb'
+   Atributos:
+   + type:'TypeInt'
+   + offset:136
+
+--------- ----------
+* Lexema:'a'
+   Atributos:
+   + type:'TypeInt'
+   + offset:137
+
+--------- ----------
+* Lexema:'a'
+   Atributos:
+   + type:'TypeInt'
+   + offset:137
+
+--------- ----------
+* Lexema:'bb'
+   Atributos:
+   + type:'TypeInt'
+   + offset:138
+
+--------- ----------
+* Lexema:'bb'
+   Atributos:
+   + type:'TypeInt'
+   + offset:138
+
+--------- ----------
+* Lexema:'s'
+   Atributos:
+   + type:'TypeInt'
+   + offset:139
+
+--------- ----------
+* Lexema:'s'
+   Atributos:
+   + type:'TypeInt'
+   + offset:139
+
+--------- ----------
+* Lexema:'RR'
+   Atributos:
+   + type:'TypeInt'
+   + offset:140
+
+--------- ----------
+* Lexema:'RR'
+   Atributos:
+   + type:'TypeInt'
+   + offset:140
+
+--------- ----------
+* Lexema:'a'
+   Atributos:
+   + type:'TypeInt'
+   + offset:141
+
+--------- ----------
+* Lexema:'a'
+   Atributos:
+   + type:'TypeInt'
+   + offset:141
+
+--------- ----------
+* Lexema:'bb'
+   Atributos:
+   + type:'TypeInt'
+   + offset:142
+
+--------- ----------
+* Lexema:'bb'
+   Atributos:
+   + type:'TypeInt'
+   + offset:142
+
+--------- ----------
+* Lexema:'s_s'
+   Atributos:
+   + type:'TypeInt'
+   + offset:143
+
+--------- ----------
+* Lexema:'s_s'
+   Atributos:
+   + type:'TypeInt'
+   + offset:143
+
+--------- ----------
+
+TABLA DE LA FUNCION cadena #2:
+--------- ----------
+* Lexema:'kk'
+   Atributos:
+   + type:'TypeString'
+   + offset:0
+
+--------- ----------

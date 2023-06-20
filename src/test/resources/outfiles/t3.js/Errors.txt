@@ -1,0 +1,8 @@
+ERROR FOUND USING THE SEMANTIC ANALYZER
+###################
+Error #235 @ line 5: Expresion Invalida
+
+ERROR FOUND USING THE SEMANTIC ANALYZER
+###################
+Error #235 @ line 17: Expresion Invalida
+

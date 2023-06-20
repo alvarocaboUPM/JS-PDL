@@ -1,0 +1,15 @@
+ERROR FOUND USING THE SEMANTIC ANALYZER
+###################
+Error #232 @ line 13: Error de tipo: bool && bool -> int
+
+ERROR FOUND USING THE SEMANTIC ANALYZER
+###################
+Error #217 @ line 15: Necesaria previa declaracion de las funciones 
+- TRAZA -> D	 1 32 21 25 23 1 32 21 24 23 1 32 21 26 23 2 53 27 25 54 25 57 40 33 40 35 37 29 9 17 9 16 4 14 14 40 32 21 24 23 40 35 36 51 20 9 15 19 14 40 31 42 9 15 19 14 44 38 49 9 15 19 14 41 34 9 17 9 15 19 11 9 16 5 14 12 9 15 19 14 40 35 36 51 20 9 15 
+- ÚLTIMO TK LEIDO -> <ParOpen,>
+
+
+ERROR FOUND USING THE SEMANTIC ANALYZER
+###################
+Error #235 @ line 15: Expresion Invalida
+

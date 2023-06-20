@@ -10,7 +10,7 @@ function  cadena string (string kk)
 		xx=s_s;
 		if (bb)  return kk; /* No se puede  if(bb)-> nada */
     }
-	while (a > 9 && bb); /*|| -> && */
+	while ((a > 9) && bb); /*|| -> && */
 
 	s= RR (a, bb, kk); /* quito $ */
 	kk = "print (kk)"; /* void prin -> print */

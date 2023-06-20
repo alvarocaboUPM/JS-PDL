@@ -14,32 +14,31 @@ import com.pdl.lexer.Lexer;
 import com.pdl.lexer.lib.SymbolAt;
 import com.pdl.lexer.lib.Token;
 import com.pdl.parser.lib.Exprss;
+import com.pdl.symbols.SymbolTable;
 
 public class Parser implements ASin {
     // public class Parser {
     private String result;
     private Lexer lexer;
     private Token tk;
-    private TS t;
+    private SymbolTable t;
     private SymbolAt id, funcID; // current symbol
-    private int CurrID, nParams, nArgs, OffsetG, OffsetL;// Counters
+    private int nParams, nArgs, OffsetG, OffsetL;// Counters
     private String LastType, TypeToCmp;
     // for evaluating expresions
     private Queue<List<String>> ExpQueue = new LinkedList<>();
     private List<String> tmpExp, Emded;
     private List<String> tmpArgs;
 
-    private String TabLex;
     // Flagset
-    private boolean inFunc, inCond, inVarDec, noErr,
-            inParms, setID, inFCall, nestedExp, inAss;
+    private boolean inFunc;
 
     public Parser(TS t) {
         result = "D\t ";
         lexer = new Lexer(t);
         nParams = OffsetG = OffsetL = 0;
-        inFunc = inCond = inVarDec = nestedExp = inAss = false;
-        this.t = t;
+        inFunc = false;
+        this.t = (SymbolTable) t;
     }
 
     protected String parserDebug(String testFile) {
@@ -111,7 +110,6 @@ public class Parser implements ASin {
             }
             case Constants.let: {
                 result += "32 ";
-                inVarDec = true;
                 DECL();
                 break;
             }
@@ -141,14 +139,15 @@ public class Parser implements ASin {
         result += "42 ";
         getNext();
         ckParOp();
-        inCond = true;
         getNext();
         tmpExp = new ArrayList<>();
         EXP();
         ExpQueue.add(tmpExp);
+        if (!Exprss.evaluate(ExpQueue.poll()).equals(Constants.booleanType)) {
+            // ErrorAt.ezError(250, debugString());
+        }
         ckParCl();
         getNext();
-        inCond = false;
         if (checkTk(Constants.curlyBraceOpen)) {
             result += "43 ";
             BODY();
@@ -196,27 +195,25 @@ public class Parser implements ASin {
 
         switch (tk.getType()) {
             case Constants.GT: {
-                tmpExp.add("GT");
                 result += "11 ";
-                getNext();
-                EXP();
+                tmpExp.add("GT");
+
                 break;
             }
             case Constants.AND: {
-                tmpExp.add("AND");
                 result += "12 ";
-                getNext();
-                EXP();
+                tmpExp.add("AND");
+
                 break;
             }
             case Constants.MOD: {
-                tmpExp.add("MOD");
                 result += "13 ";
-                getNext();
-                EXP();
+                tmpExp.add("MOD");
                 break;
             }
         }
+        getNext();
+        EXP();
     }
 
     /**
@@ -232,8 +229,8 @@ public class Parser implements ASin {
             XPX();
             return;
         } else if (checkTk(Constants.parenthesesOpen)) {
-            tmpExp.add("ParOpen");
             result += "17 ";
+            tmpExp.add("ParOpen");
             // TODO Set Priority??
             getNext();
             EXP();
@@ -248,7 +245,6 @@ public class Parser implements ASin {
         }
     }
 
-    // ------------------
     /**
      * Handles constant declarations
      */
@@ -275,21 +271,19 @@ public class Parser implements ASin {
         getNext();
     }
 
-    // ------------------
     /**
      * Permite utilizar el retorno de una función en una expresión
      */
     public void XPX() {
         if (checkTk(Constants.parenthesesOpen)) {
             if (id.getType() != "Function") {
-            } // ParseLib.ezError(117); TODO error?
-            LastType = t.lookAtIndex(CurrID).getReturnType();
+                ErrorAt.ezError(217, debugString());
+            }
+
             tmpExp.add(id.getReturnType()); // TODO review
             SymbolAt tmp = id;
             result += "18 ";
             getNext();
-
-            inFCall = true;
             Emded = tmpExp;
             nArgs = 0;
             // ExpQueue.add(tmpExp);
@@ -299,21 +293,19 @@ public class Parser implements ASin {
             } // ParseLib.ezError(237,tmp.getLexema()); TODO error
             if (nArgs != tmp.getNumParams()) {
             } // ParseLib.ezError(204, tmp.getLexema()); TODO error
-            inFCall = false;
-
         } else {
             CheckExplicitness();
-            tmpExp.add(id.getType());// todo review
-            result += "19 ";// lambda
+            tmpExp.add(id.getType());
+            result += "19 ";
         }
     }
-    // ------------------
 
     /**
      * Handles function calls
      */
     public void FCALL() {
         if (!checkTk(Constants.parenthesesClose)) {
+            // TODO: Comprobar funcion
             result += "45 ";
             tmpExp = new ArrayList<>();
             EXP();
@@ -373,11 +365,7 @@ public class Parser implements ASin {
         result += "21 ";
         getNext();
         ckID();
-        try {
-            id = t.lookAtIndex((int) tk.getInfo());
-        } catch (Exception e) {
-            return;
-        }
+        CheckExplicitness();
         getNext();
         TD();
         id.setOffset(inFunc ? OffsetL : OffsetG);
@@ -386,7 +374,7 @@ public class Parser implements ASin {
         TypeToCmp = tk.getType();
         getNext();
         DECLX();
-        inVarDec = false;
+        t.setInVarDeclaration(false);
     }
 
     // ------------------
@@ -394,6 +382,10 @@ public class Parser implements ASin {
      * Gestión de tipos
      */
     public void TD() {
+        if (!tk.isType()) {
+            ErrorAt.ezError(106, debugString());
+            return;
+        }
 
         switch (tk.getType()) {
             case Constants.intType:
@@ -407,7 +399,9 @@ public class Parser implements ASin {
                 break;
             default:
                 id.setType("Unknown");
+                return;
         }
+        id.setType(tk.getType());
     }
 
     /**
@@ -415,16 +409,17 @@ public class Parser implements ASin {
      */
     public void TDX() {
         if (checkTk(Constants.parenthesesOpen)) {
-            funcID.setReturnType("Void");
             result += "28 ";
-        } else {
-            result += "27 ";
-            TD();
-            funcID.setOffset(OffsetG);
-            IncOffset(tk.getType());
-            funcID.setReturnType(tk.getType());
-            getNext();
+            funcID.setReturnType("Void");
+            return;
         }
+        result += "27 ";
+        TD();
+        funcID.setOffset(OffsetG);
+        IncOffset(tk.getType());
+        funcID.setReturnType(tk.getType());
+        getNext();
+
     }
 
     // ------------------
@@ -434,9 +429,7 @@ public class Parser implements ASin {
     public void DECLX() {
         if (checkTk(Constants.equals)) {
             result += "22 ";
-            inAss = true;
             ASIGN();
-            inAss = false;
         } else {
             result += "23 ";
         }
@@ -462,16 +455,15 @@ public class Parser implements ASin {
         ckWhile(); // checks token =? while
         getNext();
         ckParOp();
-        inCond = true;
+
         getNext();
         tmpExp = new ArrayList<>();
         EXP();
         ExpQueue.add(tmpExp);
         if (!Exprss.evaluate(ExpQueue.poll()).equals("TypeBool")) {
-
+            // ErrorAt.ezError(239, debugString());
         }
         getNext();
-        inCond = false;
         ckSemCol();
     }
 
@@ -495,6 +487,9 @@ public class Parser implements ASin {
             }
             case Constants.returnKw: {
                 result += "38 ";
+                if (t.getScope()) {
+                    // ErrorAt.ezError(251, debugString());
+                }
                 RX();
                 ckSemCol();
                 break;
@@ -514,29 +509,22 @@ public class Parser implements ASin {
      */
     public void IDX() {
         ckID();
-        try {
-            id = t.lookAtIndex((int) tk.getInfo());
-        } catch (Exception e) {
-            return;
-        }
         CheckExplicitness();
         SymbolAt tmp = id;
-        TypeToCmp = tmp.getType();
         getNext();
         if (checkTk(Constants.equals)) {
             result += "51 ";
+            TypeToCmp = tmp.getType();
             ASIGN();
         } else if (checkTk(Constants.parenthesesOpen)) {
             // Funciones
             result += "52 ";
             getNext();
             // Comprobar numero de parametros
-            inFCall = true;
             FCALL();
-            inFCall = false; // Should I?
-            // if (!tmpArgs.equals(tmp.getTypesParams())) {
-            // TODO: Si la funcion viene sin parametros esto es nulo
-            // }
+            if (tmpArgs != null && !tmpArgs.equals(tmp.getTypesParams())) {
+                // ErrorAt.ezError(253, debugString());
+            }
             ckSemCol();
         }
     }
@@ -551,8 +539,8 @@ public class Parser implements ASin {
         EXP();
         ExpQueue.add(tmpExp);
         if (!Exprss.evaluate(ExpQueue.poll()).equals(TypeToCmp)) {
-        } // ParseLib.ezError(234,"Tipo de la Expresion != " +
-          // TypeToCmp); Semantic Error //TODO Throw proper error
+            // ErrorAt.ezError(234, debugString());
+        }
         ckSemCol();
     }
 
@@ -565,14 +553,9 @@ public class Parser implements ASin {
             result += "30 ";
             getNext();
             ckID();
-            try {
-                id = t.lookAtIndex((int) tk.getInfo());
-            } catch (Exception e) {
-                return;
-            }
             CheckExplicitness();
             if (id.getType() != "TypeInt" && id.getType() != "TypeString") {
-                ErrorAt.ezError(214, null);
+                // ErrorAt.ezError(214, null);
             }
             getNext();
             ckSemCol();
@@ -585,7 +568,7 @@ public class Parser implements ASin {
             ExpQueue.add(tmpExp);
             String type = Exprss.evaluate(ExpQueue.poll());
             if (!type.equals("TypeInt") && !type.equals("TypeString")) {
-                ErrorAt.ezError(214, null);
+                // ErrorAt.ezError(214, null);
             }
             ckSemCol();
 
@@ -608,8 +591,8 @@ public class Parser implements ASin {
             EXP();
             ExpQueue.add(tmpExp);
             if (!Exprss.evaluate(ExpQueue.poll()).equals(funcID.getReturnType())) {
+                // ErrorAt.ezError(234, debugString());
             }
-            // ParseLib.ezError(238, funcID.getLexema()); // TODO throw semantic error
         }
     }
 
@@ -632,8 +615,9 @@ public class Parser implements ASin {
         tmpExp = new ArrayList<>();
         tmpExp.add(id.getType());
         if (!id.getType().equals("TypeInt")) {
+            // ErrorAt.ezError(205, debugString());
         }
-        // ParseLib.ezError(205); semantic error? //TODO Throw semantic Error
+
     }
 
     /**
@@ -643,31 +627,22 @@ public class Parser implements ASin {
         t.functionOn();
         result += "53 ";
         getNext();
-        try {
-            funcID = t.lookAtIndex((int) tk.getInfo());
-        } catch (Exception e) {
-            return;
-        }
-        TabLex = funcID.getLexema();
-        //
+        funcID = t.lookAtIndex((int) tk.getInfo());
         funcID.setType("Function");
-        funcID.setOffset(OffsetG++);// Todo ver cuanto hay que incrementar el offset en caso de funcion, como no se
-                                    // especifica en el enunciado +1??
         getNext();
         TDX();
         inFunc = true;
 
         ckParOp();
-        t.setLocal();
+        t.setLocal(true);
         getNext();
-        inParms = true;
+
         PARAM();
-        inParms = false;
+
         funcID.setNumParams(nParams);
         getNext();
         ckKeyOp();
         BODY();
-        OffsetG += OffsetL; // revisar
         OffsetL = 0;
 
         t.functionOff();
@@ -684,19 +659,17 @@ public class Parser implements ASin {
             TD();
             funcID.addTypesParams(tk.getType());
             LastType = tk.getType();
+            t.setInParams(true);
             getNext();
             ckID();
-            try {
-                id = t.lookAtIndex((int) tk.getInfo());
-            } catch (Exception e) {
-                return;
-            }
+            id = t.lookAtIndex((int) tk.getInfo());
             id.setOffset(OffsetL);
             IncOffset(LastType);
             id.setType(LastType);
             getNext();
             nParams++;
             PARAMX();
+            t.setInParams(false);
 
         } else if (checkTk(Constants.parenthesesClose))
             result += "55 ";
@@ -721,13 +694,12 @@ public class Parser implements ASin {
                 } catch (Exception e) {
                     return;
                 }
-                CurrID = (int) tk.getInfo();
+
                 id.setOffset(OffsetL);
                 IncOffset(LastType);
                 id.setType(LastType);
                 getNext();
                 PARAMX();
-                // }
             }
         } else if (checkTk(Constants.parenthesesClose))
             result += "57 ";
@@ -781,13 +753,6 @@ public class Parser implements ASin {
         }
     }
 
-    private void ckKeyCl() {
-        if (!checkTk(Constants.curlyBraceClose)) {
-            ErrorAt.ezError(114, debugString());
-            panic();
-        }
-    }
-
     private void ckSemCol() {
         if (!checkTk(Constants.semicolon)) {
             ErrorAt.ezError(107, debugString());
@@ -798,20 +763,6 @@ public class Parser implements ASin {
     private void ckWhile() {
         if (!checkTk(Constants.whileKw)) {
             ErrorAt.ezError(118, debugString());
-            panic();
-        }
-    }
-
-    private void ckCte() {
-        if (!checkTk(Constants.cad, Constants.num, Constants.falseKw, Constants.trueKw)) {
-            ErrorAt.ezError(111, debugString());
-            panic();
-        }
-    }
-
-    private void ckType() {
-        if (!checkTk(Constants.stringType, Constants.booleanType, Constants.intType)) {
-            ErrorAt.ezError(106, debugString());
             panic();
         }
     }
@@ -842,7 +793,6 @@ public class Parser implements ASin {
             if (id.getType().equals("Unknown")) {
                 id.setType("TypeInt");
                 id.setOffset(OffsetG++);
-                // TODO Decrementar offset de la tabla global??
                 if (inFunc)
                     t.setGlobal(id);
             }

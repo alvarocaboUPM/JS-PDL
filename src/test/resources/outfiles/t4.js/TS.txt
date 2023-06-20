@@ -1,0 +1,128 @@
+TABLA PRINCIPAL #1:
+--------- ----------
+* Lexema:'n1'
+   Atributos:
+   + type:'TypeInt'
+   + offset:1
+
+--------- ----------
+* Lexema:'l1'
+   Atributos:
+   + type:'TypeBool'
+   + offset:3
+
+--------- ----------
+* Lexema:'cad'
+   Atributos:
+   + type:'TypeString'
+   + offset:5
+
+--------- ----------
+* Lexema:'n2'
+   Atributos:
+   + type:'TypeBool'
+   + offset:70
+
+--------- ----------
+* Lexema:'l2'
+   Atributos:
+   + type:'TypeBool'
+   + offset:72
+
+--------- ----------
+* Lexema:'ff'
+   Atributos:
+   + type:'Function'
+   + NumParams:1
+   + TypesParams:'[TypeBool]'
+   + ReturnType:'TypeBool'
+   + offset:73
+
+--------- ----------
+* Lexema:'varglobal'
+   Atributos:
+   + type:'TypeInt'
+   + offset:74
+
+--------- ----------
+* Lexema:'varglobal'
+   Atributos:
+   + type:'TypeInt'
+   + offset:74
+
+--------- ----------
+* Lexema:'l1'
+   Atributos:
+   + type:'TypeInt'
+   + offset:75
+
+--------- ----------
+* Lexema:'l1'
+   Atributos:
+   + type:'TypeInt'
+   + offset:75
+
+--------- ----------
+* Lexema:'l2'
+   Atributos:
+   + type:'TypeInt'
+   + offset:76
+
+--------- ----------
+* Lexema:'l2'
+   Atributos:
+   + type:'TypeInt'
+   + offset:76
+
+--------- ----------
+* Lexema:'ff'
+   Atributos:
+   + type:'TypeInt'
+   + offset:77
+
+--------- ----------
+* Lexema:'ff'
+   Atributos:
+   + type:'TypeInt'
+   + offset:77
+
+--------- ----------
+* Lexema:'a'
+   Atributos:
+   + type:'TypeInt'
+   + offset:78
+
+--------- ----------
+* Lexema:'a'
+   Atributos:
+   + type:'TypeInt'
+   + offset:78
+
+--------- ----------
+* Lexema:'ff'
+   Atributos:
+   + type:'TypeInt'
+   + offset:79
+
+--------- ----------
+* Lexema:'l2'
+   Atributos:
+   + type:'TypeInt'
+   + offset:80
+
+--------- ----------
+* Lexema:'varglobal'
+   Atributos:
+   + type:'TypeInt'
+   + offset:81
+
+--------- ----------
+
+TABLA DE LA FUNCION ff #2:
+--------- ----------
+* Lexema:'ss'
+   Atributos:
+   + type:'TypeBool'
+   + offset:0
+
+--------- ----------

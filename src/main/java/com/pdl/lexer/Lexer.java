@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.pdl.lexer.lib.*;
+import com.pdl.symbols.SymbolTable;
 import com.pdl.common.ErrorAt;
 import com.pdl.common.interfaces.ALex;
 import com.pdl.common.interfaces.TS;
@@ -27,13 +28,13 @@ public class Lexer implements ALex {
     private Integer num;
     // Data Structures
     public List<Token> tokenList; // Keeps track of the tokens generated
-    public TS tab;
+    public SymbolTable tab;
 
     public Lexer(TS t) {
         Pointer = 0;
         numLineas = 1;
         tokenList = new ArrayList<Token>();
-        tab = t;
+        tab = (SymbolTable)t;
         source = FilesAt.Source;
         onTest = false;
     }
@@ -43,7 +44,7 @@ public class Lexer implements ALex {
         Pointer = 0;
         numLineas = 1;
         tokenList = new ArrayList<Token>();
-        tab = t;
+        tab = (SymbolTable)t;
         try {
             source = Files.readAllBytes(new File(input).toPath());
         } catch (IOException e) {
@@ -270,8 +271,6 @@ public class Lexer implements ALex {
                     return new Token(Constants.id, tmp.getID());
 
                 // el lexema está en la global, pero no en la local
-                // Añadir flag Shadowing
-                tab.shadowing(true);
                 return nToken(Constants.id, tab.insertAt(lex)); // insertamos el lexema en la local y devolvemos el
                                                                 // token correspondiente
             }
