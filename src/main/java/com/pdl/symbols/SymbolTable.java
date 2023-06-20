@@ -71,7 +71,7 @@ public class SymbolTable implements TS {
                 return indexG++;
             }
             // If not found, insert
-            localT.get(CurrentLTSName).put(indexL, new SymbolAt(ID, indexL));
+            curLocal.put(indexL, new SymbolAt(ID, indexL));
             return indexL--;
         }
     }
@@ -102,13 +102,13 @@ public class SymbolTable implements TS {
         SymbolAt tmp;
         if (!Global && (tmp = curLocal.get(index)) != null) {
             return tmp;
-        } else if ((tmp = globalT.get(index)) != null) {// && !shadowing) {
+        } else if ((tmp = globalT.get(index)) != null) {
             return tmp;
         }
         return null;
     }
 
-    public void setGlobal(SymbolAt tmp) {// ???
+    public void setGlobal(SymbolAt tmp) {
 
         int id = tmp.getID();
         // tmp.setPosition(index);

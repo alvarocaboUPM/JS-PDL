@@ -273,14 +273,14 @@ public class Parser implements ASin {
         getNext();
     }
 
-    // ------------------
+
     /**
      * Permite utilizar el retorno de una función en una expresión
      */
     public void XPX() {
         if (checkTk(Constants.parenthesesOpen)) {
             if (id.getType() != "Function") {
-                ErrorAt.ezError(117, debugString());
+                ErrorAt.ezError(217, debugString());
             }
 
             tmpExp.add(id.getReturnType()); // TODO review
@@ -298,8 +298,8 @@ public class Parser implements ASin {
             } // ParseLib.ezError(204, tmp.getLexema()); TODO error
         } else {
             CheckExplicitness();
-            tmpExp.add(id.getType());// todo review
-            result += "19 ";// lambda
+            tmpExp.add(id.getType());
+            result += "19 ";
         }
     }
 
@@ -385,6 +385,10 @@ public class Parser implements ASin {
      * Gestión de tipos
      */
     public void TD() {
+        if(!tk.isType()){
+            ErrorAt.ezError(106, debugString());
+            return ;
+        }
 
         switch (tk.getType()) {
             case Constants.intType:
@@ -398,7 +402,9 @@ public class Parser implements ASin {
                 break;
             default:
                 id.setType("Unknown");
+                return ;
         }
+        id.setType(tk.getType());
     }
 
     /**
@@ -518,9 +524,7 @@ public class Parser implements ASin {
             result += "52 ";
             getNext();
             // Comprobar numero de parametros
-
             FCALL();
-
             if (tmpArgs!=null && !tmpArgs.equals(tmp.getTypesParams())) {
              ErrorAt.ezError(253, debugString());
             }
@@ -626,7 +630,7 @@ public class Parser implements ASin {
         t.functionOn();
         result += "53 ";
         getNext();
-        CheckExplicitness();
+        funcID = t.lookAtIndex((int) tk.getInfo());
         funcID.setType("Function");
         getNext();
         TDX();
@@ -658,15 +662,17 @@ public class Parser implements ASin {
             TD();
             funcID.addTypesParams(tk.getType());
             LastType = tk.getType();
+            t.setInParams(true);
             getNext();
             ckID();
-            CheckExplicitness();
+            id = t.lookAtIndex((int) tk.getInfo());
             id.setOffset(OffsetL);
             IncOffset(LastType);
             id.setType(LastType);
             getNext();
             nParams++;
             PARAMX();
+            t.setInParams(false);
 
         } else if (checkTk(Constants.parenthesesClose))
             result += "55 ";

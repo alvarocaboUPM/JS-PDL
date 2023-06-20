@@ -134,7 +134,6 @@ public class Tables {
                 put(111, "Se esperaba una constante");
                 put(113, "Se esperaba el cierre de la expresión: ')'");
                 put(114, "Se esperaba el cierre de la declaración: '}'");
-                put(117, "Necesaria previa declaracion de las funciones ");
                 put(118, "Estructura inválida del bucle do { something } while(cond); ");
                 put(120, "El parser ha recibido un token nulo");
                 // Semantics
@@ -150,6 +149,7 @@ public class Tables {
                 put(213, "Use 'let' para declarar variables globales");
                 put(214, "las operacion de entrada o salida solo aceptan un valor entero o cadena");
                 put(215, "Constante inválida introducida -> ");
+                put(217, "Necesaria previa declaracion de las funciones ");
                 put(220, "Intentando declarar una expresión ternaria: ");
                 put(221, "Intentando declarar una expresión vacía/inválida; ");
                 put(230, "Error de tipo: int % int -> int");
