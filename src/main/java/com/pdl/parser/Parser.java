@@ -134,6 +134,8 @@ public class Parser {
                 break;
             }
             default: {
+                ErrorAt.ezError(100, debugString());
+                break;
                 //ParseLib.ezError(102); ERROR!!
             }
         }
@@ -154,6 +156,7 @@ public class Parser {
         ckParCl();
         getNext();
         inCond = false;
+        //ExpQueue = new LinkedList<>();
         if (checkTk(Constants.curlyBraceOpen)){
             result+="43 ";
             BODY();
@@ -322,14 +325,16 @@ public class Parser {
             tmpArgs = new ArrayList<>();
             FCALL();
             tmpExp = Emded;// Emded es un array temporal para guardar las expresiones en caso de que haya expresiones aniadadas...
-            if (nArgs != tmp.getNumParams())ErrorAt.ezError(205, debugString()); //ParseLib.ezError(204, tmp.getLexema()); TODO error
-            if(!tmpArgs.equals(tmp.getTypesParams()))ErrorAt.ezError(237, debugString()); //ParseLib.ezError(237,tmp.getLexema()); TODO error
+            if (nArgs != tmp.getNumParams())ErrorAt.ezError(252, debugString()); //ParseLib.ezError(204, tmp.getLexema()); TODO error
+            if(!tmpArgs.equals(tmp.getTypesParams()))ErrorAt.ezError(253, debugString()); //ParseLib.ezError(237,tmp.getLexema()); TODO error
             inFCall = false;
             LastType = tmpLastType;// Guardamos el Typ Todo Review
         } else {
             //CheckExplicitness();// No va aquí
             //tmpExp.add(id.getType());//todo review //Si es function call se añade function en vez de su tipo de retorno
-            tmpExp.add(id.getType() == "Function" ? id.getReturnType(): id.getType());// TODO OK?
+            if(id != null) {
+                tmpExp.add(id.getType() == "Function" ? id.getReturnType() : id.getType());// TODO OK?
+            }
             //TODO Añadir a la pila de expresiones???
 
             result += "19 ";// lambda
@@ -439,7 +444,7 @@ public class Parser {
             default:
                 id.setType("Unknown");
                 ckType();
-                ErrorAt.ezError(106, debugString());
+                //ErrorAt.ezError(106, debugString());
                 break;
                 //ParseLib.ezError(106); TODO review if should ret error
         }
@@ -577,7 +582,7 @@ public class Parser {
             FCALL();
             inFCall = false; //Should I?
             if(tmpArgs != null) {
-                if (!tmpArgs.equals(tmp.getTypesParams())) ErrorAt.ezError(237, debugString()); //ParseLib.ezError(237,tmp.getLexema()); Sementic error
+                if (!tmpArgs.equals(tmp.getTypesParams())) ErrorAt.ezError(253, debugString()); //ParseLib.ezError(237,tmp.getLexema()); Sementic error
             }
             ckSemCol();
         } else ErrorAt.ezError(103, debugString());
@@ -594,7 +599,7 @@ public class Parser {
         tmpExp = new ArrayList<>();
         EXP();
         ExpQueue.add(tmpExp); //Revisar por que se añade 2 veces??
-        if(!Evaluator.evaluate(ExpQueue.poll()).equals( TypeToCmp)) ErrorAt.ezError(234, "Tipo de la Expresion != " + TypeToCmp); ;//ParseLib.ezError(234,"Tipo de la Expresion != " + TypeToCmp); Semantic Error //TODO Throw proper error
+        if(!Evaluator.evaluate(ExpQueue.poll()).equals( TypeToCmp)) ErrorAt.ezError(255, "Tipo de la Expresion != " + TypeToCmp); ;//ParseLib.ezError(234,"Tipo de la Expresion != " + TypeToCmp); Semantic Error //TODO Throw proper error
         ckSemCol();
     }
 
@@ -623,7 +628,7 @@ public class Parser {
             EXP();
             ExpQueue.add(tmpExp);
             String type  = Evaluator.evaluate(ExpQueue.poll());
-            if(!type.equals("TypeInt") && !type.equals("TypeString"))ErrorAt.ezError(240, debugString()); //ParseLib.ezError(240); semantic Error TODO Throw proper Error
+            if(!type.equals("TypeInt") && !type.equals("TypeString"));//ErrorAt.ezError(240, debugString()); //ParseLib.ezError(240); semantic Error TODO Throw proper Error
             ckSemCol();
 
         }else ErrorAt.ezError(109, debugString());
@@ -770,7 +775,7 @@ public class Parser {
             }
         } else if (checkTk(Constants.parenthesesClose))
             result += "57 ";
-        else ErrorAt.ezError(113, debugString());
+        else ErrorAt.ezError(237, debugString());
         //else
             //ParseLib.ezError(113); todo throw error?
     }

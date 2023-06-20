@@ -156,11 +156,14 @@ public class Tables {
                 put(231, "Error de tipo: int > int -> bool");
                 put(232, "Error de tipo: bool && bool -> int");
                 put(233, "Error de tipo: Expresión sin tipo");
-
+                put(239, "Error en la condicion del while");
                 //--- TODO Revisar
                 put(250, "Condicion del If mal formada");
                 put(251, "no se puede usar return fuera de una funcion");
-
+                put(252, "numero de argumentos para la llamada de la funcion invalido");
+                put(253, "tipos de los argumentos de la llamada de la funcion invalidos");
+                put(254, "putabasura");
+                put(255, "No existe conversio explicita de tipos");
                 //---
             }
         });

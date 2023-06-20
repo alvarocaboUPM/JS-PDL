@@ -14,4 +14,4 @@ function pideTexto ()
 }
 pideTexto();
   alert
-	(texto, a);
+	(texto);

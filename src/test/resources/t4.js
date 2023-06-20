@@ -24,4 +24,5 @@ function ff boolean(boolean ss)
 
 
 
-if (ff(l2)) print varglobal;
+if (ff(l2))
+    print varglobal;

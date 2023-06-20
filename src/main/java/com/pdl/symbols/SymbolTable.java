@@ -68,14 +68,15 @@ public class SymbolTable implements TS {
                     return tmp.getID();
                 }
             }
-            if(!inParams && !inVarDeclaration){
+            //if(!inParams && !inVarDeclaration){
+                // en caso de no estar declarada implicitamente se declara explicitamente en el marco global y como tipo entero
+              //  globalT.put(indexG, new SymbolAt(ID, indexG));
+              //  return indexG++;
+            //}else {
                 // If not found, insert
-                globalT.put(indexG, new SymbolAt(ID, indexG));
-                return indexG++;
-            }
-            // If not found, insert
-            localT.get(CurrentLTSName).put(indexL, new SymbolAt(ID, indexL));
-            return indexL--;
+                localT.get(CurrentLTSName).put(indexL, new SymbolAt(ID, indexL));
+                return indexL--;
+
         }
     }
 

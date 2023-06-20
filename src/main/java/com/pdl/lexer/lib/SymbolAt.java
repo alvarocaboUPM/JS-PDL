@@ -34,6 +34,15 @@ public class SymbolAt extends Object {
         this.ReturnType = "Unknown";
         this.offset = -1;
     }
+    public SymbolAt(String Lexema, int index, String type) { // offset no se mete
+        this.Lexema = Lexema;
+        this.ID = index;
+        this.type = type;
+        this.NumParams = -1;
+        this.TypesParams = new ArrayList<>();
+        this.ReturnType = "Unknown";
+        this.offset = -1;
+    }
 
     public SymbolAt(String ID, int i, String type, int NumParams,
             List<String> TypesParams, String ReturnType, int offset) {
