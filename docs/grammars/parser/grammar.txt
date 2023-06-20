@@ -1,89 +1,94 @@
-Terminales = { lambda eof  let  id  ;  if  (  )  {   }  while % do else
+Terminales = { eof  let  id  ;  if  (  )  {   }  while % do else
             function return input print int boolean string and >  =
             cad num  ++  , &&  true false  }
-NoTerminales = { START DEC PARM PARMX DECID DECLX SEN ASCALL ASIGN FCALL FCALLX IO SENCOM IFX SENB RX BODY EXP EXPX VALUE XPX INC T TX CTE }
+NoTerminales = {  START  SENA  CTE  INC  EXP    EXPX  VALUE  XPX  ASIGN  DECL   DECLX  TD  TDX  INOUT
+                 WILE  SENB  BODY  IFX  FCALL  FCALLX  RX  IDX	IFAX   FUN  PARM  PARMX EXPA }
 
 Axioma = START
 
 Producciones = {
 
-START -> DEC START ////1 > Declaraciones
-START -> SEN START ////2 > Sentencias Simples
-START -> SENCOM START ////3 > Sentencias Complejas
-START -> eof ////4
+START -> SENA START ////1 > Sentencias A
+START -> FUN START ////2 > Dec funciones
+START -> eof ////3
 
-DEC -> function id TX ( PARM ) { BODY }    //// 5
+CTE -> cad ////4 
+CTE -> num ////5
+CTE -> true ////6
+CTE -> false ////7
 
-PARM -> T id PARMX     //// 6
-PARM -> lambda      //// 7
-PARMX -> , T id PARMX  //// 8
-PARMX -> lambda     //// 9
+INC -> ++ id //// 8
 
-DEC -> DECID    //// 10
-DECID -> let id T DECLX ; //// 11
+EXP -> VALUE EXPX ////9 > 
+EXP -> INC EXPX ////10 > 
 
-DECLX -> ASIGN //// 12
-DECLX -> lambda //// 13
+EXPX -> > EXP  ////11
+EXPX -> &&  EXP ////12
+EXPX -> % EXP ////13
+EXPX -> lambda ////14
 
-SEN-> id ASCALL ;  ////14
-SEN-> IO ;////15
-SEN-> INC ;////16
-
-ASCALL -> ASIGN ////17
-ASCALL -> ( FCALL ) ////18
-ASIGN -> = EXP ////19
-FCALL -> EXP FCALLX     //// 20
-FCALL -> lambda         //// 21
-FCALLX -> , EXP FCALLX  //// 22
-FCALLX -> lambda         //// 23
-
-IO -> print EXP      //// 24
-IO -> input id      //// 25
-
-SENCOM -> if ( EXP ) IFX     //// 26 > Condicionales
-IFX -> { BODY } //// 27
-IFX -> SENB    //// 28
-
-SENB -> SEN               //// 29
-SENB -> return RX ;         //// 30
-RX -> EXP               //// 31
-RX -> lambda            //// 32
-
-SENCOM -> do { BODY } while ( EXP ) ;    //// 33 > do wile
-
-BODY -> SENB BODYX           //// 34
-BODY -> DECID BODYX           //// 35
-BODY -> SENCOM BODYX           //// 36
-BODY -> lambda              //// 37
-
-EXP -> VALUE EXPX ////38
-EXP -> INC EXPX ////39
-
-EXPX -> > EXP  ////40
-EXPX -> &&  EXP ////41
-EXPX -> % EXP ////42
-EXPX -> lambda ////43
-
-VALUE -> id XPX ////44
-VALUE -> CTE    ////45
-VALUE -> ( EXP ) ////46
-
-XPX -> ( FCALL ) ////47
-XPX -> lambda   ////48
-
-INC -> ++ id //// 49
-
-TX -> T   //// 50
-TX -> lambda   //// 51
-
-T -> int //// 52 tipos de datos
-T -> string //// 53
-T -> boolean   //// 54
+VALUE -> id XPX ////15
+VALUE -> CTE    ////16
+VALUE -> ( EXP ) ////17
 
 
-CTE -> cad ////55
-CTE -> num ////56
-CTE -> true ////57
-CTE -> false ////58
+XPX -> ( FCALL ) ////18
+XPX -> lambda   ////19
+
+ASIGN ->  = EXP ; ////20
+
+DECL -> let id TD DECLX ; //// 21
+
+DECLX -> ASIGN //// 22
+DECLX -> lambda //// 23
+
+TD -> int //// 24 tipos de datos
+TD -> string //// 25
+TD -> boolean   //// 26
+
+TDX -> TD   //// 27
+TDX -> lambda   //// 28
+
+INOUT -> print EXP ;     //// 29
+INOUT -> input id ;     //// 30
+
+SENA -> IFX     //// 31 > Condicionales
+SENA -> DECL    //// 32 > Declaraciones
+SENA -> do { BODY } WILE    //// 33 > do wile
+WILE -> while ( EXP ) ;     //// 34
+SENA -> SENB                //// 35
+
+SENB -> id IDX              //// 36
+SENB -> INOUT               //// 37
+SENB -> return RX ;         //// 38
+SENB -> INC ;               //// 39
+
+BODY -> SENA BODY           //// 40
+BODY -> lambda              //// 41
+
+IFX -> if ( EXP ) IFAX      //// 42
+
+IFAX -> { BODY } //// 43
+IFAX -> SENB    //// 44
+
+
+FCALL -> EXP FCALLX     //// 45
+FCALL -> lambda         //// 46
+FCALLX -> , EXP FCALLX  //// 47
+FCALLX -> lambda         //// 48
+
+RX -> EXP               //// 49
+RX -> lambda            //// 50
+
+IDX -> ASIGN          //// 51
+IDX -> ( FCALL ) ;      //// 52
+
+FUN -> function id TDX ( PARM ) { BODY }    //// 53
+
+PARM -> TD id PARMX     //// 54
+PARM -> lambda      //// 55
+PARMX -> , TD id PARMX  //// 56
+PARMX -> lambda ////57
+
 
 }

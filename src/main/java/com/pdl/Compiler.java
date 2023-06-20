@@ -37,7 +37,7 @@ public class Compiler {
         Scanner sc = new Scanner(System.in);
         System.out.println("\nSelecciona la temática de la prueba");
         System.out.println("1) Errors");
-        System.out.println("2) Sentencias");
+        System.out.println("2) Examen");
         System.out.println("o.c) General");
 
         folder = sc.nextLine();
@@ -55,8 +55,8 @@ public class Compiler {
                 break;
                 
                 case 2:
-                folder = "sentencias/";
-                df = "s5.js";
+                folder = "examen/";
+                df = "ej1.js";
                 break;
                 
             default:
@@ -88,9 +88,9 @@ public class Compiler {
             // Dupms Ast
             FilesAt.FParser.write(ast);
             // Dumps TS
-            //ts.OutTS();
+            ts.OutTS();
         } catch (IOException | NullPointerException e) {
-            e.getStackTrace();
+            e.printStackTrace();
         } finally {
             // Resets the standard error output
             FilesAt.closeFiles();

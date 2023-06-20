@@ -1,4 +1,6 @@
 /* Programa de ejemplo  */
+/******* José Luis Fuertes, julio, 2022 *********/
+/* El ejemplo incorpora elementos del lenguaje opcionales y elementos que no todos los grupos tienen que implementar */
 
 let s string;	/* variable global cadena */
 
@@ -22,7 +24,7 @@ function FactorialDo int (int n)
 	do
 	{
 		factorial *= n--;	// equivale a: factorial = factorial * n; n = n - 1;
-	} while (n != 0);		// mientras n no sea 0
+	} while (n > 0);		// mientras n no sea 0
 	return factorial;		// devuelve el valor entero de la variable factorial
 }
 
@@ -58,6 +60,12 @@ function imprime (string s, string msg, int f)	/* función que recibe 3 argument
 	print salto();	// imprime un salto de línea */
 	return;	/* finaliza la ejecución de la función (en este caso, se podría omitir) */
 }
+
+function cadena string (boolean log)
+{
+	if (!log) {return s;}
+	else      {return"Fin";}
+}	// fin cadena: función que devuelve una cadena
 
 // Parte del programa principal:
 s = "El factorial ";	// Primera sentencia que se ejecutaría
@@ -100,9 +108,21 @@ switch (num)
 function bisiesto boolean (int a)	
 {			
 	return 
-		(a % 4 && 0 && a % 100 && 0 && a % 400 && 0);	//se tienen en cuenta la precedencia de operadores
+		(a % 4 == 0 && a % 100 != 0 || a % 400 == 0);	//se tienen en cuenta la precedencia de operadores
 } // fin de bisiesto: función lógica
 
+function dias int (int m, int a)
+{
+	switch (m)
+	{
+		case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+			return 31; break;
+		case 4: case 6: case 9: case 11:
+			return 30;
+		case 2: if (bisiesto (a))  return(29); 
+			return(28);
+		default: print "Error: mes incorrecto: "; print m; print salto(); return 0;
+	}
 } // fin de dias. Todos los return devuelven un entero y la función es entera
 
 function esFechaCorrecta boolean (int d, int m, int a)	
@@ -147,7 +167,7 @@ function demo ()	/* definición de la función demo, sin argumentos y que no dev
 		}
 		else
 		{
-			v0= 1 / v3;
+			v0= 1 % v3;
 		}
 		print s;
 	}
@@ -163,9 +183,9 @@ function demo ()	/* definición de la función demo, sin argumentos y que no dev
 
 	potencia (v0, 4);
 	let i int;
-	for (i=1; i <= 10; ++i)	{
-		zv+=i;
-	}
+	do{
+		zv=++i;
+    } while(i <= 10);
 	potencia (zv, 5);
 	imprimeSuma (i, num);
 	imprime ("", cadena(true), 666);

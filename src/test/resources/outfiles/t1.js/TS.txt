@@ -1,0 +1,25 @@
+TABLA PRINCIPAL #1:
+--------- ----------
+* Lexema:'a'
+   Atributos:
+   + type:'TypeInt'
+   + offset:0
+
+--------- ----------
+* Lexema:'b'
+   Atributos:
+   + type:'TypeInt'
+   + offset:1
+
+--------- ----------
+* Lexema:'bbb'
+   Atributos:
+   + type:'TypeBool'
+   + offset:2
+
+--------- ----------
+* Lexema:'c'
+   Atributos:
+   + type:'TypeBool'
+   + offset:3
+

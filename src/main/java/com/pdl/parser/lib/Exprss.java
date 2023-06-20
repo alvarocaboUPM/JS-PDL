@@ -5,16 +5,20 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
+import com.pdl.common.ErrorAt;
+
 public class Exprss {
     /**
      * Método para evaluar las expresiones utilizando el algoritmo Shunting Yard
+     * 
      * @param tokens una lista de tokens de la expresión a evaluar
-     * @return el tipo de la expresión evaluada, o NULL si la expresión es inválida
+     * @return el tipo de la expresión evaluada, o "NULL" si la expresión es inválida
      */
-    public String evaluate(List<String> tokens)  {
+    public static String evaluate(List<String> tokens) {
         // Verificamos si la lista de tokens está vacía
-        if(tokens.isEmpty()) {
-            throw new IllegalArgumentException("Token list is empty");
+        if (tokens.isEmpty()) {
+            ErrorAt.ezError(221, "Token list is empty");
+            return "NULL";
         }
 
         // Verificamos casos especiales
@@ -38,7 +42,8 @@ public class Exprss {
 
         // Lanzamos una excepción si los paréntesis no están equilibrados
         if (openParens != closeParens) {
-            throw new IllegalArgumentException("Mismatched parentheses in expression");
+            ErrorAt.ezError(220, "Mismatched parentheses in expression");
+            return "NULL";
         }
 
         // Procesamos las expresiones dentro de los paréntesis
@@ -59,12 +64,12 @@ public class Exprss {
             List<String> subExpr = tokens.subList(start + 1, end);
             String result = "";
             try {
-                result = evaluate(subExpr);//Si se produce error
+                result = evaluate(subExpr);// Si se produce error
             } catch (Exception e) {
-                //ALex.ezError(235, result);//Todo Throw detailed error
+                // ALex.ezError(235, result);//Todo Throw detailed error
             }
             tokens.subList(start, end + 1).clear();
-            tokens.add(start, result);//revisar ?? Añadir o eliminar?
+            tokens.add(start, result);// revisar ?? Añadir o eliminar?
         }
 
         // Creamos la pila de operadores y la cola de salida
@@ -73,7 +78,7 @@ public class Exprss {
 
         // Procesamos los tokens, manejando los operadores y los operandos
         for (String token : tokens) {
-            if (token.equals("TypeInt")){
+            if (token.equals("TypeInt")) {
                 output.add(token);
             } else if (token.equals("TypeBool")) {
                 output.add(token);
@@ -110,28 +115,31 @@ public class Exprss {
                     val1 = evalStack.pop();
                 }
                 // Verificamos la compatibilidad de los operandos
-                if(val1.equals("TypeInt") && val2.equals("TypeBool") || val1.equals("TypeBool") && val2.equals("TypeInt")){
-                    //ParseLib.ezError(236); TODO Throw detailed Error
-                    throw new IllegalArgumentException("Type Incompatibility");
-                    //Error Tipos no Comparables
+                if (val1.equals("TypeInt") && val2.equals("TypeBool")
+                        || val1.equals("TypeBool") && val2.equals("TypeInt")) {
+
+                    ErrorAt.ezError(232, null);
+                    return "NULL";
                 }
 
                 // Evaluamos el operador
                 else if (token.equals("GT")) {
-                    evalStack.push(val1.equals("TypeInt") && val2.equals("TypeInt") ? "TypeBool": "NULL");
+                    evalStack.push(val1.equals("TypeInt") && val2.equals("TypeInt") ? "TypeBool" : "NULL");
                 } else if (token.equals("AND")) {
-                    evalStack.push(val1.equals("TypeBool") && val2.equals("TypeBool") ? "TypeBool": "NULL");
+                    evalStack.push(val1.equals("TypeBool") && val2.equals("TypeBool") ? "TypeBool" : "NULL");
                 } else if (token.equals("MOD")) {
-                    evalStack.push(val1.equals("TypeInt") && val2.equals("TypeInt") ? "TypeInt": "NULL");
+                    evalStack.push(val1.equals("TypeInt") && val2.equals("TypeInt") ? "TypeInt" : "NULL");
                 } else {
-                    throw new Error();
+                    ErrorAt.ezError(234, null);
+                    return "NULL";
                 }
             }
         }
 
         // Verificamos que hay un resultado en la pila de evaluación
         if (evalStack.isEmpty()) {
-            throw new IllegalArgumentException("Invalid expression");
+            ErrorAt.ezError(235, null);
+            return "NULL";
         }
 
         // Devolvemos el resultado
@@ -150,7 +158,7 @@ public class Exprss {
             case "AND":
                 return 1;
             default:
-                throw new IllegalArgumentException("Invalid operator: " + operator);
+                return -1;
         }
     }
 

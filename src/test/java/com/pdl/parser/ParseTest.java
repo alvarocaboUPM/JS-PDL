@@ -11,6 +11,7 @@ import org.junit.jupiter.api.*;
 import com.pdl.Compiler;
 import com.pdl.common.interfaces.TS;
 import com.pdl.common.utils.Constants;
+
 import com.pdl.symbols.SymbolTable;
 
 public class ParseTest {
@@ -23,9 +24,8 @@ public class ParseTest {
     public static void init() {
         t = new SymbolTable();
         p = new Parser(t);
-
     }
-
+    
     @BeforeEach
     public void resetTestfile() {
         testFile = Constants.TEST_FOLDER;
@@ -73,8 +73,8 @@ public class ParseTest {
         testFile += "t4.js";
         ok = "D\t 1 32 21 24 23 1 32 21 26 23 1 32 21 25 23 1 32 21 24 23 1 32 21 26 23 1 35 37 30 1 35 36 51 20 9 15 19 14 1 31 42 9 15 19 12 9 15 19 14 44 36 51 20 9 16 4 14 1 35 36 51 20 9 15 19 13 9 16 5 14 1 35 37 29 9 16 5 13 9 15 19 13 9 15 19 14 2 53 27 26 54 26 57 40 35 36 51 20 9 16 5 14 40 31 42 9 15 19 14 44 36 51 20 9 15 18 45 9 15 19 14 47 9 15 19 14 48 14 40 35 38 49 9 15 19 14 41 1 31 42 9 15 18 45 9 15 19 14 48 14 44 37 29 9 15 19 14 3 ";
         String res = p.parserDebug(testFile);
-        assertTrue(Compiler.errors.isEmpty());
         assertEquals(ok, res);
+        assertTrue(Compiler.errors.isEmpty());
     }
 
 
