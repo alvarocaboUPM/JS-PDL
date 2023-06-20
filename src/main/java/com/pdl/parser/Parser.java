@@ -14,32 +14,32 @@ import com.pdl.lexer.Lexer;
 import com.pdl.lexer.lib.SymbolAt;
 import com.pdl.lexer.lib.Token;
 import com.pdl.parser.lib.Exprss;
+import com.pdl.symbols.SymbolTable;
 
 public class Parser implements ASin {
     // public class Parser {
     private String result;
     private Lexer lexer;
     private Token tk;
-    private TS t;
+    private SymbolTable t;
     private SymbolAt id, funcID; // current symbol
-    private int CurrID, nParams, nArgs, OffsetG, OffsetL;// Counters
+    private int  nParams, nArgs, OffsetG, OffsetL;// Counters
     private String LastType, TypeToCmp;
     // for evaluating expresions
     private Queue<List<String>> ExpQueue = new LinkedList<>();
     private List<String> tmpExp, Emded;
     private List<String> tmpArgs;
 
-    private String TabLex;
+
     // Flagset
-    private boolean inFunc, inCond, inVarDec, noErr,
-            inParms, setID, inFCall, nestedExp, inAss;
+    private boolean inFunc;
 
     public Parser(TS t) {
         result = "D\t ";
         lexer = new Lexer(t);
         nParams = OffsetG = OffsetL = 0;
-        inFunc = inCond = inVarDec = nestedExp = inAss = false;
-        this.t = t;
+        inFunc = false;
+        this.t = (SymbolTable)t;
     }
 
     protected String parserDebug(String testFile) {
@@ -111,7 +111,6 @@ public class Parser implements ASin {
             }
             case Constants.let: {
                 result += "32 ";
-                inVarDec = true;
                 DECL();
                 break;
             }
@@ -141,14 +140,15 @@ public class Parser implements ASin {
         result += "42 ";
         getNext();
         ckParOp();
-        inCond = true;
         getNext();
         tmpExp = new ArrayList<>();
         EXP();
         ExpQueue.add(tmpExp);
+        if(!Exprss.evaluate(ExpQueue.poll()).equals(Constants.booleanType)){
+            ErrorAt.ezError(250, debugString());
+        }
         ckParCl();
         getNext();
-        inCond = false;
         if (checkTk(Constants.curlyBraceOpen)) {
             result += "43 ";
             BODY();
@@ -232,8 +232,8 @@ public class Parser implements ASin {
             XPX();
             return;
         } else if (checkTk(Constants.parenthesesOpen)) {
-            tmpExp.add("ParOpen");
             result += "17 ";
+            tmpExp.add("ParOpen");
             // TODO Set Priority??
             getNext();
             EXP();
@@ -248,7 +248,6 @@ public class Parser implements ASin {
         }
     }
 
-    // ------------------
     /**
      * Handles constant declarations
      */
@@ -282,14 +281,13 @@ public class Parser implements ASin {
     public void XPX() {
         if (checkTk(Constants.parenthesesOpen)) {
             if (id.getType() != "Function") {
-            } // ParseLib.ezError(117); TODO error?
-            LastType = t.lookAtIndex(CurrID).getReturnType();
+                ErrorAt.ezError(117, debugString());
+            } 
+            
             tmpExp.add(id.getReturnType()); // TODO review
             SymbolAt tmp = id;
             result += "18 ";
             getNext();
-
-            inFCall = true;
             Emded = tmpExp;
             nArgs = 0;
             // ExpQueue.add(tmpExp);
@@ -299,15 +297,12 @@ public class Parser implements ASin {
             } // ParseLib.ezError(237,tmp.getLexema()); TODO error
             if (nArgs != tmp.getNumParams()) {
             } // ParseLib.ezError(204, tmp.getLexema()); TODO error
-            inFCall = false;
-
         } else {
             CheckExplicitness();
             tmpExp.add(id.getType());// todo review
             result += "19 ";// lambda
         }
     }
-    // ------------------
 
     /**
      * Handles function calls
@@ -386,7 +381,6 @@ public class Parser implements ASin {
         TypeToCmp = tk.getType();
         getNext();
         DECLX();
-        inVarDec = false;
     }
 
     // ------------------
@@ -434,9 +428,9 @@ public class Parser implements ASin {
     public void DECLX() {
         if (checkTk(Constants.equals)) {
             result += "22 ";
-            inAss = true;
+
             ASIGN();
-            inAss = false;
+
         } else {
             result += "23 ";
         }
@@ -462,7 +456,7 @@ public class Parser implements ASin {
         ckWhile(); // checks token =? while
         getNext();
         ckParOp();
-        inCond = true;
+
         getNext();
         tmpExp = new ArrayList<>();
         EXP();
@@ -471,7 +465,6 @@ public class Parser implements ASin {
 
         }
         getNext();
-        inCond = false;
         ckSemCol();
     }
 
@@ -531,9 +524,9 @@ public class Parser implements ASin {
             result += "52 ";
             getNext();
             // Comprobar numero de parametros
-            inFCall = true;
+
             FCALL();
-            inFCall = false; // Should I?
+
             // if (!tmpArgs.equals(tmp.getTypesParams())) {
             // TODO: Si la funcion viene sin parametros esto es nulo
             // }
@@ -648,7 +641,7 @@ public class Parser implements ASin {
         } catch (Exception e) {
             return;
         }
-        TabLex = funcID.getLexema();
+
         //
         funcID.setType("Function");
         funcID.setOffset(OffsetG++);// Todo ver cuanto hay que incrementar el offset en caso de funcion, como no se
@@ -658,11 +651,11 @@ public class Parser implements ASin {
         inFunc = true;
 
         ckParOp();
-        t.setLocal();
+        t.setLocal(true);
         getNext();
-        inParms = true;
+
         PARAM();
-        inParms = false;
+
         funcID.setNumParams(nParams);
         getNext();
         ckKeyOp();
@@ -721,7 +714,7 @@ public class Parser implements ASin {
                 } catch (Exception e) {
                     return;
                 }
-                CurrID = (int) tk.getInfo();
+
                 id.setOffset(OffsetL);
                 IncOffset(LastType);
                 id.setType(LastType);

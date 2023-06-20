@@ -158,8 +158,11 @@ public class Tables {
                 put(233, "Error de tipo: Expresión sin tipo");
                 put(234, "Incompatibilidad tipo y operador");
                 put(235, "Expresion Invalida");
+                put(250, "Condicion del If mal formada");
+                put(251, "no se puede usar return fuera de una funcion");
+                put(252, "numero de argumentos para la llamada de la funcion invalido");
+                put(253, "tipos de los argumentos de la llamada de la funcion invalidos");
                 
-
             }
         });
 
