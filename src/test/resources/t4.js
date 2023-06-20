@@ -18,11 +18,10 @@ function ff boolean(boolean ss)
 {
     varglobal = 8;
     if (l1)
-        l2 = ff (ss, a);
+        l2 = ff (ss);
     return ss;
 }
 
 
 
-if (ff(l2))
-    print varglobal;
+if (ff(l2)) print varglobal;

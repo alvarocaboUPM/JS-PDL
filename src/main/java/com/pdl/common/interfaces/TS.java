@@ -59,13 +59,17 @@ public interface TS {
      */
     public void OutTS() throws IOException;
 
-    public void setLocal();
+    public void setLocal(boolean state);
 
     public void functionOn();
     public void functionOff();
     public boolean functionState();
     public Map<Integer, SymbolAt> getCurrentLocalTs();
-    public boolean ShadowingState(); //REMOVE
-    public void shadowing(boolean state);//REMOVE
+    public void setInParams(boolean state);
+    public boolean isInParams();
+
+    public void setInVarDeclaration(boolean state);
+    public boolean isInVarDeclaration();
+
 
 }

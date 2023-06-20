@@ -11,7 +11,7 @@ public class Exprss {
      * @param tokens una lista de tokens de la expresión a evaluar
      * @return el tipo de la expresión evaluada, o NULL si la expresión es inválida
      */
-    public static String evaluate(List<String> tokens)  {
+    public String evaluate(List<String> tokens)  {
         // Verificamos si la lista de tokens está vacía
         if(tokens.isEmpty()) {
             throw new IllegalArgumentException("Token list is empty");
@@ -19,7 +19,10 @@ public class Exprss {
 
         // Verificamos casos especiales
         if(tokens.contains("Void")) return "Void";
+        if(tokens.contains("Unknown")) return "Unknown";
         if(tokens.size() == 1 && tokens.get(0).equals("TypeString")) return "TypeString";
+        if(tokens.size() == 1 && tokens.get(0).equals("TypeInt")) return "TypeInt";
+        if(tokens.size() == 1 && tokens.get(0).equals("TypeBool")) return "TypeBool";
         if(tokens.contains("TypeString") && tokens.size() == 3) return "TypeString";
 
         // Contamos los paréntesis para verificar que estén equilibrados

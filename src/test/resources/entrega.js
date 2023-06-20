@@ -6,7 +6,7 @@ function Func1 int (int x, boolean y2)
    x = 11;
    z = "hola";
    return x;
-   /* 
+   /*
    return y2;
     */
 }

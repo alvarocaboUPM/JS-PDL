@@ -156,6 +156,12 @@ public class Tables {
                 put(231, "Error de tipo: int > int -> bool");
                 put(232, "Error de tipo: bool && bool -> int");
                 put(233, "Error de tipo: Expresión sin tipo");
+
+                //--- TODO Revisar
+                put(250, "Condicion del If mal formada");
+                put(251, "no se puede usar return fuera de una funcion");
+
+                //---
             }
         });
 

@@ -254,11 +254,9 @@ public class Lexer implements ALex {
                     if(tab.getScope()){ //estamos en la tabla global
                         return new Token(Constants.id, tmp.getID());
                     } else { // estamos en la tabla local
-                        if (!tab.getCurrentLocalTs().containsValue(tmp)) { // el lexema está en la global, pero no en la local
-                            //Añadir flag Shadowing
-                            tab.shadowing(true);
+                        if (!tab.getCurrentLocalTs().containsValue(tmp) && (tab.isInParams() || tab.isInVarDeclaration())) { // el lexema está en la global, pero no en la local
                             return nToken("ID", tab.insertAt(lex)); // insertamos el lexema en la local y devolvemos el token correspondiente
-                        } else { // el lexema ya está en la local
+                        } else { // el lexema ya está en la local o se hace referencia a un lexema del scope global
                             return new Token(Constants.id, tmp.getID());
                         }
                     }
