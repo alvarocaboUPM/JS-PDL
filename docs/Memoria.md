@@ -34,10 +34,11 @@
 | ----------------- | --------- | -------------------------- |
 | Alvaro Cabo       | c200172   | <alvaro.cabo@alumnos.upm.es> |
 | Oussama El Hatifi | c200359   | <o.elhatifi@alumnos.upm.es>  |
+| Jessica Zhu       | c200132   | <jessica.zhu@alumnos.upm.es> |
 
 ### Opciones del Grupo
 
-Las opciones obligatorias para el grupo 98 son:
+Las opciones obligatorias para el grupo 136 son:
 
 - Sentencia repetitiva (do-while)
 - Pre-auto-incremento (++ como prefijo)
@@ -230,29 +231,29 @@ La opción del grupo es **Análisis recursivo descendente**
 ### Gramática
 
 ```text
-Terminales = { lambda eof  let  id  ;  if  (  )  {   }  while % do else
+Terminales = { eof  let  id  ;  if  (  )  {   }  while % do else
             function return input print int boolean string and >  =
             cad num  ++  , &&  true false  }
 NoTerminales = {  START  SENA  CTE  INC  EXP    EXPX  VALUE  XPX  ASIGN  DECL   DECLX  TD  TDX  INOUT
-                 WILE  SENB  BODY  IFX  FCALL  FCALLX  RX  IDX IFAX   FUN  PARM  PARMX  }
+                 WILE  SENB  BODY  IFX  FCALL  FCALLX  RX  IDX	IFAX   FUN  PARM  PARMX EXPA }
 
 Axioma = START
 
 Producciones = {
 
-START -> SENA START ////1
-START -> FUN START ////2
+START -> SENA START ////1 > Sentencias A
+START -> FUN START ////2 > Dec funciones
 START -> eof ////3
 
-CTE -> cad ////4
+CTE -> cad ////4 
 CTE -> num ////5
 CTE -> true ////6
 CTE -> false ////7
 
 INC -> ++ id //// 8
 
-EXP -> VALUE EXPX ////9
-EXP -> INC EXPX ////10
+EXP -> VALUE EXPX ////9 > 
+EXP -> INC EXPX ////10 > 
 
 EXPX -> > EXP  ////11
 EXPX -> &&  EXP ////12
@@ -263,17 +264,18 @@ VALUE -> id XPX ////15
 VALUE -> CTE    ////16
 VALUE -> ( EXP ) ////17
 
+
 XPX -> ( FCALL ) ////18
 XPX -> lambda   ////19
 
-ASIGN ->  = EXP ; ////factorizable ? //// 20
+ASIGN ->  = EXP ; ////20
 
 DECL -> let id TD DECLX ; //// 21
 
 DECLX -> ASIGN //// 22
 DECLX -> lambda //// 23
 
-TD -> int //// 24
+TD -> int //// 24 tipos de datos
 TD -> string //// 25
 TD -> boolean   //// 26
 
@@ -283,9 +285,9 @@ TDX -> lambda   //// 28
 INOUT -> print EXP ;     //// 29
 INOUT -> input id ;     //// 30
 
-SENA -> IFX     //// 31
-SENA -> DECL    //// 32
-SENA -> do { BODY } WILE    //// 33
+SENA -> IFX     //// 31 > Condicionales
+SENA -> DECL    //// 32 > Declaraciones
+SENA -> do { BODY } WILE    //// 33 > do wile
 WILE -> while ( EXP ) ;     //// 34
 SENA -> SENB                //// 35
 
@@ -297,10 +299,10 @@ SENB -> INC ;               //// 39
 BODY -> SENA BODY           //// 40
 BODY -> lambda              //// 41
 
-IFX -> if ( EXP ) IFAX ;    //// 42
+IFX -> if ( EXP ) IFAX      //// 42
 
-IFAX -> SENB    //// 43
-IFAX -> { SENB } //// 44 Esto en verdad no hace falta
+IFAX -> { BODY } //// 43
+IFAX -> SENB    //// 44
 
 
 FCALL -> EXP FCALLX     //// 45
@@ -319,7 +321,8 @@ FUN -> function id TDX ( PARM ) { BODY }    //// 53
 PARM -> TD id PARMX     //// 54
 PARM -> lambda      //// 55
 PARMX -> , TD id PARMX  //// 56
-PARMX -> lambda     //// 57
+PARMX -> lambda  //// 57
+
 
 }
 
@@ -635,3 +638,634 @@ ERROR FOUND USING THE {$Analizer} Analyzer
 ###################
 Error #{$ErrorCode} @ line {$LineAt}: {$ExtraInfo}
 ```
+
+## Anexo
+
+### Pruebas correctas
+
+#### Prueba 1
+
+```text
+let a int;
+let   b  int  ;
+let bbb boolean ;
+
+a = 3;
+b=a;
+let c boolean;
+
+c = a > b;
+
+if (c) b = 3333;
+a = a % b;
+print a ;
+print b;
+```
+- **TOKENS** 
+
+```text
+<ResLet,>
+<ID,0>
+<TypeInt,>
+<SemCol,>
+<ResLet,>
+<ID,1>
+<TypeInt,>
+<SemCol,>
+<ResLet,>
+<ID,2>
+<TypeBool,>
+<SemCol,>
+<ID,0>
+<AsValue,>
+<CteInt,3>
+<SemCol,>
+<ID,1>
+<AsValue,>
+<ID,0>
+<SemCol,>
+<ResLet,>
+<ID,3>
+<TypeBool,>
+<SemCol,>
+<ID,3>
+<AsValue,>
+<ID,0>
+<GT,>
+<ID,1>
+<SemCol,>
+<CondIf,>
+<ParOpen,>
+<ID,3>
+<ParClose,>
+<ID,1>
+<AsValue,>
+<CteInt,3333>
+<SemCol,>
+<ID,0>
+<AsValue,>
+<ID,0>
+<MOD,>
+<ID,1>
+<SemCol,>
+<ResPrint,>
+<ID,0>
+<SemCol,>
+<ResPrint,>
+<ID,1>
+<SemCol,>
+<Teof,>
+```
+
+- **TABLA DE SIMBOLOS** 
+
+```text
+```
+
+- **TRAZA PARSER** 
+
+```text
+```
+
+- **ARBOL DE A.S** 
+
+#### Prueba 2
+
+```text
+let x int;
+let b boolean;
+let z int;
+input x;
+print x;
+input z;
+print x%z;
+b=x>z;if (b)
+x =
+  x % 6
+    % z
+    % 1
+    % (2
+    % y
+    % 7)
+    > 5;
+```
+- **TOKENS** 
+
+```text
+<ResLet,>
+<ID,0>
+<TypeInt,>
+<SemCol,>
+<ResLet,>
+<ID,1>
+<TypeBool,>
+<SemCol,>
+<ResLet,>
+<ID,2>
+<TypeInt,>
+<SemCol,>
+<ResIn,>
+<ID,0>
+<SemCol,>
+<ResPrint,>
+<ID,0>
+<SemCol,>
+<ResIn,>
+<ID,2>
+<SemCol,>
+<ResPrint,>
+<ID,0>
+<MOD,>
+<ID,2>
+<SemCol,>
+<ID,1>
+<AsValue,>
+<ID,0>
+<GT,>
+<ID,2>
+<SemCol,>
+<CondIf,>
+<ParOpen,>
+<ID,1>
+<ParClose,>
+<ID,0>
+<AsValue,>
+<ID,0>
+<MOD,>
+<CteInt,6>
+<MOD,>
+<ID,2>
+<MOD,>
+<CteInt,1>
+<MOD,>
+<ParOpen,>
+<CteInt,2>
+<MOD,>
+<ID,3>
+<MOD,>
+<CteInt,7>
+<ParClose,>
+<GT,>
+<CteInt,5>
+<SemCol,>
+<Teof,>
+```
+
+- **TABLA DE SIMBOLOS** 
+
+```text
+```
+
+- **TRAZA PARSER** 
+
+```text
+D	 1 32 21 24 23 1 32 21 26 23 1 32 21 24 23 1 35 37 30 1 35 37 29 9 15 19 14 1 35 37 30 1 35 37 29 9 15 19 13 9 15 19 14 1 35 36 51 20 9 15 19 11 9 15 19 14 1 31 42 9 15 19 14 44 36 51 20 9 15 19 13 9 16 5 13 9 15 19 13 9 16 5 13 9 17 9 16 5 13 9 15 19 13 9 16 5 14 11 9 16 5 14 3 
+```
+
+- **ARBOL DE A.S** 
+
+#### Prueba 3
+
+```text
+let texto string;
+
+print "hola";
+input esto_es_un_nombre_de_variable_global_de_tipo_entero_que_tiene_que_aparecer_en_la_TS_global;
+print x__x;
+function alert (string msg_)
+{
+	print msg_;
+}
+function pideTexto ()
+{
+	print "Introduce un texto";
+	input texto;
+}
+pideTexto();
+  alert
+	(texto, a);
+```
+- **TOKENS** 
+
+```text
+<ResLet,>
+<ID,0>
+<TypeString,>
+<SemCol,>
+<ResPrint,>
+<Cad,"hola">
+<SemCol,>
+<ResIn,>
+<ID,1>
+<SemCol,>
+<ResPrint,>
+<ID,2>
+<SemCol,>
+<FunID,>
+<ID,3>
+<ParOpen,>
+<TypeString,>
+<ID,0>
+<ParClose,>
+<KeyOpen,>
+<ResPrint,>
+<ID,0>
+<SemCol,>
+<KeyClose,>
+<FunID,>
+<ID,1>
+<ParOpen,>
+<ParClose,>
+<KeyOpen,>
+<ResPrint,>
+<Cad,"Introduce un texto">
+<SemCol,>
+<ResIn,>
+<ID,2>
+<SemCol,>
+<KeyClose,>
+<ID,1>
+<ParOpen,>
+<ParClose,>
+<SemCol,>
+<ID,2>
+<ParOpen,>
+<ID,3>
+<Com,>
+<ID,4>
+<ParClose,>
+<SemCol,>
+<Teof,>
+```
+
+- **TABLA DE SIMBOLOS** 
+
+```text
+```
+
+- **TRAZA PARSER** 
+
+```text
+D	 1 32 21 25 23 1 35 37 29 9 16 4 14 1 35 37 30 1 35 37 29 9 15 19 14 2 53 28 54 25 57 40 35 37 29 9 15 19 14 41 2 53 28 55 40 35 37 29 9 16 4 14 40 35 37 30 41 1 35 36 52 46 1 35 36 52 45 9 15 19 14 47 9 15 19 14 48 3 
+```
+
+- **ARBOL DE A.S** 
+
+#### Prueba 4
+
+```text
+let n1	int     ;
+let l1	boolean ;
+let cad	string  ;
+let n2	int     ;
+let l2	boolean ;
+input n1;
+l1 = l2;
+if (l1&& l2) cad = "hello";
+n2 = n1 % 378;
+
+print	33
+%
+n1
+%
+n2;
+
+function ff boolean(boolean ss)
+{
+    varglobal = 8;
+    if (l1)
+        l2 = ff (ss, a);
+    return ss;
+}
+
+
+
+if (ff(l2))
+    print varglobal;
+```
+- **TOKENS** 
+
+```text
+<ResLet,>
+<ID,0>
+<TypeInt,>
+<SemCol,>
+<ResLet,>
+<ID,1>
+<TypeBool,>
+<SemCol,>
+<ResLet,>
+<ID,2>
+<TypeString,>
+<SemCol,>
+<ResLet,>
+<ID,3>
+<TypeInt,>
+<SemCol,>
+<ResLet,>
+<ID,4>
+<TypeBool,>
+<SemCol,>
+<ResIn,>
+<ID,0>
+<SemCol,>
+<ID,1>
+<AsValue,>
+<ID,4>
+<SemCol,>
+<CondIf,>
+<ParOpen,>
+<ID,1>
+<AND,>
+<ID,4>
+<ParClose,>
+<ID,2>
+<AsValue,>
+<Cad,"hello">
+<SemCol,>
+<ID,3>
+<AsValue,>
+<ID,0>
+<MOD,>
+<CteInt,378>
+<SemCol,>
+<ResPrint,>
+<CteInt,33>
+<MOD,>
+<ID,0>
+<MOD,>
+<ID,3>
+<SemCol,>
+<FunID,>
+<ID,5>
+<TypeBool,>
+<ParOpen,>
+<TypeBool,>
+<ID,0>
+<ParClose,>
+<KeyOpen,>
+<ID,1>
+<AsValue,>
+<CteInt,8>
+<SemCol,>
+<CondIf,>
+<ParOpen,>
+<ID,1>
+<ParClose,>
+<ID,2>
+<AsValue,>
+<ID,2>
+<ParOpen,>
+<ID,0>
+<Com,>
+<ID,3>
+<ParClose,>
+<SemCol,>
+<Return,>
+<ID,0>
+<SemCol,>
+<KeyClose,>
+<CondIf,>
+<ParOpen,>
+<ID,2>
+<ParOpen,>
+<ID,4>
+<ParClose,>
+<ParClose,>
+<ResPrint,>
+<ID,5>
+<SemCol,>
+<Teof,>
+```
+
+- **TABLA DE SIMBOLOS** 
+
+```text
+```
+
+- **TRAZA PARSER** 
+
+```text
+D	 1 32 21 24 23 1 32 21 26 23 1 32 21 25 23 1 32 21 24 23 1 32 21 26 23 1 35 37 30 1 35 36 51 20 9 15 19 14 1 31 42 9 15 19 12 9 15 19 14 44 36 51 20 9 16 4 14 1 35 36 51 20 9 15 19 13 9 16 5 14 1 35 37 29 9 16 5 13 9 15 19 13 9 15 19 14 2 53 27 26 54 26 57 40 35 36 51 20 9 16 5 14 40 31 42 9 15 19 14 44 36 51 20 9 15 18 45 9 15 19 14 47 9 15 19 14 48 14 40 35 38 49 9 15 19 14 41 1 31 42 9 15 18 45 9 15 19 14 48 14 44 37 29 9 15 19 14 3 
+```
+
+- **ARBOL DE A.S** 
+
+#### Prueba 5
+
+```text
+let s_s string ;
+let a int;
+let bb boolean;
+
+function  cadena string (string kk)
+{
+    do{
+        print ("{9}"); /* Aqui mal ->  RR(s, bb)*/
+		let	xx	int;
+		xx=s_s;
+		if (bb)  return kk; /* No se puede  if(bb)-> nada */
+    }
+	while (a > 9 && bb); /*|| -> && */
+
+	s= RR (a, bb, kk); /* quito $ */
+	kk = "print (kk)"; /* void prin -> print */
+	return s_s;
+} /* Faltaba llave */
+```
+- **TOKENS** 
+
+```text
+<ResLet,>
+<ID,0>
+<TypeString,>
+<SemCol,>
+<ResLet,>
+<ID,1>
+<TypeInt,>
+<SemCol,>
+<ResLet,>
+<ID,2>
+<TypeBool,>
+<SemCol,>
+<FunID,>
+<ID,3>
+<TypeString,>
+<ParOpen,>
+<TypeString,>
+<ID,0>
+<ParClose,>
+<KeyOpen,>
+<LoopDo,>
+<KeyOpen,>
+<ResPrint,>
+<ParOpen,>
+<Cad,"{9}">
+<ParClose,>
+<SemCol,>
+<ResLet,>
+<ID,1>
+<TypeInt,>
+<SemCol,>
+<ID,1>
+<AsValue,>
+<ID,2>
+<SemCol,>
+<CondIf,>
+<ParOpen,>
+<ID,3>
+<ParClose,>
+<Return,>
+<ID,0>
+<SemCol,>
+<KeyClose,>
+<LoopWhile,>
+<ParOpen,>
+<ID,4>
+<GT,>
+<CteInt,9>
+<AND,>
+<ID,3>
+<ParClose,>
+<SemCol,>
+<ID,5>
+<AsValue,>
+<ID,5>
+<ParOpen,>
+<ID,4>
+<Com,>
+<ID,3>
+<Com,>
+<ID,0>
+<ParClose,>
+<SemCol,>
+<ID,0>
+<AsValue,>
+<Cad,"print (kk)">
+<SemCol,>
+<Return,>
+<ID,2>
+<SemCol,>
+<KeyClose,>
+<Teof,>
+```
+
+- **TABLA DE SIMBOLOS** 
+
+```text
+```
+
+- **TRAZA PARSER** 
+
+```text
+D	 1 32 21 25 23 1 32 21 24 23 1 32 21 26 23 2 53 27 25 54 25 57 40 33 40 35 37 29 9 17 9 16 4 14 14 40 32 21 24 23 40 35 36 51 20 9 15 19 14 40 31 42 9 15 19 14 44 38 49 9 15 19 14 41 34 9 15 19 11 9 16 5 12 9 15 19 14 40 35 36 51 20 9 15 18 45 9 15 19 14 47 9 15 19 14 47 9 15 19 14 48 14 40 35 36 51 20 9 16 4 14 40 35 38 49 9 15 19 14 41 3 
+```
+
+- **ARBOL DE A.S** 
+
+### Pruebas con errores
+
+#### Prueba 6
+
+```text
+```
+- **TOKENS** 
+
+```text
+```
+
+- **TABLA DE SIMBOLOS** 
+
+```text
+```
+
+- **TRAZA PARSER** 
+
+```text
+```
+
+- **ARBOL DE A.S** 
+
+#### Prueba 7
+
+```text
+```
+- **TOKENS** 
+
+```text
+```
+
+- **TABLA DE SIMBOLOS** 
+
+```text
+```
+
+- **TRAZA PARSER** 
+
+```text
+```
+
+- **ARBOL DE A.S** 
+
+#### Prueba 8
+
+```text
+```
+- **TOKENS** 
+
+```text
+```
+
+- **TABLA DE SIMBOLOS** 
+
+```text
+```
+
+- **TRAZA PARSER** 
+
+```text
+```
+
+- **ARBOL DE A.S** 
+
+#### Prueba 9
+
+```text
+```
+- **TOKENS** 
+
+```text
+```
+
+- **TABLA DE SIMBOLOS** 
+
+```text
+```
+
+- **TRAZA PARSER** 
+
+```text
+```
+
+- **ARBOL DE A.S** 
+
+#### Prueba 10
+
+```text
+```
+- **TOKENS** 
+
+```text
+```
+
+- **TABLA DE SIMBOLOS** 
+
+```text
+```
+
+- **TRAZA PARSER** 
+
+```text
+```
+
+- **ARBOL DE A.S** 
